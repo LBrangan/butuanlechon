@@ -1,34 +1,108 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const theme = ref('light')
+const router = useRouter()
+const loading = ref(false)
+const form = ref({
+  email: '',
+  password: '',
+})
+const showPassword = ref(false)
+const formValid = ref(true)
 
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
+const rules = {
+  email: [(v) => !!v || 'Email is required', (v) => /.+@.+\..+/.test(v) || 'Email must be valid'],
+  password: [
+    (v) => !!v || 'Password is required',
+    (v) => v.length >= 6 || 'Password must be at least 6 characters',
+  ],
+}
+
+const handleSubmit = async () => {
+  loading.value = true
+  try {
+    // TODO: Implement actual login logic here
+    // await loginUser(form.value)
+    router.push('/dashboard')
+  } catch (error) {
+    console.error('Login failed:', error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
 <template>
-  <v-responsive class="border rounded" max-height="300">
-    <v-app :theme="theme">
-      <v-app-bar class="px-3">
-        <v-spacer></v-spacer>
+  <v-container fluid class="fill-height bg-red-lighten-1 pa-0">
+    <v-row align="center" justify="center" class="ga-15">
+      <v-col cols="10" sm="8" md="6" lg="4">
+        <v-img
+          max-height="400"
+          class="mx-auto"
+          :src="`/images/Background.png`"
+          cover
+          rounded="lg"
+          shadow="lg"
+        ></v-img>
+      </v-col>
 
-        <v-btn
-          :prepend-icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          text="Toggle Theme"
-          slim
-          @click="onClick"
-        ></v-btn>
-      </v-app-bar>
+      <v-col cols="10" sm="8" md="6" lg="4">
+        <v-card class="elevation-12 pa-4">
+          <v-card-title class="text-h5 font-weight-bold text-center mb-6">
+            <h4 text-start>Welcome Back!</h4>
+            Inventory Management System
+          </v-card-title>
 
-      <v-main>
-        <v-container>
-          <h1>Main Content</h1>
-        </v-container>
-      </v-main>
-    </v-app>
-  </v-responsive>
+          <v-form @submit.prevent="handleSubmit" v-model="formValid">
+            <v-card-text>
+              <v-text-field
+                v-model="form.email"
+                label="Email"
+                prepend-inner-icon="mdi-email"
+                type="email"
+                :rules="rules.email"
+                required
+                variant="outlined"
+              />
+
+              <v-text-field
+                v-model="form.password"
+                label="Password"
+                prepend-inner-icon="mdi-lock"
+                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                :type="showPassword ? 'text' : 'password'"
+                @click:append-inner="showPassword = !showPassword"
+                :rules="rules.password"
+                required
+                variant="outlined"
+              />
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                class="none"
+                variant="flat"
+                size="large"
+                rounded="lg"
+                :loading="loading"
+                block
+                text="black"
+                color="#ff5050"
+              >
+                Login
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fill-height {
+  min-height: 100vh;
+}
+</style>
