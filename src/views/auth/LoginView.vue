@@ -48,11 +48,10 @@ const handleSubmit = async () => {
       </v-col>
 
       <v-col cols="10" sm="8" md="6" lg="4">
-        <v-card class="elevation-12 pa-4">
-          <v-card-title class="font-weight-bold text-center mb-4">
-            <h3 class="mb-2">Welcome Back!</h3>
-            <span> Inventory Management System </span>
-          </v-card-title>
+        <v-card class="elevation-12 pa-4" prepend-icon="mdi-account-alert" subtitle="Login Form">
+          <template v-slot:title>
+            <span class="font-weight-black"> BL & SG Restaurant </span>
+          </template>
 
           <v-form @submit.prevent="handleSubmit" v-model="formValid">
             <v-card-text>
@@ -87,6 +86,7 @@ const handleSubmit = async () => {
                 size="large"
                 rounded="lg"
                 :loading="loading"
+                type="submit"
                 block
                 text="black"
                 color="#ff5050"
