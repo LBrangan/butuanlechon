@@ -34,71 +34,76 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <v-container fluid class="fill-height bg-red-lighten-1 pa-0">
-    <v-row align="center" justify="center" class="ga-15">
-      <v-col cols="10" sm="8" md="6" lg="4">
-        <v-img
-          max-height="400"
-          class="mx-auto"
-          :src="`/images/Background.png`"
-          cover
-          rounded="lg"
-          shadow="lg"
-        ></v-img>
-      </v-col>
+  <v-responsive>
+    <v-app>
+      <v-main>
+        <v-container fluid class="fill-height bg-red-lighten-1 d-flex flex-wrap">
+          <v-row class="justify-center">
+            <v-col cols="12" class="text-center">
+              <v-avatar size="180">
+                <v-img class :src="`/images/Background.png`" cover alt="logo"></v-img>
+              </v-avatar>
+            </v-col>
 
-      <v-col cols="10" sm="8" md="6" lg="4">
-        <v-card class="elevation-12 pa-4" prepend-icon="mdi-account-alert" subtitle="Login Form">
-          <template v-slot:title>
-            <span class="font-weight-black"> BL & SG Restaurant </span>
-          </template>
-
-          <v-form @submit.prevent="handleSubmit" v-model="formValid">
-            <v-card-text>
-              <v-text-field
-                v-model="form.email"
-                label="Email"
-                prepend-inner-icon="mdi-email"
-                type="email"
-                :rules="rules.email"
-                required
-                variant="outlined"
-              />
-
-              <v-text-field
-                v-model="form.password"
-                label="Password"
-                prepend-inner-icon="mdi-lock"
-                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                :type="showPassword ? 'text' : 'password'"
-                @click:append-inner="showPassword = !showPassword"
-                :rules="rules.password"
-                required
-                variant="outlined"
-              />
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer />
-              <v-btn
-                class="none"
-                variant="flat"
-                size="large"
-                rounded="lg"
-                :loading="loading"
-                type="submit"
-                block
-                text="black"
-                color="#ff5050"
+            <v-col cols="12" sm="8" md="6" lg="4">
+              <v-card
+                class="elevation-12 pa-4"
+                prepend-icon="mdi-account"
+                subtitle="Inventory Management System"
               >
-                Login
-              </v-btn>
-            </v-card-actions>
-          </v-form>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+                <template v-slot:title>
+                  <span class="font-weight-black"> BL & SG Restaurant </span>
+                </template>
+
+                <v-form @submit.prevent="handleSubmit" v-model="formValid">
+                  <v-card-text>
+                    <v-text-field
+                      v-model="form.email"
+                      label="Email"
+                      prepend-inner-icon="mdi-email"
+                      type="email"
+                      :rules="rules.email"
+                      required
+                      variant="outlined"
+                    />
+
+                    <v-text-field
+                      v-model="form.password"
+                      label="Password"
+                      prepend-inner-icon="mdi-lock"
+                      :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                      :type="showPassword ? 'text' : 'password'"
+                      @click:append-inner="showPassword = !showPassword"
+                      :rules="rules.password"
+                      required
+                      variant="outlined"
+                    />
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      class="none"
+                      variant="flat"
+                      size="large"
+                      rounded="lg"
+                      :loading="loading"
+                      type="submit"
+                      block
+                      text="black"
+                      color="#ff5050"
+                    >
+                      Login
+                    </v-btn>
+                  </v-card-actions>
+                </v-form>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-main>
+    </v-app>
+  </v-responsive>
 </template>
 
 <style scoped>
