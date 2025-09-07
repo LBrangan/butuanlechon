@@ -49,9 +49,9 @@ const handleSubmit = async () => {
 
       <v-col cols="10" sm="8" md="6" lg="4">
         <v-card class="elevation-12 pa-4">
-          <v-card-title class="text-h5 font-weight-bold text-center mb-6">
-            <h4 text-start>Welcome Back!</h4>
-            Inventory Management System
+          <v-card-title class="font-weight-bold text-center mb-4">
+            <h3 class="mb-2">Welcome Back!</h3>
+            <span> Inventory Management System </span>
           </v-card-title>
 
           <v-form @submit.prevent="handleSubmit" v-model="formValid">
