@@ -24,7 +24,7 @@ const handleSubmit = async () => {
   try {
     // TODO: Implement actual login logic here
     // await loginUser(form.value)
-    router.push('/dashboard')
+    router.push('/Dashboard')
   } catch (error) {
     console.error('Login failed:', error)
   } finally {
