@@ -1,5 +1,5 @@
 <template>
-  <v-main class="red lighten-1">
+  <v-main class="app-background">
     <!-- Navigation Drawer -->
     <v-navigation-drawer v-model="drawer" permanent width="280" class="elevation-2" color="white">
       <!-- Logo Section -->
@@ -49,20 +49,11 @@
         <v-col cols="12" class="d-flex justify-space-between align-center">
           <h1 class="text-h3 font-weight-medium text-grey-darken-4">Dashboard</h1>
 
-          <!-- Search Bar -->
-          <v-text-field
-            v-model="searchQuery"
-            placeholder="Search..."
-            prepend-inner-icon="mdi-magnify"
-            variant="solo"
-            rounded="xl"
-            density="comfortable"
-            hide-details
-            color="white"
-            bg-color="white"
-            class="search-field"
-            style="max-width: 420px; min-width: 350px"
-          ></v-text-field>
+          <!-- Custom Search Bar -->
+          <div class="search-box">
+            <v-icon size="20" class="mr-2 text-grey-darken-3">mdi-magnify</v-icon>
+            <input v-model="searchQuery" type="text" placeholder="Search..." class="search-input" />
+          </div>
         </v-col>
       </v-row>
 
@@ -85,18 +76,16 @@
         </v-col>
       </v-row>
 
-      <!-- Recent Activities Section -->
+      <!-- Recent Activities -->
       <v-row>
         <v-col cols="12">
           <v-card class="pa-10 rounded-xl" elevation="0" color="white" min-height="450">
             <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-8">Recent Activities</h2>
-
             <v-divider class="mb-12"></v-divider>
-
             <div class="text-center py-16">
-              <v-icon size="100" class="text-grey-lighten-2 mb-6">
-                mdi-clipboard-list-outline
-              </v-icon>
+              <v-icon size="100" class="text-grey-lighten-2 mb-6"
+                >mdi-clipboard-list-outline</v-icon
+              >
               <p class="text-h5 text-grey-lighten-1 mb-8 font-weight-regular">
                 No activities yet. Start by adding products!
               </p>
@@ -175,38 +164,37 @@ export default {
   },
 }
 </script>
-
 <style scoped>
-.search-field :deep(.v-field__input) {
-  padding: 12px 16px !important;
+/* Flat red background */
+.app-background {
+  background-color: #ff4d4d !important;
 }
 
-.search-field :deep(.v-field__prepend-inner) {
-  padding-top: 12px !important;
+/* Search bar */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #000;
+  border-radius: 50px;
+  padding: 6px 14px;
+  width: 380px;
 }
 
-.rounded-xl {
-  border-radius: 20px !important;
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  color: #333;
 }
 
-.v-list-item {
-  border-radius: 12px !important;
-}
-
-/* Custom active state for sidebar items */
+/* Active sidebar item */
 .v-list-item.bg-red-lighten-5 {
   background-color: rgba(255, 205, 210, 0.3) !important;
   border-left: 4px solid #c62828 !important;
 }
-
-/* Make sure the main content doesn't overlap with sidebar */
-.v-main {
-  padding-left: 0 !important;
-}
-
-/* Custom button styling */
-.v-btn {
-  text-transform: none !important;
-  letter-spacing: 0 !important;
+.v-field.v-field--outlined {
+  border: 1px solid #ccc !important;
 }
 </style>
