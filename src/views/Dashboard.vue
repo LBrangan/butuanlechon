@@ -1,25 +1,15 @@
 <template>
   <v-main class="red lighten-1">
     <!-- Navigation Drawer -->
-    <v-navigation-drawer
-      v-model="drawer"
-      permanent
-      width="280"
-      class="elevation-2"
-      color="white"
-    >
+    <v-navigation-drawer v-model="drawer" permanent width="280" class="elevation-2" color="white">
       <!-- Logo Section -->
       <v-list-item class="px-6 py-6">
         <template v-slot:prepend>
-          <v-icon color="red darken-2" size="40" class="mr-3">
-            mdi-silverware-fork-knife
-          </v-icon>
+          <v-icon color="red darken-2" size="40" class="mr-3"> mdi-silverware-fork-knife </v-icon>
         </template>
         <v-list-item-title>
           <div>
-            <div class="text-h5 font-weight-bold text-red-darken-2">
-              BL & SG
-            </div>
+            <div class="text-h5 font-weight-bold text-red-darken-2">BL & SG</div>
             <div class="text-body-1 text-grey-darken-1">Restaurant</div>
             <div class="text-body-2 text-grey">Inventory System</div>
           </div>
@@ -38,11 +28,7 @@
           @click="setActiveItem(item.title)"
         >
           <template v-slot:prepend>
-            <v-icon
-              :color="item.active ? 'red-darken-2' : 'grey-darken-1'"
-              size="24"
-              class="mr-3"
-            >
+            <v-icon :color="item.active ? 'red-darken-2' : 'grey-darken-1'" size="24" class="mr-3">
               {{ item.icon }}
             </v-icon>
           </template>
@@ -57,38 +43,33 @@
     </v-navigation-drawer>
 
     <!-- Main Content -->
-    <v-container fluid class="pa-8" style="margin-left: 280px;">
+    <v-container fluid class="pa-8" style="margin-left: 280px">
       <!-- Header -->
       <v-row class="mb-8">
-      <v-col cols="12" class="d-flex justify-space-between align-center">
-        <h1 class="text-h3 font-weight-medium text-grey-darken-4">Dashboard</h1>
+        <v-col cols="12" class="d-flex justify-space-between align-center">
+          <h1 class="text-h3 font-weight-medium text-grey-darken-4">Dashboard</h1>
 
-        <!-- Search Bar -->
-        <v-text-field
-        v-model="searchQuery"
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        variant="solo"
-        rounded="xl"
-        density="comfortable"
-        hide-details
-        color="white"
-        bg-color="white"
-        class="search-field"
-        style="max-width: 420px; min-width: 350px;"
-        ></v-text-field>
-      </v-col>
+          <!-- Search Bar -->
+          <v-text-field
+            v-model="searchQuery"
+            placeholder="Search..."
+            prepend-inner-icon="mdi-magnify"
+            variant="solo"
+            rounded="xl"
+            density="comfortable"
+            hide-details
+            color="white"
+            bg-color="white"
+            class="search-field"
+            style="max-width: 420px; min-width: 350px"
+          ></v-text-field>
+        </v-col>
       </v-row>
 
       <!-- Statistics Cards -->
       <v-row class="mb-10">
         <v-col cols="12" md="6" lg="6" v-for="stat in stats.slice(0, 2)" :key="stat.title">
-          <v-card
-            class="pa-8 rounded-xl"
-            elevation="0"
-            color="white"
-            height="160"
-          >
+          <v-card class="pa-8 rounded-xl" elevation="0" color="white" height="160">
             <div class="d-flex justify-space-between align-center h-100">
               <div class="d-flex flex-column justify-center">
                 <h2 class="text-h3 font-weight-bold text-grey-darken-4 mb-3">
@@ -107,15 +88,8 @@
       <!-- Recent Activities Section -->
       <v-row>
         <v-col cols="12">
-          <v-card
-            class="pa-10 rounded-xl"
-            elevation="0"
-            color="white"
-            min-height="450"
-          >
-            <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-8">
-              Recent Activities
-            </h2>
+          <v-card class="pa-10 rounded-xl" elevation="0" color="white" min-height="450">
+            <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-8">Recent Activities</h2>
 
             <v-divider class="mb-12"></v-divider>
 
@@ -156,49 +130,49 @@ export default {
         {
           title: 'Dashboard',
           icon: 'mdi-chart-box-outline',
-          active: true
+          active: true,
         },
         {
           title: 'Product',
           icon: 'mdi-package-variant',
-          active: false
-        }
+          active: false,
+        },
       ],
       stats: [
         {
           title: 'Total Product',
           value: 100000,
-          icon: 'mdi-eye-outline'
+          icon: 'mdi-eye-outline',
         },
         {
           title: 'Low Stock Items',
           value: 100000,
-          icon: 'mdi-eye-outline'
+          icon: 'mdi-eye-outline',
         },
         {
           title: 'Total Revenue',
           value: 250000,
-          icon: 'mdi-eye-outline'
+          icon: 'mdi-eye-outline',
         },
         {
           title: 'Orders Today',
           value: 150,
-          icon: 'mdi-eye-outline'
-        }
-      ]
+          icon: 'mdi-eye-outline',
+        },
+      ],
     }
   },
   methods: {
     setActiveItem(title) {
-      this.menuItems.forEach(item => {
+      this.menuItems.forEach((item) => {
         item.active = item.title === title
       })
     },
     addProduct() {
       console.log('Add product clicked')
       alert('Add Product functionality will be implemented here!')
-    }
-  }
+    },
+  },
 }
 </script>
 
