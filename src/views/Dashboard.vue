@@ -43,7 +43,7 @@
     </v-navigation-drawer>
 
     <!-- Main Content -->
-    <v-container fluid class="pa-8" style="margin-left: 280px">
+    <v-container fluid class="pa-8">
       <!-- Header -->
       <v-row class="mb-8">
         <v-col cols="12" class="d-flex justify-space-between align-center">
