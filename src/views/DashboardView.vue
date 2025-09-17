@@ -1,3 +1,14 @@
+<script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleLogout = () => {
+  // Add any cleanup logic here (clear tokens, state, etc)
+  router.push('/')
+}
+</script>
+
 <template>
   <v-main class="app-background">
     <!-- Navigation Drawer -->
@@ -40,6 +51,32 @@
           </v-list-item-title>
         </v-list-item>
       </v-list>
+
+      <!-- User Profile and Logout -->
+      <template v-slot:append>
+        <div class="pa-4">
+          <v-divider class="mb-4"></v-divider>
+          <v-list>
+            <v-list-item class="px-4">
+              <template v-slot:prepend>
+                <v-avatar color="red-lighten-2" size="40">
+                  <v-icon color="white">mdi-account</v-icon>
+                </v-avatar>
+              </template>
+              <v-list-item-title class="text-body-1 font-weight-medium">Admin</v-list-item-title>
+              <template v-slot:append>
+                <v-btn
+                  icon="mdi-logout"
+                  variant="text"
+                  color="red-darken-2"
+                  @click="handleLogout"
+                  size="small"
+                ></v-btn>
+              </template>
+            </v-list-item>
+          </v-list>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <!-- Main Content -->
