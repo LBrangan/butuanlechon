@@ -193,6 +193,11 @@ export default {
       this.menuItems.forEach((item) => {
         item.active = item.title === title
       })
+      if (title === 'Dashboard') {
+      this.$router.push('/')
+    } else if (title === 'Product') {
+      this.$router.push('/product')
+    }
     },
     addProduct() {
       console.log('Add product clicked')
