@@ -85,7 +85,9 @@ const setActiveItem = (title) => {
   })
 
   if (title === 'Dashboard') {
-    router.push('/')
+    router.push('/dashboard')
+  } else if (title === 'Product') {
+    router.push('/product')
   }
 }
 
