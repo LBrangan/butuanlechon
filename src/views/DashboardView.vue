@@ -84,7 +84,7 @@ const handleLogout = () => {
       <!-- Header -->
       <v-row class="mb-8">
         <v-col cols="12" class="d-flex justify-space-between align-center">
-          <h1 class="text-h3 font-weight-medium text-grey-darken-4">Dashboard</h1>
+          <h1 class="text-h3 font-weight-bold text-grey-darken-4">Dashboard</h1>
 
           <!-- Custom Search Bar -->
           <div class="search-box">
