@@ -1,10 +1,38 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import {ref} from 'vue'
 
+const drawer = ref(true)
+const searchQuery = ref('')
 const router = useRouter()
+const menuItems = ref([
+  { title: 'Dashboard', icon: 'mdi-view-dashboard', active: true },
+  { title: 'Products', icon: 'mdi-package-variant', active: false },
+])
+const stats = ref([
+  { title: 'Total Products', value: 1200, icon: 'mdi-package-variant' },
+  { title: 'Low Stock Items', value: 45, icon: 'mdi-alert-circle-outline' },
+  { title: 'Total Revenue', value: 15000, icon: 'mdi-currency-usd' },
+  { title: 'Orders Today', value: 8, icon: 'mdi-eye-outline' },
+])
+
+const setActiveItem = (title) => {
+  menuItems.value.forEach(item => {
+    item.active = (item.title === title)
+  })
+  if (title ==='Dashboard'){
+  router.push('/dashboard')
+  } else if (title === 'Products'){
+  router.push('/product')
+  }
+}
+
+const addProduct = () => {
+  console.log('Add product clicked')
+  alert('Add Product functionality will be implemented here!')
+}
 
 const handleLogout = () => {
-  // Add any cleanup logic here (clear tokens, state, etc)
   router.push('/')
 }
 </script>
@@ -145,67 +173,6 @@ const handleLogout = () => {
   </v-main>
 </template>
 
-<script>
-export default {
-  name: 'DashboardView',
-  data() {
-    return {
-      drawer: true,
-      searchQuery: '',
-      menuItems: [
-        {
-          title: 'Dashboard',
-          icon: 'mdi-chart-box-outline',
-          active: true,
-        },
-        {
-          title: 'Product',
-          icon: 'mdi-package-variant',
-          active: false,
-        },
-      ],
-      stats: [
-        {
-          title: 'Total Product',
-          value: 100000,
-          icon: 'mdi-eye-outline',
-        },
-        {
-          title: 'Low Stock Items',
-          value: 100000,
-          icon: 'mdi-eye-outline',
-        },
-        {
-          title: 'Total Revenue',
-          value: 250000,
-          icon: 'mdi-eye-outline',
-        },
-        {
-          title: 'Orders Today',
-          value: 150,
-          icon: 'mdi-eye-outline',
-        },
-      ],
-    }
-  },
-  methods: {
-    setActiveItem(title) {
-      this.menuItems.forEach((item) => {
-        item.active = item.title === title
-      })
-      if (title === 'Dashboard') {
-      this.$router.push('/')
-    } else if (title === 'Product') {
-      this.$router.push('/product')
-    }
-    },
-    addProduct() {
-      console.log('Add product clicked')
-      alert('Add Product functionality will be implemented here!')
-    },
-  },
-}
-</script>
 <style scoped>
 /* Flat red background */
 .app-background {
