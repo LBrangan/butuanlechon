@@ -1,6 +1,6 @@
 
 <template>
-  <v-navigation-drawer v-model="drawer" permanent width="280" class="elevation-2" color="white">
+  <v-navigation-drawer v-bind="drawer" permanent width="280" class="elevation-2" color="white">
     <!-- Logo Section -->
     <v-list-item class="px-6 py-6">
       <template v-slot:prepend>

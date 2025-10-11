@@ -8,7 +8,7 @@ const searchQuery = ref('')
 const router = useRouter()
 const menuItems = ref([
   { title: 'Dashboard', icon: 'mdi-view-dashboard', active: true },
-  { title: 'Products', icon: 'mdi-package-variant', active: false },
+  { title: 'Product', icon: 'mdi-package-variant', active: false },
 ])
 const stats = ref([
   { title: 'Total Products', value: 1200, icon: 'mdi-package-variant' },
@@ -23,7 +23,7 @@ const setActiveItem = (title) => {
   })
   if (title ==='Dashboard'){
   router.push('/dashboard')
-  } else if (title === 'Products'){
+  } else if (title === 'Product'){
   router.push('/product')
   }
 }

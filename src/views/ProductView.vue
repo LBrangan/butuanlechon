@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
+import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 
 const router = useRouter()
 
