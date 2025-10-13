@@ -9,7 +9,7 @@ const router = useRouter()
 const drawer = ref(true)
 const dialog = ref(false)
 const deleteDialog = ref(false)
-const editMode = ref(false)
+const isEditMode = ref(false)
 const valid = ref(false)
 const productToDelete = ref(null)
 
@@ -93,7 +93,7 @@ const setActiveItem = (title) => {
 }
 
 const openAddDialog = () => {
-  editMode.value = false
+  isEditMode.value = false
   productForm.value = {
     name: '',
     quantity: 0,
@@ -104,14 +104,14 @@ const openAddDialog = () => {
 }
 
 const editProduct = (product) => {
-  editMode.value = true
+  isEditMode.value = true
   productForm.value = { ...product }
   dialog.value = true
 }
 
 const closeDialog = () => {
   dialog.value = false
-  editMode.value = false
+  isEditMode.value = false
   productForm.value = {
     name: '',
     quantity: 0,
@@ -128,7 +128,7 @@ const saveProduct = () => {
     totalPrice: totalPrice.value,
   }
 
-  if (editMode.value) {
+  if (isEditMode.value) {
     const index = products.value.findIndex((p) => p.id === productForm.value.id)
     if (index !== -1) {
       products.value[index] = productData
@@ -292,7 +292,7 @@ const confirmDelete = () => {
       <v-card class="rounded-xl">
         <v-card-title class="pa-6 pb-2">
           <span class="text-h4 font-weight-medium text-grey-darken-4">
-            {{ editMode ? 'Edit Product' : 'Add New Product' }}
+            {{ isEditMode ? 'Edit Product' : 'Add New Product' }}
           </span>
         </v-card-title>
 
