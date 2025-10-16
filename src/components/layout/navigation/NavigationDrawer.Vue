@@ -1,4 +1,3 @@
-
 <template>
   <v-navigation-drawer v-bind="drawer" permanent width="280" class="elevation-2" color="white">
     <!-- Logo Section -->
