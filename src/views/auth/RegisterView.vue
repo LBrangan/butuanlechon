@@ -40,9 +40,9 @@ const handleSubmit = async () => {
         <v-container fluid class="fill-height bg-red-lighten-1 d-flex flex-wrap">
           <v-row class="justify-center">
             <v-col cols="12" class="text-center">
-              <v-avatar size="180">
+
                 <v-img class :src="`/images/Background.png`" cover alt="logo"></v-img>
-              </v-avatar>
+
             </v-col>
 
             <v-col cols="12" sm="8" md="6" lg="4">
@@ -95,7 +95,6 @@ const handleSubmit = async () => {
                     >
                       Login
                     </v-btn>
-
                   </v-card-actions>
                 </v-form>
               </v-card>
