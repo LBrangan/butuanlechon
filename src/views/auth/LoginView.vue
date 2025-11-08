@@ -97,7 +97,12 @@ const handleSubmit = async () => {
                     </v-btn>
                   </v-card-actions>
                   <v-divider class="my-2"></v-divider>
-                  <h5>Don't have an account? <router-link to="/register">Register Here</router-link></h5>
+                  <h5>
+                    Don't have an account?
+                    <router-link to="/register" class="text-decoration-none"
+                      >Register Here</router-link
+                    >
+                  </h5>
                 </v-form>
               </v-card>
             </v-col>

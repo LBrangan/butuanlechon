@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer :model-value="drawer" permanent width="280" class="elevation-2" color="white">
+  <v-navigation-drawer
+    :model-value="drawer"
+    permanent
+    width="280"
+    class="elevation-2"
+    color="white"
+  >
     <!-- Logo Section -->
     <v-list-item class="px-6 py-6">
       <template v-slot:prepend>
@@ -68,13 +74,13 @@
 defineProps({
   drawer: {
     type: Boolean,
-    required: true
+    required: true,
   },
   menuItems: {
     type: Array,
     required: true,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 defineEmits(['setActiveItem', 'logout'])
 </script>
