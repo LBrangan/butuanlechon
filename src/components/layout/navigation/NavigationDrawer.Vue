@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const drawer = ref(true);
 const items = ref([
-  { title: 'Home', prependIcon: 'mdi-home', active: true },
+  { title: 'Home', prependIcon: 'mdi-home', active: false },
   { title: 'Products', prependIcon: 'mdi-information-outline', active: false },
   { title: 'Report', prependIcon: 'mdi-file-chart-outline', active: false },
 ]);
@@ -28,7 +28,9 @@ const setActiveItem = (title) => {
 
 <template >
   <v-navigation-drawer
-    :model-value="drawer">
+    :model-value="drawer"
+    
+    >
   
 
     <!-- Logo Section -->
@@ -54,21 +56,19 @@ const setActiveItem = (title) => {
       />
     </v-list>
 
-    <template>
+    <template #append>
       <v-list-item
         class="ma-2"
         link
         nav
         prepend-icon="mdi-cog-outline"
         title="Settings"
-        
-        
       />
     </template>
   </v-navigation-drawer>
 
 
-    <v-app-bar border="b" class="ps-4" flat>
+    <v-app-bar border="b" class="ps-4" flat >
       <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
 
       <v-app-bar-title>BL & SG Administrative Panel</v-app-bar-title>
@@ -86,15 +86,12 @@ const setActiveItem = (title) => {
           </v-menu>
         </v-btn>
       </template>
-      </v-app-bar>  
+      </v-app-bar> 
+ 
 
-    
-
-      
 </template>
 
 <style scoped>
-
 
 </style>
 
