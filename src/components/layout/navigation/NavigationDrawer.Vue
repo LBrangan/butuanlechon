@@ -29,16 +29,17 @@ const setActiveItem = (title) => {
 <template> 
   <v-navigation-drawer
     :model-value="drawer"
-   color="#C62828"
+   color="#01579B"
     >
   
 
     <!-- Logo Section -->
-    <v-list-item class="mx-4 my-5">
+    <v-list-item class="mx-6 my-5">
       <template v-slot:prepend>
-        <v-avatar size="180">
-          <v-img src="/images/Icon.png" alt="BL & SG Logo" />
+        <v-avatar size="160">
+          <v-img src="/images/bl.png" alt="BL & SG Logo" />
         </v-avatar>
+
       </template>
       
     </v-list-item>
@@ -56,6 +57,8 @@ const setActiveItem = (title) => {
         link
         @click="setActiveItem(item.title)"
         class="ma-2"
+        :class="{ 'bg-red-lighten-5': item.active }"
+        :color="item.active ? 'red-darken-2' : 'grey-darken-1'"
       />
     </v-list>
 
@@ -71,7 +74,7 @@ const setActiveItem = (title) => {
   </v-navigation-drawer>
 
 
-    <v-app-bar border="b" class="ps-4" flat color="#C62828" >
+    <v-app-bar border="b" class="ps-4" flat color="#01579B" >
       <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
 
       <v-app-bar-title>BL & SG Administrative Panel</v-app-bar-title>
@@ -116,7 +119,7 @@ const setActiveItem = (title) => {
 
 .search-box {
     /* Example background color to show context for why white text is needed */
-    background-color: #E53935; 
+    background-color: #1E88E5; 
     padding: 8px 16px;
     margin: 0 60px;
     
@@ -124,6 +127,8 @@ const setActiveItem = (title) => {
     align-items: center;
     border-radius: 4px;
 }
+
+
 </style>
 
 
