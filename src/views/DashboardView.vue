@@ -3,13 +3,10 @@ import { useRouter } from 'vue-router'
 import {ref} from 'vue'
 import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'  // Add this import
 
-const drawer = ref(true)
+
 const searchQuery = ref('')
 const router = useRouter()
-const menuItems = ref([
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', active: true },
-  { title: 'Product', icon: 'mdi-package-variant', active: false },
-])
+
 const stats = ref([
   { title: 'Total Products', value: 1200, icon: 'mdi-package-variant' },
   { title: 'Low Stock Items', value: 45, icon: 'mdi-alert-circle-outline' },
@@ -17,16 +14,7 @@ const stats = ref([
   { title: 'Orders Today', value: 8, icon: 'mdi-eye-outline' },
 ])
 
-const setActiveItem = (title) => {
-  menuItems.value.forEach(item => {
-    item.active = (item.title === title)
-  })
-  if (title ==='Dashboard'){
-  router.push('/dashboard')
-  } else if (title === 'Product'){
-  router.push('/product')
-  }
-}
+
 
 const addProduct = () => {
   console.log('Add product clicked')
