@@ -40,13 +40,9 @@ const handleLogout = () => {
       <!-- Header -->
       <v-row class="mb-8">
         <v-col cols="12" class="d-flex justify-space-between align-center">
-          <h1 class="text-grey-darken-4">Welcome Rawr!</h1>
+          <h1 class="blue-grey-lighten-5">Welcome Rawr!</h1>
 
-          <!-- Custom Search Bar -->
-          <div class="search-box">
-            <v-icon size="20" class="mr-2 text-grey-darken-3">mdi-magnify</v-icon>
-            <input v-model="searchQuery" type="text" placeholder="Search..." class="search-input" />
-          </div>
+  
         </v-col>
       </v-row>
 
@@ -104,7 +100,7 @@ const handleLogout = () => {
 <style scoped>
 /* Flat red background */
 .app-background {
-  background-color: #ff4d4d !important;
+  background-color: #90CAF9; ;
 }
 
 /* Search bar */

@@ -26,10 +26,10 @@ const setActiveItem = (title) => {
 </script>
 
 
-<template >
+<template> 
   <v-navigation-drawer
     :model-value="drawer"
-    
+   color="#C62828"
     >
   
 
@@ -42,7 +42,10 @@ const setActiveItem = (title) => {
       </template>
       
     </v-list-item>
+
     <v-divider></v-divider>
+
+
     <v-list density="compact" nav>
       <v-list-item
         v-for="item in items"
@@ -68,12 +71,16 @@ const setActiveItem = (title) => {
   </v-navigation-drawer>
 
 
-    <v-app-bar border="b" class="ps-4" flat >
+    <v-app-bar border="b" class="ps-4" flat color="#C62828" >
       <v-app-bar-nav-icon v-if="$vuetify.display.smAndDown" @click="drawer = !drawer" />
 
       <v-app-bar-title>BL & SG Administrative Panel</v-app-bar-title>
 
     <template #append>
+      <div class="search-box">
+            <v-icon size="20" class="mr-5 text-grey-lighten-5">mdi-magnify</v-icon>
+            <input v-model="searchQuery" type="text" placeholder="Search here... " class="search-input" />
+          </div>
       <v-btn class="text-none me-2" height="48" icon slim>
           <v-avatar color="surface-light" image="https://cdn.vuetifyjs.com/images/john.png" size="32" />
 
@@ -81,7 +88,7 @@ const setActiveItem = (title) => {
             <v-list density="compact" nav>
               <v-list-item append-icon="mdi-cog-outline" link title="Settings" />
 
-              <v-list-item append-icon="mdi-logout" link title="Logout" />
+              <v-list-item append-icon="mdi-logout" link title="Logout" @click="router.push('/')" />
             </v-list>
           </v-menu>
         </v-btn>
@@ -93,6 +100,30 @@ const setActiveItem = (title) => {
 
 <style scoped>
 
+.search-input::placeholder {
+  color: white; 
+  opacity: 1; 
+}
+
+
+.search-input {
+  color: white;
+  background: none; 
+  border: none;
+  width: 100%;
+  outline: none
+}
+
+.search-box {
+    /* Example background color to show context for why white text is needed */
+    background-color: #E53935; 
+    padding: 8px 16px;
+    margin: 0 60px;
+    
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+}
 </style>
 
 
