@@ -37,7 +37,7 @@ const handleSubmit = async () => {
   <v-responsive>
     <v-app>
       <v-main>
-        <v-container fluid class="fill-height bg-red-lighten-1 d-flex flex-wrap">
+        <v-container fluid class="fill-height bg-blue-lighten-1 d-flex flex-wrap">
           <v-row class="justify-center">
             <v-col cols="12" class="text-center">
               <v-avatar size="180">
@@ -91,7 +91,7 @@ const handleSubmit = async () => {
                       type="submit"
                       block
                       text="black"
-                      color="#ff5050"
+                      color="#0D47A1"
                     >
                       Login
                     </v-btn>

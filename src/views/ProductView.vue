@@ -167,15 +167,16 @@ const confirmDelete = () => {
     />
 
     <!-- Main Content -->
-    <v-container fluid class="pa-8">
-      <!-- Header -->
-      <v-row class="mb-8">
+    <v-container class="pa-8">
+      <div>
+           <!-- Header -->
+      <v-row class="mb-8 bg-blue-lighten-1 pa-6 rounded-xl">
         <v-col cols="12" class="d-flex justify-space-between align-center">
           <h1 class="text-h3 font-weight-medium text-grey-darken-4">Product</h1>
 
           <!-- Add Product Button -->
           <v-btn
-            color="red-darken-2"
+            color="blue-darken-3"
             size="large"
             rounded="xl"
             class="px-8 py-3 text-body-1 font-weight-medium"
@@ -191,7 +192,7 @@ const confirmDelete = () => {
       <!-- Product List Card -->
       <v-row>
         <v-col cols="12">
-          <v-card class="pa-10 rounded-xl" elevation="0" color="white" min-height="500">
+          <v-card class="bg-blue-lighten-1 pa-10 rounded-xl" elevation="0" color="white" min-height="500">
             <h2 class="text-h4 font-weight-medium text-grey-darken-4 mb-8">Product List</h2>
             <v-divider class="mb-8"></v-divider>
 
@@ -271,7 +272,7 @@ const confirmDelete = () => {
                 No products yet. Start by adding your first product!
               </p>
               <v-btn
-                color="red-darken-2"
+                color="blue-darken-2"
                 size="large"
                 rounded="xl"
                 class="px-8 py-3 text-body-1 font-weight-medium"
@@ -285,6 +286,8 @@ const confirmDelete = () => {
           </v-card>
         </v-col>
       </v-row>
+      </div>
+
     </v-container>
 
     <!-- Add/Edit Product Dialog -->
@@ -386,16 +389,10 @@ const confirmDelete = () => {
 </template>
 
 <style scoped>
-/* Flat red background */
-.app-background {
-  background-color: #ff4d4d !important;
-}
+
 
 /* Active sidebar item */
-.v-list-item.bg-red-lighten-5 {
-  background-color: rgba(255, 205, 210, 0.3) !important;
-  border-left: 4px solid #c62828 !important;
-}
+
 
 /* Product table styling */
 .product-table {
