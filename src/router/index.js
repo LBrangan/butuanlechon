@@ -24,8 +24,8 @@ const router = createRouter({
       component: DashboardView,
     },
     {
-      path: '/product',
-      name: 'product',
+      path: '/products',
+      name: 'products',
       component: ProductView,
     },
   ],
