@@ -1,49 +1,60 @@
 <script setup>
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+  confirmedValidator,
+} from '@/utils/validators.js'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { supabase, formActionDefault } from '@/utils/supabase.js'
 
-const router = useRouter()
-const loading = ref(false)
-const form = ref({
+const formDataDefault = {
   firstName: '',
   lastName: '',
   email: '',
   password: '',
   confirmPassword: '',
-})
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-const formValid = ref(true)
-
-const rules = {
-  firstName: [(v) => !!v || 'First name is required'],
-  lastName: [(v) => !!v || 'Last name is required'],
-  email: [(v) => !!v || 'Email is required', (v) => /.+@.+\..+/.test(v) || 'Email must be valid'],
-  password: [
-    (v) => !!v || 'Password is required',
-    (v) => v.length >= 6 || 'Password must be at least 6 characters',
-  ],
-  confirmPassword: [
-    (v) => !!v || 'Please confirm your password',
-    (v) => v === form.value.password || 'Passwords must match',
-  ],
 }
 
-const handleSubmit = async () => {
-  loading.value = true
-  try {
-    // TODO: Implement actual login logic here
-    // await loginUser(form.value)
-    router.push('/Dashboard')
-  } catch (error) {
-    console.error('Registration failed:', error)
-  } finally {
-    loading.value = false
-  }
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
+
+const isPasswordVisible = ref(false)
+const isPasswordConfirmVisible = ref(false)
+const refVForm = ref()
+
+const onSubmit = () => {}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
 }
 </script>
 
 <template>
+  <v-alert
+    v-if="formAction.formSuccessMessage"
+    :text="formAction.formSuccessMessage"
+    title="Success!"
+    type="success"
+    variant="tonal"
+    density="compact"
+    border="start"
+    closable
+  >
+  </v-alert>
+  <v-alert
+    v-if="formAction.formErrorMessage"
+    :text="formAction.formErrorMessage"
+    title="Ooops!"
+    type="error"
+    variant="tonal"
+    density="compact"
+    border="start"
+    closable
+  >
+  </v-alert>
   <v-responsive>
     <v-app>
       <v-main>
@@ -59,56 +70,58 @@ const handleSubmit = async () => {
                   <span class="font-weight-black">BL & SG Restaurant</span>
                 </template>
 
-                <v-form @submit.prevent="handleSubmit" v-model="formValid">
+                <v-form ref="refVForm" @submit.prevent="onFormSubmit">
                   <v-card-text>
                     <v-text-field
-                      v-model="form.firstName"
+                      v-model="formData.firstname"
                       label="First Name"
                       prepend-inner-icon="mdi-account"
-                      :rules="rules.firstName"
-                      required
+                      :rules="[requiredValidator]"
                       variant="outlined"
                     />
 
                     <v-text-field
-                      v-model="form.lastName"
+                      v-model="formData.lastname"
                       label="Last Name"
                       prepend-inner-icon="mdi-account"
-                      :rules="rules.lastName"
+                      :rules="[requiredValidator]"
                       required
                       variant="outlined"
                     />
 
                     <v-text-field
-                      v-model="form.email"
+                      v-model="formData.email"
                       label="Email"
                       prepend-inner-icon="mdi-email"
                       type="email"
-                      :rules="rules.email"
+                      :rules="[requiredValidator, emailValidator]"
                       required
                       variant="outlined"
                     />
 
                     <v-text-field
-                      v-model="form.password"
+                      v-model="formData.password"
                       label="Password"
                       prepend-inner-icon="mdi-lock"
-                      :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                      :type="showPassword ? 'text' : 'password'"
-                      @click:append-inner="showPassword = !showPassword"
-                      :rules="rules.password"
+                      :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+                      :type="isPasswordVisible ? 'text' : 'password'"
+                      @click:append-inner="isPasswordVisible = !isPasswordVisible"
+                      :rules="[requiredValidator, passwordValidator]"
                       required
                       variant="outlined"
                     />
 
                     <v-text-field
-                      v-model="form.confirmPassword"
-                      label="Confirm Password"
+                      v-model="formData.password_confirmation"
+                      label="Password Confirmation"
                       prepend-inner-icon="mdi-lock"
-                      :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                      :type="showConfirmPassword ? 'text' : 'password'"
-                      @click:append-inner="showConfirmPassword = !showConfirmPassword"
-                      :rules="rules.confirmPassword"
+                      :append-inner-icon="isPasswordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'"
+                      :type="isPasswordConfirmVisible ? 'text' : 'password'"
+                      @click:append-inner="isPasswordConfirmVisible = !isPasswordConfirmVisible"
+                      :rules="[
+                        requiredValidator,
+                        confirmedValidator(formData.password_confirmation, formData.password),
+                      ]"
                       required
                       variant="outlined"
                     />
@@ -117,15 +130,16 @@ const handleSubmit = async () => {
                   <v-card-actions>
                     <v-spacer />
                     <v-btn
-                      class="none"
+                      class="mt-2"
                       variant="flat"
                       size="large"
                       rounded="lg"
-                      :loading="loading"
                       type="submit"
                       block
                       text="black"
                       color="#0D47A1"
+                      :disabled="formAction.formProcess"
+                      :loading="formAction.formProcess"
                     >
                       Register
                     </v-btn>
