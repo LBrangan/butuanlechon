@@ -1,35 +1,27 @@
 <script setup>
+import { requiredValidator, emailValidator } from '@/utils/validators.js'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
-const loading = ref(false)
-const form = ref({
+const isPasswordVissible = ref(false)
+const refVFrom = ref()
+
+const formDataDefault = {
   email: '',
   password: '',
-})
-const showPassword = ref(false)
-const formValid = ref(true)
-
-const rules = {
-  email: [(v) => !!v || 'Email is required', (v) => /.+@.+\..+/.test(v) || 'Email must be valid'],
-  password: [
-    (v) => !!v || 'Password is required',
-    (v) => v.length >= 6 || 'Password must be at least 6 characters',
-  ],
 }
 
-const handleSubmit = async () => {
-  loading.value = true
-  try {
-    // TODO: Implement actual login logic here
-    // await loginUser(form.value)
-    router.push('/Dashboard')
-  } catch (error) {
-    console.error('Login failed:', error)
-  } finally {
-    loading.value = false
-  }
+const formData = ref({ ...formDataDefault })
+
+const onLogin = () => {
+  alert(formData.value)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) {
+      onLogin()
+    }
+  })
 }
 </script>
 
@@ -55,27 +47,25 @@ const handleSubmit = async () => {
                   <span class="font-weight-black"> BL & SG Restaurant </span>
                 </template>
 
-                <v-form @submit.prevent="handleSubmit" v-model="formValid">
+                <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
                   <v-card-text>
                     <v-text-field
-                      v-model="form.email"
+                      v-model="formData.email"
                       label="Email"
                       prepend-inner-icon="mdi-email"
                       type="email"
-                      :rules="rules.email"
-                      required
+                      :rules="[requiredValidator, emailValidator]"
                       variant="outlined"
                     />
 
                     <v-text-field
-                      v-model="form.password"
+                      v-model="formData.password"
                       label="Password"
                       prepend-inner-icon="mdi-lock"
-                      :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                      :type="showPassword ? 'text' : 'password'"
-                      @click:append-inner="showPassword = !showPassword"
-                      :rules="rules.password"
-                      required
+                      :type="isPasswordVissible ? 'text' : 'password'"
+                      :append-inner-icon="isPasswordVissible ? 'mdi-eye-off' : 'mdi-eye'"
+                      @click:append-inner="isPasswordVissible = !isPasswordVissible"
+                      :rules="[requiredValidator]"
                       variant="outlined"
                     />
                   </v-card-text>
