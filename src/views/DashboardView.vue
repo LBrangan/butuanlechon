@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import {ref} from 'vue'
-import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'  // Add this import
+import Navigation from '@/components/layout/navigation/Navigation.vue'
 
 
 const searchQuery = ref('')
