@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue';
   import { requiredValidator, emailValidator } from '@/utils/validators';
-  import { useLogin } from '@/composables/auth/useLogin';
+  import {useLogin} from '@/composables/auth/login';
 
   const {formData, formAction, refVForm, onFormSubmit} = useLogin();
 
