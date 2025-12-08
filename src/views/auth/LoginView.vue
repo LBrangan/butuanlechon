@@ -1,28 +1,6 @@
 <script setup>
-import { requiredValidator, emailValidator } from '@/utils/validators.js'
-import { ref } from 'vue'
+  import LoginForm from '@/components/auth/LoginForm.vue';
 
-const isPasswordVissible = ref(false)
-const refVFrom = ref()
-
-const formDataDefault = {
-  email: '',
-  password: '',
-}
-
-const formData = ref({ ...formDataDefault })
-
-const onLogin = () => {
-  alert(formData.value)
-}
-
-const onFormSubmit = () => {
-  refVForm.value?.validate().then(({ valid }) => {
-    if (valid) {
-      onLogin()
-    }
-  })
-}
 </script>
 
 <template>
@@ -47,53 +25,16 @@ const onFormSubmit = () => {
                   <span class="font-weight-black"> BL & SG Restaurant </span>
                 </template>
 
-                <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
-                  <v-card-text>
-                    <v-text-field
-                      v-model="formData.email"
-                      label="Email"
-                      prepend-inner-icon="mdi-email"
-                      type="email"
-                      :rules="[requiredValidator, emailValidator]"
-                      variant="outlined"
-                    />
+                <LoginForm></LoginForm>
 
-                    <v-text-field
-                      v-model="formData.password"
-                      label="Password"
-                      prepend-inner-icon="mdi-lock"
-                      :type="isPasswordVissible ? 'text' : 'password'"
-                      :append-inner-icon="isPasswordVissible ? 'mdi-eye-off' : 'mdi-eye'"
-                      @click:append-inner="isPasswordVissible = !isPasswordVissible"
-                      :rules="[requiredValidator]"
-                      variant="outlined"
-                    />
-                  </v-card-text>
+                <v-divider class="my-5"></v-divider>
 
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      class="none"
-                      variant="flat"
-                      size="large"
-                      rounded="lg"
-                      :loading="loading"
-                      type="submit"
-                      block
-                      text="black"
-                      color="#0D47A1"
-                    >
-                      Login
-                    </v-btn>
-                  </v-card-actions>
-                  <v-divider class="my-2"></v-divider>
-                  <h5>
-                    Don't have an account?
-                    <router-link to="/register" class="text-decoration-none"
+                <h5 class="text-center">
+                  Don't have an account?
+                  <router-link to="/register" class="text-decoration-none"
                       >Register Here</router-link
                     >
                   </h5>
-                </v-form>
               </v-card>
             </v-col>
           </v-row>
