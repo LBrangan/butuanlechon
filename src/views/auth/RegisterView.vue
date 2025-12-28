@@ -1,9 +1,8 @@
 <script setup>
-  import RegisterForm from '@/components/auth/RegisterForm.vue';
+import RegisterForm from '@/components/auth/RegisterForm.vue'
 </script>
 
 <template>
-
   <v-responsive>
     <v-app>
       <v-main>
@@ -19,13 +18,13 @@
                   <span class="font-weight-black">BL & SG Restaurant</span>
                 </template>
 
-               <v-divider class="my-2"></v-divider>
+                <v-divider class="my-2"></v-divider>
                 <RegisterForm></RegisterForm>
 
-                  <h5>
+                <h5>
                   Already have an account?
                   <router-link to="/" class="text-decoration-none">Sign in here</router-link>
-                  </h5>
+                </h5>
               </v-card>
             </v-col>
           </v-row>
