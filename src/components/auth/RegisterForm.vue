@@ -13,6 +13,7 @@ const { formData, formAction, refVForm, onFormSubmit } = useRegister()
 
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
+
 </script>
 
 <template>
@@ -90,7 +91,7 @@ const isPasswordConfirmVisible = ref(false)
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
     >
-      Register
+      Sign-up
     </v-btn>
   </v-form>
 </template>
