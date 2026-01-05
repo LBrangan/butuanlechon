@@ -1,8 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import {ref} from 'vue'
-import Navigation from '@/components/layout/navigation/Navigation.vue'
-
+import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
 
 const searchQuery = ref('')
 const router = useRouter()
@@ -29,9 +28,7 @@ const handleLogout = () => {
 <template>
   <v-main class="app-background">
     <NavigationDrawer
-      :drawer="drawer"
-      :menuItems="menuItems"
-      @setActiveItem="setActiveItem"
+
       @logout="handleLogout"
 
     />
