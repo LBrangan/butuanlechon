@@ -2,13 +2,12 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
-import { useProducts } from '@/composables/useProducts'
+import { useProducts } from '@/composables/useProducts.js'
+
+const { products, lowStockProducts } = useProducts()
 
 // Router
 const router = useRouter()
-
-// Products composable
-const { products } = useProducts()
 
 // Computed: total products
 const totalProducts = computed(() => products.value.length)
@@ -19,33 +18,44 @@ const stats = computed(() => [
     title: 'Total Products',
     value: totalProducts.value,
     icon: 'mdi-package-variant',
-    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)'
+    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)',
+    clickable: false
   },
   {
     title: 'Low Stock Items',
-    value: 45,
+    value: lowStockProducts.value.length,
     icon: 'mdi-alert-circle-outline',
-    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)'
+    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)',
+    clickable: true
   },
   {
     title: 'Total Revenue',
     value: 15000,
     icon: 'mdi-currency-usd',
-    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)'
+    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)',
+    clickable: false
   },
   {
     title: 'Orders Today',
     value: 8,
     icon: 'mdi-eye-outline',
-    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)'
+    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)',
+    clickable: false
   },
 ])
 
-// Navigate to products page
+// Navigate to products page or low stock dialog
 const addProduct = () => router.push('/products')
-
-// Logout
 const handleLogout = () => router.push('/')
+
+// Low Stock dialog
+const lowStockDialog = ref(false)
+
+const openLowStockDialog = () => {
+  if (lowStockProducts.value.length > 0) {
+    lowStockDialog.value = true
+  }
+}
 </script>
 
 <template>
@@ -64,7 +74,13 @@ const handleLogout = () => router.push('/')
           v-for="stat in stats.slice(0, 2)"
           :key="stat.title"
         >
-          <v-card class="stat-card pa-8 rounded-xl" elevation="4" height="180">
+          <v-card
+            class="stat-card pa-8 rounded-xl"
+            elevation="4"
+            height="180"
+            :style="{ cursor: stat.clickable ? 'pointer' : 'default' }"
+            @click="stat.clickable ? openLowStockDialog() : null"
+          >
             <div class="d-flex justify-space-between align-center h-100">
               <div>
                 <h2 class="text-h3 font-weight-bold stat-value mb-3">
@@ -84,39 +100,30 @@ const handleLogout = () => router.push('/')
         </v-col>
       </v-row>
 
-      <!-- Recent Activities -->
-      <v-row>
-        <v-col cols="12" class="activities-container pa-8 rounded-xl">
-          <v-card class="activities-card pa-10 rounded-xl" elevation="4" min-height="500">
-            <h2 class="text-h4 font-weight-bold activities-title mb-6">
-              Recent Activities
-            </h2>
-
-            <v-divider class="activities-divider mb-12" />
-
-            <div class="text-center py-16">
-              <v-icon size="120" class="mb-8 text-grey-lighten-1">
-                mdi-clipboard-list-outline
-              </v-icon>
-
-              <p class="text-h5 empty-state-text mb-10">
-                No activities yet. Start by adding products!
-              </p>
-
-              <v-btn
-                class="add-product-btn px-10 py-6 font-weight-bold"
-                size="x-large"
-                rounded="xl"
-                elevation="6"
-                @click="addProduct"
-              >
-                <v-icon start size="24">mdi-plus-circle</v-icon>
-                Add Product
-              </v-btn>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
+      <!-- Low Stock Dialog -->
+      <v-dialog v-model="lowStockDialog" max-width="600px">
+        <v-card>
+          <v-card-title class="text-h6">Low Stock Products</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-list>
+              <v-list-item v-for="product in lowStockProducts" :key="product.id">
+                <v-list-item-content>
+                  <v-list-item-title>{{ product.name }}</v-list-item-title>
+                  <v-list-item-subtitle>
+                    Qty: {{ product.quantity }} {{ product.unit }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <p v-if="lowStockProducts.length === 0">All products have sufficient stock.</p>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="lowStockDialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-main>
 </template>
@@ -144,15 +151,5 @@ const handleLogout = () => router.push('/')
   width: 80px;
   height: 80px;
   border-radius: 20px;
-}
-.activities-container {
-  background: linear-gradient(135deg, #8B0000 0%, #B22222 100%);
-}
-.activities-card {
-  background: white;
-}
-.add-product-btn {
-  background: linear-gradient(135deg, #8B0000 0%, #B22222 100%) !important;
-  color: white !important;
 }
 </style>
