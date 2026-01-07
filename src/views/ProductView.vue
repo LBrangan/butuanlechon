@@ -2,33 +2,12 @@
 import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
+import { useProducts } from '@/composables/useProducts.js'
 
 const router = useRouter()
 
-// Products data - direkta nalang diri instead of composable
-const products = ref([])
-let nextId = 1
-
-const addProduct = (product) => {
-  products.value.push({
-    ...product,
-    id: nextId++
-  })
-}
-
-const updateProduct = (updatedProduct) => {
-  const index = products.value.findIndex(p => p.id === updatedProduct.id)
-  if (index !== -1) {
-    products.value[index] = updatedProduct
-  }
-}
-
-const deleteProduct = (id) => {
-  const index = products.value.findIndex(p => p.id === id)
-  if (index !== -1) {
-    products.value.splice(index, 1)
-  }
-}
+// Use the products composable
+const { products, addProduct, updateProduct, deleteProduct } = useProducts()
 
 // Reactive data
 const drawer = ref(true)
