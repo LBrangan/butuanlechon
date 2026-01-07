@@ -7,7 +7,7 @@ import { useProducts } from '@/composables/useProducts.js'
 const router = useRouter()
 
 // Use the products composable
-const { products, addProduct, updateProduct, deleteProduct } = useProducts()
+const { products, addProduct, updateProduct, deleteProduct, deductProduct, lowStockProducts } = useProducts()
 
 // Reactive data
 const drawer = ref(true)
@@ -17,12 +17,18 @@ const isEditMode = ref(false)
 const valid = ref(false)
 const productToDelete = ref(null)
 
+//add
 const productForm = ref({
   name: '',
   quantity: 0,
   unit: '',
   price: 0,
 })
+
+//Deduct
+const deductDialog = ref(false)
+const selectedProductId = ref(null)
+const deductQuantity = ref(0)
 
 // Form validation rules
 const nameRules = [
@@ -52,6 +58,7 @@ const handleLogout = () => {
   router.push('/')
 }
 
+//add
 const openAddDialog = () => {
   isEditMode.value = false
   productForm.value = {
@@ -107,6 +114,22 @@ const confirmDelete = () => {
   deleteDialog.value = false
   productToDelete.value = null
 }
+
+//Deduct
+const openDeductDialog = () => {
+  selectedProductId.value = null
+  deductQuantity.value = 0
+  deductDialog.value = true
+}
+
+const closeDeductDialog = () => deductDialog.value = false
+
+const submitDeduct = () => {
+  if (!selectedProductId.value || deductQuantity.value <= 0) return
+  deductProduct(selectedProductId.value, Number(deductQuantity.value))
+  closeDeductDialog()
+}
+
 </script>
 
 <template>
@@ -133,6 +156,17 @@ const confirmDelete = () => {
               <v-icon start size="24">mdi-plus-circle</v-icon>
               Add Product
             </v-btn>
+
+            <!--Deduct Product Button -->
+             <v-btn class="deduct-product-btn px-10 py-6 text-body-1 font-weight-bold"
+             size="x-large"
+              rounded="xl"
+              elevation="6"
+             @click="openDeductDialog"
+             >
+                <v-icon start>mdi-minus-circle</v-icon>
+                Deduct Product
+              </v-btn>
           </v-col>
         </v-row>
 
@@ -206,16 +240,7 @@ const confirmDelete = () => {
                 <p class="empty-state-text mb-10">
                   No products in inventory yet. Start by adding your first product!
                 </p>
-                <v-btn
-                  class="add-product-btn px-10 py-6 text-body-1 font-weight-bold"
-                  size="x-large"
-                  rounded="xl"
-                  elevation="6"
-                  @click="openAddDialog"
-                >
-                  <v-icon start size="24">mdi-plus-circle</v-icon>
-                  Add Product
-                </v-btn>
+
               </div>
             </v-card>
           </v-col>
@@ -354,6 +379,73 @@ const confirmDelete = () => {
               Delete
             </v-btn>
           </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+        <!-- Deduct Product Dialog -->
+      <v-dialog v-model="deductDialog" max-width="650px" persistent>
+  <v-card class="dialog-card rounded-xl" elevation="8">
+    <v-card-title class="dialog-header pa-8 pb-6">
+      <span class="dialog-title">Deduct Product</span>
+    </v-card-title>
+
+           <v-card-text class="pa-8">
+      <v-form>
+        <v-row>
+          <!-- Product Select -->
+          <v-col cols="12">
+            <v-select
+              v-model="selectedProductId"
+              :items="products"
+              item-text="name"
+              item-value="id"
+              label="Select Product"
+              variant="outlined"
+              class="form-field"
+              prepend-inner-icon="mdi-food"
+              required
+            />
+          </v-col>
+
+          <!-- Deduct Quantity -->
+           <v-col cols="6">
+            <v-text-field
+              v-model="deductQuantity"
+              type="number"
+              label="Quantity to Deduct"
+              variant="outlined"
+              class="form-field"
+              prepend-inner-icon="mdi-counter"
+              required
+            />
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+
+          <v-card-actions class="pa-8 pt-0">
+      <v-spacer></v-spacer>
+      <v-btn
+        variant="outlined"
+        class="cancel-btn px-8 py-5"
+        size="large"
+        rounded="xl"
+        @click="closeDeductDialog"
+      >
+        Cancel
+      </v-btn>
+      <v-btn
+        class="save-btn px-8 py-5 ml-4"
+        size="large"
+        rounded="xl"
+        elevation="4"
+        color="red"
+        @click="submitDeduct"
+        :disabled="!selectedProductId || deductQuantity <= 0"
+      >
+        Deduct
+      </v-btn>
+    </v-card-actions>
         </v-card>
       </v-dialog>
     </v-main>
