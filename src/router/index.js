@@ -3,6 +3,8 @@ import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import ProductView from '@/views/ProductView.vue'
+import DailyUsage from '@/views/DailyUsage.vue'
+
 
 
 const router = createRouter({
@@ -23,11 +25,18 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,
     },
+
     {
       path: '/products',
       name: 'products',
       component: ProductView,
     },
+    {
+      path: '/daily-usage',
+      name: 'daily-usage',
+      component: DailyUsage,
+    },
+
   ],
 })
 
