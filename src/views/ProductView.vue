@@ -383,16 +383,17 @@ const submitDeduct = () => {
       </v-dialog>
 
         <!-- Deduct Product Dialog -->
-      <v-dialog v-model="deductDialog" max-width="650px" persistent>
+     <!-- Deduct Product Dialog -->
+<v-dialog v-model="deductDialog" max-width="650px" persistent>
   <v-card class="dialog-card rounded-xl" elevation="8">
     <v-card-title class="dialog-header pa-8 pb-6">
       <span class="dialog-title">Deduct Product</span>
     </v-card-title>
 
-           <v-card-text class="pa-8">
+    <v-card-text class="pa-8">
       <v-form>
         <v-row>
-          <!-- Product Select -->
+          <!-- Product Select (Dropdown) -->
           <v-col cols="12">
             <v-select
               v-model="selectedProductId"
@@ -403,12 +404,22 @@ const submitDeduct = () => {
               variant="outlined"
               class="form-field"
               prepend-inner-icon="mdi-food"
+              persistent-hint
+              hide-details="auto"
               required
-            />
+            >
+              <!-- Optional: slot to show quantity/unit inside dropdown -->
+              <template #item="{ item }">
+                <div class="d-flex justify-space-between">
+                  <span>{{ item.name }}</span>
+                  <span class="text-grey">{{ item.quantity }} {{ item.unit }}</span>
+                </div>
+              </template>
+            </v-select>
           </v-col>
 
           <!-- Deduct Quantity -->
-           <v-col cols="6">
+          <v-col cols="6">
             <v-text-field
               v-model="deductQuantity"
               type="number"
@@ -423,7 +434,7 @@ const submitDeduct = () => {
       </v-form>
     </v-card-text>
 
-          <v-card-actions class="pa-8 pt-0">
+    <v-card-actions class="pa-8 pt-0">
       <v-spacer></v-spacer>
       <v-btn
         variant="outlined"
@@ -446,8 +457,9 @@ const submitDeduct = () => {
         Deduct
       </v-btn>
     </v-card-actions>
-        </v-card>
-      </v-dialog>
+  </v-card>
+</v-dialog>
+
     </v-main>
   </v-app>
 </template>
