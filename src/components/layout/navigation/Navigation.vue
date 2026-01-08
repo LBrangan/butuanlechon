@@ -7,7 +7,9 @@ const drawer = ref(true)
 const items = ref([
   { title: 'Home', prependIcon: 'mdi-home', active: false },
   { title: 'Products', prependIcon: 'mdi-information-outline', active: false },
+  { title: 'Daily Usage', prependIcon: 'mdi-clipboard-check-outline', active: false },
   { title: 'Report', prependIcon: 'mdi-file-chart-outline', active: false },
+
 ])
 
 const setActiveItem = (title) => {
@@ -19,9 +21,12 @@ const setActiveItem = (title) => {
     router.push('/dashboard')
   } else if (title === 'Products') {
     router.push('/products')
+  } else if (title === 'Daily Usage') {
+    router.push('/daily-usage')
   } else if (title === 'Report') {
     router.push('/report')
   }
+
 }
 </script>
 
