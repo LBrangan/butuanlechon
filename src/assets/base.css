@@ -10,6 +10,13 @@
 
   --vt-c-indigo: #2c3e50;
 
+  /* Restaurant Red Theme Colors */
+  --vt-c-red-dark: #8B0000;
+  --vt-c-red-primary: #A52A2A;
+  --vt-c-red-accent: #DC143C;
+  --vt-c-red-light: #FFE4E1;
+  --vt-c-red-soft: #FFF5F5;
+
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
   --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
@@ -83,4 +90,81 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   RESTAURANT RED THEME - NAVIGATION & TOPBAR
+   ======================================== */
+
+/* Sidebar / Navigation Drawer */
+.v-navigation-drawer {
+  background: linear-gradient(180deg, #1a0505 0%, #2d0a0a 100%) !important;
+  border-right: 1px solid rgba(139, 0, 0, 0.3) !important;
+}
+
+/* Topbar / App Bar */
+.v-app-bar {
+  background: linear-gradient(90deg, #8B0000 0%, #A52A2A 100%) !important;
+  box-shadow: 0 2px 12px rgba(139, 0, 0, 0.3) !important;
+}
+
+.v-app-bar .v-toolbar__content {
+  color: white !important;
+}
+
+.v-app-bar .v-btn,
+.v-app-bar .v-icon {
+  color: white !important;
+}
+
+/* Sidebar List Items */
+.v-list-item {
+  color: #FFE4E1 !important;
+  transition: all 0.3s ease;
+  margin: 4px 8px;
+  border-radius: 8px;
+}
+
+.v-list-item:hover {
+  background: rgba(139, 0, 0, 0.3) !important;
+  transform: translateX(4px);
+}
+
+.v-list-item--active {
+  background: rgba(220, 20, 60, 0.25) !important;
+  border-left: 4px solid #DC143C;
+  font-weight: 600;
+}
+
+.v-list-item--active .v-icon {
+  color: #DC143C !important;
+}
+
+/* Sidebar Icons */
+.v-navigation-drawer .v-icon {
+  color: #FFB6B6 !important;
+}
+
+.v-navigation-drawer .v-list-item__prepend .v-icon {
+  opacity: 0.9;
+}
+
+/* Sidebar Title/Header */
+.v-navigation-drawer .v-list-item-title {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Search Bar in Topbar */
+.v-app-bar .v-field {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px;
+}
+
+.v-app-bar .v-field input {
+  color: white !important;
+}
+
+.v-app-bar .v-field input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
