@@ -32,13 +32,24 @@ export function useProducts() {
   }
 
   // Deduct product quantity
-  const deductProduct = (id, quantity) => {
+ const deductProduct = (id, quantity) => {
     const index = products.value.findIndex(p => p.id === id)
     if (index !== -1) {
-      products.value[index].quantity -= quantity
-      if (products.value[index].quantity < 0) products.value[index].quantity = 0
-      products.value[index].totalPrice = products.value[index].quantity * products.value[index].price
+      products.value[index].quantity -= Number(quantity)
+      if (products.value[index].quantity < 0) {
+        products.value[index].quantity = 0
+      }
+      products.value[index].totalPrice =
+        products.value[index].quantity * products.value[index].price
     }
+  }
+
+ // ✅ Deduct MULTIPLE products (Daily Usage)
+  const deductMultipleProducts = (usageArray) => {
+    // usageArray = [{ productId, quantity }]
+    usageArray.forEach(item => {
+      deductProduct(item.productId, item.quantity)
+    })
   }
 
   // Computed: products with quantity < 10
@@ -52,6 +63,7 @@ export function useProducts() {
     updateProduct,
     deleteProduct,
     deductProduct,
+    deductMultipleProducts,
     lowStockProducts
   }
 }
