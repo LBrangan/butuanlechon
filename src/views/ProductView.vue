@@ -139,41 +139,48 @@ const submitDeduct = () => {
 
     <!-- Main Content -->
     <v-main class="app-background">
-      <v-container class="pa-8">
+      <v-container class="pa-4 pa-md-8">
         <!-- Header -->
-        <v-row class="mb-8 header-container pa-8 rounded-xl">
-          <v-col cols="12" class="d-flex justify-space-between align-center">
+        <v-row class="mb-8 header-container pa-4 pa-md-8 rounded-xl">
+          <v-col
+          cols="12"
+          class="d-flex flex-column flex-md-row justify-md-space-between align-center ga-4 ga-md-0">
             <h1 class="page-title">Product Inventory</h1>
 
-            <!-- Add Product Button -->
-            <v-btn
-              class="add-product-btn px-10 py-6 text-body-1 font-weight-bold"
-              size="x-large"
-              rounded="xl"
-              elevation="6"
-              @click="openAddDialog"
-            >
-              <v-icon start size="24">mdi-plus-circle</v-icon>
-              Add Product
-            </v-btn>
-
-            <!--Deduct Product Button -->
-             <v-btn class="deduct-product-btn px-10 py-6 text-body-1 font-weight-bold"
-             size="x-large"
-              rounded="xl"
-              elevation="6"
-             @click="openDeductDialog"
-             >
-                <v-icon start>mdi-minus-circle</v-icon>
-                Deduct Product
+            <div class="d-flex flex-column flex-sm-row ga-3 ga-sm-4 w-100 w-md-auto">
+              <!-- Add Product Button -->
+              <v-btn
+                class="add-product-btn px-6 px-sm-10 py-2 text-body-2 text-sm-body-1 font-weight-bold flex-grow-1 flex-sm-grow-0"
+                rounded="l"
+                elevation="6"
+                @click="openAddDialog"
+              >
+                <v-icon start size="small" class="hidden-sm-and-up">mdi-plus-circle</v-icon>
+                <v-icon start class="hidden-xs">mdi-plus-circle</v-icon>
+                <span class="hidden-xs">Add Product</span>
+                <span class="hidden-sm-and-up">Add</span>
               </v-btn>
+
+              <!--Deduct Product Button -->
+               <v-btn
+                class="deduct-product-btn px-6 px-sm-10 py-2 text-body-2 text-sm-body-1 font-weight-bold flex-grow-1 flex-sm-grow-0"
+                rounded="l"
+                elevation="6"
+                @click="openDeductDialog"
+               >
+                <v-icon start size="small" class="hidden-sm-and-up">mdi-minus-circle</v-icon>
+                <v-icon start class="hidden-xs">mdi-minus-circle</v-icon>
+                <span class="hidden-xs">Deduct Product</span>
+                <span class="hidden-sm-and-up">Deduct</span>
+              </v-btn>
+            </div>
           </v-col>
         </v-row>
 
         <!-- Product List Card -->
         <v-row>
-          <v-col cols="12" class="product-list-container pa-8 rounded-xl">
-            <v-card class="product-list-card pa-10 rounded-xl" elevation="4" min-height="550">
+          <v-col cols="12" class="product-list-container pa-4 pa-md-8 rounded-xl">
+            <v-card class="product-list-card pa-6 pa-md-10 rounded-xl" elevation="4" min-height="550">
               <h2 class="section-title mb-6">Product Inventory List</h2>
               <v-divider class="section-divider mb-10"></v-divider>
 
@@ -323,7 +330,7 @@ const submitDeduct = () => {
             <v-spacer></v-spacer>
             <v-btn
               variant="outlined"
-              class="cancel-btn px-8 py-5"
+              class="cancel-btn px-8 py-2"
               size="large"
               rounded="xl"
               @click="closeDialog"
@@ -331,7 +338,7 @@ const submitDeduct = () => {
               Cancel
             </v-btn>
             <v-btn
-              class="save-btn px-8 py-5 ml-4"
+              class="save-btn px-8 py-2 ml-4"
               size="large"
               rounded="xl"
               elevation="4"
@@ -434,11 +441,11 @@ const submitDeduct = () => {
       </v-form>
     </v-card-text>
 
-    <v-card-actions class="pa-8 pt-0">
+        <v-card-actions class="pa-8 pt-0">
       <v-spacer></v-spacer>
       <v-btn
         variant="outlined"
-        class="cancel-btn px-8 py-5"
+        class="cancel-btn px-8 py-2"
         size="large"
         rounded="xl"
         @click="closeDeductDialog"
@@ -446,7 +453,7 @@ const submitDeduct = () => {
         Cancel
       </v-btn>
       <v-btn
-        class="save-btn px-8 py-5 ml-4"
+        class="save-btn px-8 py-2 ml-4"
         size="large"
         rounded="xl"
         elevation="4"
@@ -476,12 +483,39 @@ const submitDeduct = () => {
   box-shadow: 0 8px 32px rgba(139, 0, 0, 0.2);
 }
 
+/* Responsive Header */
+@media (max-width: 960px) {
+  .header-container {
+    padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    padding: 1rem !important;
+  }
+}
+
 .page-title {
   color: white;
   font-size: 2.5rem;
   font-weight: 700;
   letter-spacing: -0.5px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Title */
+@media (max-width: 960px) {
+  .page-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 }
 
 /* Add Product Button */
@@ -502,6 +536,42 @@ const submitDeduct = () => {
   border-color: rgba(139, 0, 0, 0.4);
 }
 
+/* Deduct Product Button */
+.deduct-product-btn {
+  background: linear-gradient(135deg, #FFE4E1 0%, #FFF 100%) !important;
+  color: #8B0000 !important;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid rgba(139, 0, 0, 0.2);
+}
+
+.deduct-product-btn:hover {
+  background: linear-gradient(135deg, #FFF 0%, #FFE4E1 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(139, 0, 0, 0.4);
+}
+
+/* Responsive Buttons */
+@media (max-width: 960px) {
+  .add-product-btn,
+  .deduct-product-btn {
+    padding: 12px 16px !important;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .add-product-btn,
+  .deduct-product-btn {
+    padding: 10px 12px !important;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+}
+
 /* Product List Container */
 .product-list-container {
   background: linear-gradient(135deg, #8B0000 0%, #B22222 100%);
@@ -518,6 +588,19 @@ const submitDeduct = () => {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.3px;
+}
+
+/* Responsive Section Title */
+@media (max-width: 960px) {
+  .section-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
 }
 
 .section-divider {
@@ -543,6 +626,25 @@ const submitDeduct = () => {
   border-bottom: none !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* Responsive Table */
+@media (max-width: 960px) {
+  .table-header {
+    font-size: 0.85rem !important;
+    padding: 15px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .table-header {
+    font-size: 0.75rem !important;
+    padding: 10px !important;
+  }
+
+  .product-table {
+    font-size: 0.85rem;
+  }
 }
 
 .product-row {
