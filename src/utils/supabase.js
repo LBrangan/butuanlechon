@@ -4,8 +4,6 @@ import { createClient } from '@supabase/supabase-js'
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY,
-
-
 )
 // Form Action Utils
 export const formActionDefault = {
@@ -15,3 +13,12 @@ export const formActionDefault = {
   formSuccessMessage: '',
 }
 
+// Returns the session object, not just true/false
+export const isAuthenticated = async () => {
+  const { data, error } = await supabase.auth.getSession()
+  if (error) {
+    console.error('Error getting session:', error.message)
+    return null
+  }
+  return data.session
+}
