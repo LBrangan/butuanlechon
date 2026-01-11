@@ -1,13 +1,17 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
+import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 import { useProducts } from '@/composables/useProducts.js'
+import { useAuthUserStore } from '@/stores/authUser'
+
 
 const { products, lowStockProducts } = useProducts()
 
 // Router
 const router = useRouter()
+
+const authStore = useAuthUserStore()
 
 // Computed: total products
 const totalProducts = computed(() => products.value.length)
@@ -59,7 +63,7 @@ const openLowStockDialog = () => {
 </script>
 
 <template>
-  <v-main class="app-background">
+   <v-main class="app-background">
     <NavigationDrawer @logout="handleLogout" />
 
     <v-container class="pa-8">
@@ -91,7 +95,7 @@ const openLowStockDialog = () => {
                 </p>
               </div>
               <div class="stat-icon-wrapper" :style="{ background: stat.gradient }">
-                <v-icon size="40" color="white">
+                <v-icon size="80" color="white">
                   {{ stat.icon }}
                 </v-icon>
               </div>
@@ -126,6 +130,7 @@ const openLowStockDialog = () => {
       </v-dialog>
     </v-container>
   </v-main>
+
 </template>
 
 <style scoped>

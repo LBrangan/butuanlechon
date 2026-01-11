@@ -4,6 +4,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import ProductView from '@/views/ProductView.vue'
 import DailyUsage from '@/views/DailyUsage.vue'
+import AccountSettings from '@/views/system/AccountSettings.vue'
 
 
 
@@ -36,6 +37,11 @@ const router = createRouter({
       name: 'daily-usage',
       component: DailyUsage,
     },
+    {
+      path: '/account-settings',
+      name: 'account-settings',
+      component: AccountSettings,
+    }
 
   ],
 })
