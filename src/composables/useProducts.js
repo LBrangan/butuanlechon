@@ -5,18 +5,14 @@ import { ref, computed } from 'vue'
 const products = ref([])
 let nextId = 1
 
-// date helper
-const todayKey = () => new Date().toISOString().split('T')[0]
+// SIMULATED DATE - para testable ang end of day
+const currentSimulatedDate = ref(new Date().toISOString().split('T')[0])
+
+// date helper - uses simulated date
+const todayKey = () => currentSimulatedDate.value
 
 // daily reports
 const dailyReports = ref({})
-// structure:
-// {
-//   "2026-01-12": {
-//     sales: 0,
-//     expenses: 0
-//   }
-// }
 
 const getTodayReport = () => {
   const date = todayKey()
@@ -37,48 +33,74 @@ const todayReport = computed(() => getTodayReport())
 
 const profitToday = computed(() => todayReport.value.sales - todayReport.value.expenses)
 
+const todayProducts = computed(() => {
+  const today = todayKey()
+  return products.value.filter((p) => p.purchaseDate === today)
+})
+
 /* ================= COMPOSABLE ================= */
 
 export function useProducts() {
   /* ===== PRODUCTS ===== */
 
   const addProduct = (product) => {
-    products.value.push({
+    const today = todayKey()
+    const newProduct = {
       ...product,
       id: nextId++,
-    })
+      purchaseDate: today,
+      initialQuantity: product.quantity,
+    }
+
+    products.value.push(newProduct)
+
+    // Add expenses for TODAY only
+    const report = getTodayReport()
+    report.expenses += newProduct.totalPrice
   }
 
   const updateProduct = (updated) => {
     const index = products.value.findIndex((p) => p.id === updated.id)
-    if (index !== -1) products.value[index] = updated
+    if (index !== -1) {
+      const oldProduct = products.value[index]
+      const today = todayKey()
+
+      if (oldProduct.purchaseDate === today) {
+        const report = getTodayReport()
+        report.expenses -= oldProduct.totalPrice
+        report.expenses += updated.totalPrice
+      }
+
+      products.value[index] = {
+        ...updated,
+        purchaseDate: oldProduct.purchaseDate,
+      }
+    }
   }
 
   const deleteProduct = (id) => {
+    const product = products.value.find((p) => p.id === id)
+    const today = todayKey()
+
+    if (product && product.purchaseDate === today) {
+      const report = getTodayReport()
+      report.expenses -= product.totalPrice
+    }
+
     products.value = products.value.filter((p) => p.id !== id)
   }
-
-  /* ===== DEDUCT / EXPENSES ===== */
 
   const deductProduct = (productId, qty) => {
     const product = products.value.find((p) => p.id === productId)
     if (!product || qty <= 0) return
-
     product.quantity -= qty
-
-    const report = getTodayReport()
-    report.expenses += qty * product.price
   }
 
   const deductMultipleProducts = (usageArray) => {
-    const report = getTodayReport()
-
     usageArray.forEach((u) => {
       const product = products.value.find((p) => p.id === u.productId)
       if (!product || u.quantity <= 0) return
-
       product.quantity -= u.quantity
-      report.expenses += u.quantity * product.price
     })
   }
 
@@ -94,27 +116,37 @@ export function useProducts() {
   const endDay = () => {
     const today = todayKey()
 
-    // ensure report exists
-    getTodayReport()
+    console.log('=== DAY ENDED ===')
+    console.log('Date:', today)
+    console.log('Sales:', todayReport.value.sales)
+    console.log('Expenses:', todayReport.value.expenses)
+    console.log('Profit:', profitToday.value)
 
-    // nothing to do actually because reports are already stored by date
-    // this function is for semantic clarity & future use
-    console.log('Day ended:', today)
+    // Advance to next day
+    const nextDate = new Date(today)
+    nextDate.setDate(nextDate.getDate() + 1)
+    currentSimulatedDate.value = nextDate.toISOString().split('T')[0]
+
+    console.log('New date:', currentSimulatedDate.value)
+    console.log('================')
   }
 
   const allReports = computed(() => {
-    return Object.entries(dailyReports.value).map(([date, data]) => ({
-      date,
-      sales: data.sales,
-      expenses: data.expenses,
-      profit: data.sales - data.expenses,
-    }))
+    return Object.entries(dailyReports.value)
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(([date, data]) => ({
+        date,
+        sales: data.sales,
+        expenses: data.expenses,
+        profit: data.sales - data.expenses,
+      }))
   })
 
   return {
     // state
     products,
     lowStockProducts,
+    currentSimulatedDate, // expose para makita sa UI
 
     // product actions
     addProduct,
@@ -128,6 +160,7 @@ export function useProducts() {
     // reports
     todayReport,
     profitToday,
+    todayProducts,
     setTodaySales,
     dailyReports,
     allReports,
