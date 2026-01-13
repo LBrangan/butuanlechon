@@ -43,20 +43,22 @@ const todayProducts = computed(() => {
 export function useProducts() {
   /* ===== PRODUCTS ===== */
 
-  const addProduct = (product) => {
-    const today = todayKey()
+  const addProduct = (product, customDate = null) => {
+    const purchaseDate = customDate || todayKey()
     const newProduct = {
       ...product,
       id: nextId++,
-      purchaseDate: today,
+      purchaseDate: purchaseDate,
       initialQuantity: product.quantity,
     }
 
     products.value.push(newProduct)
 
-    // Add expenses for TODAY only
-    const report = getTodayReport()
-    report.expenses += newProduct.totalPrice
+    // Add expenses to the SPECIFIC date's report
+    if (!dailyReports.value[purchaseDate]) {
+      dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
+    }
+    dailyReports.value[purchaseDate].expenses += newProduct.totalPrice
   }
 
   const updateProduct = (updated) => {
@@ -111,6 +113,12 @@ export function useProducts() {
     report.sales = Number(amount) || 0
   }
 
+  /* ===== DATE MANAGEMENT ===== */
+
+  const setBusinessDate = (newDate) => {
+    currentSimulatedDate.value = newDate
+  }
+
   /* ===== END DAY / REPORTS ===== */
 
   const endDay = () => {
@@ -152,6 +160,9 @@ export function useProducts() {
     addProduct,
     updateProduct,
     deleteProduct,
+
+    // date management
+    setBusinessDate,
 
     // deduct
     deductProduct,
