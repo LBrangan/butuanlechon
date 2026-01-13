@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { isAuthenticated } from '@/utils/supabase.js'
 
 // Views
+import ReportView from '@/views/auth/ReportView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/DashboardView.vue'
@@ -53,6 +54,11 @@ const router = createRouter({
         requiresAuth: true,
         role: 'Admin',
       },
+    },
+    {
+      path: '/report',
+      name: 'reports',
+      component: ReportView,
     },
   ],
 })
