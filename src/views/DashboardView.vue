@@ -1,4 +1,5 @@
 <script setup>
+import { watch } from 'vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
@@ -13,6 +14,25 @@ const { products, lowStockProducts, todayReport, profitToday, setTodaySales } = 
 
 // computed
 const totalProducts = computed(() => products.value.length)
+
+const { endDay } = useProducts()
+
+const endToday = () => {
+  endDay()
+  alert('Day ended successfully!')
+}
+
+// auto update chart when values change
+watch([todayReport, profitToday], () => {
+  if (!chartInstance) return
+
+  chartInstance.data.datasets[0].data = [
+    todayReport.value.expenses,
+    todayReport.value.sales,
+    profitToday.value,
+  ]
+  chartInstance.update()
+})
 
 // dashboard stats
 const stats = computed(() => [
@@ -149,6 +169,10 @@ onMounted(() => {
 
         <canvas id="dailyChart" height="120"></canvas>
       </v-card>
+
+      <v-btn class="mt-4" color="red-darken-2" variant="elevated" @click="endToday">
+        End Day
+      </v-btn>
 
       <!-- Low Stock Dialog -->
       <v-dialog v-model="lowStockDialog" max-width="600px">
