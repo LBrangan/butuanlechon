@@ -56,27 +56,5 @@ const router = createRouter({
     },
   ],
 })
-router.beforeEach(async (to) => {
-  const session = await isAuthenticated()
-  const role = session?.user?.user_metadata?.role
-
-  // NOT logged in pero gi-access ang protected page
-  if (!session && to.meta.requiresAuth) {
-    return { name: 'login' }
-  }
-
-  // LOGGED IN pero gi-access ang login/register via URL
-  if (session && to.meta.guestOnly) {
-    return { name: 'dashboard' }
-  }
-
-  // LOGGED IN pero sayop ang role
-  if (session && to.meta.requiresAuth && to.meta.role && to.meta.role !== role) {
-    console.warn(`Access denied for role: ${role}`)
-    return { name: 'dashboard' }
-  }
-
-  return true
-})
 
 export default router
