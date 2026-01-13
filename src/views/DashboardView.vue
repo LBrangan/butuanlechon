@@ -6,23 +6,26 @@ import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
 import Chart from 'chart.js/auto'
 import { useProducts } from '@/composables/useProducts.js'
 
-// router
 const router = useRouter()
 
-// products composable (ISA LANG)
-const { products, lowStockProducts, todayReport, profitToday, setTodaySales } = useProducts()
+const {
+  products,
+  lowStockProducts,
+  todayReport,
+  profitToday,
+  setTodaySales,
+  endDay,
+  currentSimulatedDate, // NEW: Current date
+} = useProducts()
 
-// computed
 const totalProducts = computed(() => products.value.length)
 
-const { endDay } = useProducts()
-
 const endToday = () => {
-  endDay()
-  alert('Day ended successfully!')
+  if (confirm(`End day for ${currentSimulatedDate.value}?`)) {
+    endDay()
+  }
 }
 
-// auto update chart when values change
 watch([todayReport, profitToday], () => {
   if (!chartInstance) return
 
@@ -34,7 +37,6 @@ watch([todayReport, profitToday], () => {
   chartInstance.update()
 })
 
-// dashboard stats
 const stats = computed(() => [
   {
     title: 'Total Products',
@@ -48,7 +50,6 @@ const stats = computed(() => [
   },
 ])
 
-// low stock dialog
 const lowStockDialog = ref(false)
 
 const openLowStockDialog = () => {
@@ -59,9 +60,6 @@ const openLowStockDialog = () => {
 
 const handleLogout = () => router.push('/')
 
-// =====================
-// CHART
-// =====================
 let chartInstance = null
 
 onMounted(() => {
@@ -95,6 +93,14 @@ onMounted(() => {
     <NavigationDrawer @logout="handleLogout" />
 
     <v-container class="pa-8">
+      <!-- Current Date Display -->
+      <v-alert type="info" variant="tonal" class="mb-4" prominent>
+        <template #prepend>
+          <v-icon>mdi-calendar-today</v-icon>
+        </template>
+        <strong>Current Business Date:</strong> {{ currentSimulatedDate }}
+      </v-alert>
+
       <h1 class="dashboard-title mb-8">Dashboard</h1>
 
       <!-- Statistics Cards -->
@@ -128,7 +134,7 @@ onMounted(() => {
 
       <!-- DAILY SALES REPORT -->
       <v-card class="pa-6 mt-8 rounded-xl" elevation="4">
-        <h2 class="mb-4">Daily Sales Report</h2>
+        <h2 class="mb-4">Daily Sales Report - {{ currentSimulatedDate }}</h2>
 
         <v-row>
           <v-col cols="12" md="4">
@@ -164,14 +170,15 @@ onMounted(() => {
           </v-col>
         </v-row>
       </v-card>
+
       <v-card class="pa-6 mt-8 rounded-xl" elevation="4">
         <h2 class="mb-4">Profit vs Expenses (Today)</h2>
-
         <canvas id="dailyChart" height="120"></canvas>
       </v-card>
 
-      <v-btn class="mt-4" color="red-darken-2" variant="elevated" @click="endToday">
-        End Day
+      <v-btn class="mt-4" color="red-darken-2" variant="elevated" size="large" @click="endToday">
+        <v-icon start>mdi-calendar-check</v-icon>
+        End Day & Advance to Next
       </v-btn>
 
       <!-- Low Stock Dialog -->
