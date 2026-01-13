@@ -1,69 +1,112 @@
 import { ref, computed } from 'vue'
 
-// Global products state - shared across all components
+/* ================= GLOBAL STATE ================= */
+
 const products = ref([])
 let nextId = 1
 
+// date helper
+const todayKey = () => new Date().toISOString().split('T')[0]
+
+// daily reports
+const dailyReports = ref({})
+// structure:
+// {
+//   "2026-01-12": {
+//     sales: 0,
+//     expenses: 0
+//   }
+// }
+
+const getTodayReport = () => {
+  const date = todayKey()
+  if (!dailyReports.value[date]) {
+    dailyReports.value[date] = {
+      sales: 0,
+      expenses: 0,
+    }
+  }
+  return dailyReports.value[date]
+}
+
+/* ================= COMPUTED ================= */
+
+const lowStockProducts = computed(() => products.value.filter((p) => p.quantity <= 10))
+
+const todayReport = computed(() => getTodayReport())
+
+const profitToday = computed(() => todayReport.value.sales - todayReport.value.expenses)
+
+/* ================= COMPOSABLE ================= */
+
 export function useProducts() {
-  // Add new product
+  /* ===== PRODUCTS ===== */
+
   const addProduct = (product) => {
     products.value.push({
       ...product,
       id: nextId++,
-      totalPrice: product.quantity * product.price
     })
   }
 
-  // Update existing product
-  const updateProduct = (updatedProduct) => {
-    const index = products.value.findIndex(p => p.id === updatedProduct.id)
-    if (index !== -1) {
-      updatedProduct.totalPrice = updatedProduct.quantity * updatedProduct.price
-      products.value[index] = { ...updatedProduct }
-    }
+  const updateProduct = (updated) => {
+    const index = products.value.findIndex((p) => p.id === updated.id)
+    if (index !== -1) products.value[index] = updated
   }
 
-  // Delete product
   const deleteProduct = (id) => {
-    const index = products.value.findIndex(p => p.id === id)
-    if (index !== -1) {
-      products.value.splice(index, 1)
-    }
+    products.value = products.value.filter((p) => p.id !== id)
   }
 
-  // Deduct product quantity
- const deductProduct = (id, quantity) => {
-    const index = products.value.findIndex(p => p.id === id)
-    if (index !== -1) {
-      products.value[index].quantity -= Number(quantity)
-      if (products.value[index].quantity < 0) {
-        products.value[index].quantity = 0
-      }
-      products.value[index].totalPrice =
-        products.value[index].quantity * products.value[index].price
-    }
+  /* ===== DEDUCT / EXPENSES ===== */
+
+  const deductProduct = (productId, qty) => {
+    const product = products.value.find((p) => p.id === productId)
+    if (!product || qty <= 0) return
+
+    product.quantity -= qty
+
+    const report = getTodayReport()
+    report.expenses += qty * product.price
   }
 
- // ✅ Deduct MULTIPLE products (Daily Usage)
   const deductMultipleProducts = (usageArray) => {
-    // usageArray = [{ productId, quantity }]
-    usageArray.forEach(item => {
-      deductProduct(item.productId, item.quantity)
+    const report = getTodayReport()
+
+    usageArray.forEach((u) => {
+      const product = products.value.find((p) => p.id === u.productId)
+      if (!product || u.quantity <= 0) return
+
+      product.quantity -= u.quantity
+      report.expenses += u.quantity * product.price
     })
   }
 
-  // Computed: products with quantity < 10
-  const lowStockProducts = computed(() =>
-    products.value.filter(p => p.quantity < 10)
-  )
+  /* ===== SALES ===== */
+
+  const setTodaySales = (amount) => {
+    const report = getTodayReport()
+    report.sales = Number(amount) || 0
+  }
 
   return {
+    // state
     products,
+    lowStockProducts,
+
+    // product actions
     addProduct,
     updateProduct,
     deleteProduct,
+
+    // deduct
     deductProduct,
     deductMultipleProducts,
-    lowStockProducts
+
+    // reports
+    todayReport,
+    profitToday,
+    setTodaySales,
+    dailyReports,
   }
 }
