@@ -89,6 +89,28 @@ export function useProducts() {
     report.sales = Number(amount) || 0
   }
 
+  /* ===== END DAY / REPORTS ===== */
+
+  const endDay = () => {
+    const today = todayKey()
+
+    // ensure report exists
+    getTodayReport()
+
+    // nothing to do actually because reports are already stored by date
+    // this function is for semantic clarity & future use
+    console.log('Day ended:', today)
+  }
+
+  const allReports = computed(() => {
+    return Object.entries(dailyReports.value).map(([date, data]) => ({
+      date,
+      sales: data.sales,
+      expenses: data.expenses,
+      profit: data.sales - data.expenses,
+    }))
+  })
+
   return {
     // state
     products,
@@ -108,5 +130,7 @@ export function useProducts() {
     profitToday,
     setTodaySales,
     dailyReports,
+    allReports,
+    endDay,
   }
 }
