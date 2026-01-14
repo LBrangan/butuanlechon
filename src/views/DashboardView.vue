@@ -1,54 +1,77 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
+import Chart from 'chart.js/auto'
 import { useProducts } from '@/composables/useProducts.js'
 
-const { products, lowStockProducts } = useProducts()
-
-// Router
 const router = useRouter()
 
-// Computed: total products
-const totalProducts = computed(() => products.value.length)
+const {
+  products,
+  lowStockProducts,
+  todayReport,
+  profitToday,
+  setTodaySales,
+  endDay,
+  currentSimulatedDate,
+  setBusinessDate,
+} = useProducts()
 
-// Dashboard stats
+const totalProducts = computed(() => products.value.length)
+const datePickerDialog = ref(false)
+// Convert string date to Date object for v-date-picker
+const tempDate = ref(new Date())
+
+const openDatePicker = () => {
+  // Parse the currentSimulatedDate string to Date object
+  const [year, month, day] = currentSimulatedDate.value.split('-')
+  tempDate.value = new Date(year, month - 1, day)
+  datePickerDialog.value = true
+}
+
+const confirmDateChange = () => {
+  // Convert Date object back to YYYY-MM-DD format
+  const year = tempDate.value.getFullYear()
+  const month = String(tempDate.value.getMonth() + 1).padStart(2, '0')
+  const day = String(tempDate.value.getDate()).padStart(2, '0')
+  const formattedDate = `${year}-${month}-${day}`
+
+  setBusinessDate(formattedDate)
+  datePickerDialog.value = false
+}
+
+const endToday = () => {
+  if (confirm(`End day for ${currentSimulatedDate.value}?`)) {
+    endDay()
+  }
+}
+
+watch([todayReport, profitToday], () => {
+  if (!chartInstance) return
+
+  chartInstance.data.datasets[0].data = [
+    todayReport.value.expenses,
+    todayReport.value.sales,
+    profitToday.value,
+  ]
+  chartInstance.update()
+})
+
 const stats = computed(() => [
   {
     title: 'Total Products',
     value: totalProducts.value,
-    icon: 'mdi-package-variant',
-    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)',
-    clickable: false
+    clickable: false,
   },
   {
     title: 'Low Stock Items',
     value: lowStockProducts.value.length,
-    icon: 'mdi-alert-circle-outline',
-    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)',
-    clickable: true
-  },
-  {
-    title: 'Total Revenue',
-    value: 15000,
-    icon: 'mdi-currency-usd',
-    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)',
-    clickable: false
-  },
-  {
-    title: 'Orders Today',
-    value: 8,
-    icon: 'mdi-eye-outline',
-    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)',
-    clickable: false
+    clickable: true,
   },
 ])
 
-// Navigate to products page or low stock dialog
-const addProduct = () => router.push('/products')
-const handleLogout = () => router.push('/')
-
-// Low Stock dialog
 const lowStockDialog = ref(false)
 
 const openLowStockDialog = () => {
@@ -56,6 +79,35 @@ const openLowStockDialog = () => {
     lowStockDialog.value = true
   }
 }
+
+const handleLogout = () => router.push('/')
+
+let chartInstance = null
+
+onMounted(() => {
+  const ctx = document.getElementById('dailyChart')
+
+  if (!ctx) return
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Expenses', 'Sales', 'Profit'],
+      datasets: [
+        {
+          label: 'Today',
+          data: [todayReport.value.expenses, todayReport.value.sales, profitToday.value],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+      },
+    },
+  })
+})
 </script>
 
 <template>
@@ -63,17 +115,25 @@ const openLowStockDialog = () => {
     <NavigationDrawer @logout="handleLogout" />
 
     <v-container class="pa-8">
+      <!-- Current Date Display -->
+      <v-alert type="info" variant="tonal" class="mb-4" prominent>
+        <template #prepend>
+          <v-icon>mdi-calendar-today</v-icon>
+        </template>
+        <div class="d-flex justify-space-between align-center">
+          <div><strong>Current Business Date:</strong> {{ currentSimulatedDate }}</div>
+          <v-btn color="primary" variant="elevated" size="small" @click="openDatePicker">
+            <v-icon start>mdi-calendar-edit</v-icon>
+            Change Date
+          </v-btn>
+        </div>
+      </v-alert>
+
       <h1 class="dashboard-title mb-8">Dashboard</h1>
 
       <!-- Statistics Cards -->
       <v-row class="mb-6 stats-container pa-8 rounded-xl">
-        <v-col
-          cols="12"
-          md="6"
-          lg="6"
-          v-for="stat in stats.slice(0, 2)"
-          :key="stat.title"
-        >
+        <v-col cols="12" md="6" lg="6" v-for="stat in stats.slice(0, 2)" :key="stat.title">
           <v-card
             class="stat-card pa-8 rounded-xl"
             elevation="4"
@@ -100,6 +160,55 @@ const openLowStockDialog = () => {
         </v-col>
       </v-row>
 
+      <!-- DAILY SALES REPORT -->
+      <v-card class="pa-6 mt-8 rounded-xl" elevation="4">
+        <h2 class="mb-4">Daily Sales Report - {{ currentSimulatedDate }}</h2>
+
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              label="Sales Today"
+              type="number"
+              prefix="₱"
+              variant="outlined"
+              :model-value="todayReport.sales"
+              @update:model-value="setTodaySales"
+            />
+          </v-col>
+
+          <v-col cols="12" md="4">
+            <v-text-field
+              label="Expenses Today"
+              prefix="₱"
+              variant="outlined"
+              :model-value="todayReport.expenses"
+              readonly
+            />
+          </v-col>
+
+          <v-col cols="12" md="4">
+            <v-text-field
+              label="Profit Today"
+              prefix="₱"
+              variant="outlined"
+              :model-value="profitToday"
+              readonly
+              :color="profitToday >= 0 ? 'green' : 'red'"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+
+      <v-card class="pa-6 mt-8 rounded-xl" elevation="4">
+        <h2 class="mb-4">Profit vs Expenses (Today)</h2>
+        <canvas id="dailyChart" height="120"></canvas>
+      </v-card>
+
+      <v-btn class="mt-4" color="red-darken-2" variant="elevated" size="large" @click="endToday">
+        <v-icon start>mdi-calendar-check</v-icon>
+        End Day & Advance to Next
+      </v-btn>
+
       <!-- Low Stock Dialog -->
       <v-dialog v-model="lowStockDialog" max-width="600px">
         <v-card>
@@ -124,28 +233,48 @@ const openLowStockDialog = () => {
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <!-- Date Picker Dialog -->
+      <v-dialog v-model="datePickerDialog" max-width="400px">
+        <v-card>
+          <v-card-title class="text-h6 bg-red-darken-2 text-white">
+            <v-icon start>mdi-calendar-edit</v-icon>
+            Change Business Date
+          </v-card-title>
+          <v-card-text class="pa-6">
+            <v-date-picker v-model="tempDate" color="red-darken-2" show-adjacent-months />
+          </v-card-text>
+          <v-card-actions class="pa-4">
+            <v-spacer></v-spacer>
+            <v-btn text @click="datePickerDialog = false">Cancel</v-btn>
+            <v-btn color="red-darken-2" variant="elevated" @click="confirmDateChange">
+              Confirm
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-main>
 </template>
 
 <style scoped>
 .app-background {
-  background: linear-gradient(135deg, #FFF5F5 0%, #FFE4E1 100%);
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
   min-height: 100vh;
 }
 .dashboard-title {
-  color: #8B0000;
+  color: #8b0000;
   font-size: 2.5rem;
   font-weight: 700;
 }
 .stats-container {
-  background: linear-gradient(135deg, #8B0000 0%, #B22222 100%);
+  background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);
 }
 .stat-card {
   background: white;
 }
 .stat-value {
-  color: #8B0000;
+  color: #8b0000;
 }
 .stat-icon-wrapper {
   width: 80px;
