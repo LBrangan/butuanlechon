@@ -1,34 +1,21 @@
 <script setup>
 import PasswordForm from '@/components/layout/system/account-settings/PasswordForm.vue'
-import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 import PictureForm from '@/components/layout/system/account-settings/PictureForm.vue'
 import ProfileForm from '@/components/layout/system/account-settings/ProfileForm.vue'
+import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
-import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
-
-// Utilize pre-defined vue functions
-const { mobile } = useDisplay()
 
 // Use Pinia Store
 const authStore = useAuthUserStore()
-
-// Load Variables
-const isDrawerVisible = ref(mobile.value ? false : true)
 </script>
 
 <template>
-  <AppLayout
-    :is-with-app-bar-nav-icon="true"
-    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
-  >
-    <template #navigation>
-      <NavigationDrawer :is-drawer-visible="isDrawerVisible"></NavigationDrawer>
-    </template>
-
+  <AppLayout>
     <template #content>
-      <v-container>
-        <v-card class="mb-5">
+      <div class="app-background">
+        <v-container>
+          <v-card class="mb-5">
           <template #title>
             <span class="text-h6 font-weight-bold">
               <v-breadcrumbs :items="['Account', 'Settings']">
@@ -94,7 +81,7 @@ const isDrawerVisible = ref(mobile.value ? false : true)
             </v-card>
 
             <v-card
-              v-if="authStore.userRole === 'Super Administrator'"
+              v-if="authStore.userRole === 'Administrator'"
               class="mb-5"
               title="Change Password"
             >
@@ -105,6 +92,15 @@ const isDrawerVisible = ref(mobile.value ? false : true)
           </v-col>
         </v-row>
       </v-container>
+    </div>
     </template>
   </AppLayout>
 </template>
+
+<style scoped>
+.app-background {
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFE4E1 100%);
+  min-height: 100vh;
+  padding: 0;
+}
+</style>

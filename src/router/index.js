@@ -38,7 +38,7 @@ const router = createRouter({
       component: DailyUsage,
     },
     {
-      path: '/account-settings',
+      path: '/account/settings',
       name: 'account-settings',
       component: AccountSettings,
     }

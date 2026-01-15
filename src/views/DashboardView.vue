@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 import { useProducts } from '@/composables/useProducts.js'
 import { useAuthUserStore } from '@/stores/authUser'
+import AppLayout from '@/components/layout/AppLayout.vue'
 
 
 const { products, lowStockProducts } = useProducts()
@@ -63,14 +63,14 @@ const openLowStockDialog = () => {
 </script>
 
 <template>
-   <v-main class="app-background">
-    <NavigationDrawer @logout="handleLogout" />
+  <AppLayout>
+    <template #content>
+      <div class="app-background">
+        <v-container class="pa-8">
+          <h1 class="dashboard-title mb-8">Dashboard</h1>
 
-    <v-container class="pa-8">
-      <h1 class="dashboard-title mb-8">Dashboard</h1>
-
-      <!-- Statistics Cards -->
-      <v-row class="mb-6 stats-container pa-8 rounded-xl">
+          <!-- Statistics Cards -->
+          <v-row class="mb-6 stats-container pa-8 rounded-xl">
         <v-col
           cols="12"
           md="6"
@@ -128,9 +128,10 @@ const openLowStockDialog = () => {
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-container>
-  </v-main>
-
+        </v-container>
+      </div>
+    </template>
+  </AppLayout>
 </template>
 
 <style scoped>
