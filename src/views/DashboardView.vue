@@ -1,54 +1,31 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
-import { useProducts } from '@/composables/useProducts.js'
+import { useAuthUserStore } from '@/stores/authUser'
+import AppLayout from '@/components/layout/AppLayout.vue'
 
-const { products, lowStockProducts } = useProducts()
 
-// Router
 const router = useRouter()
+
+const authStore = useAuthUserStore()
 
 // Computed: total products
 const totalProducts = computed(() => products.value.length)
 
-// Dashboard stats
 const stats = computed(() => [
   {
     title: 'Total Products',
     value: totalProducts.value,
-    icon: 'mdi-package-variant',
-    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)',
-    clickable: false
+    clickable: false,
   },
   {
     title: 'Low Stock Items',
     value: lowStockProducts.value.length,
-    icon: 'mdi-alert-circle-outline',
-    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)',
-    clickable: true
-  },
-  {
-    title: 'Total Revenue',
-    value: 15000,
-    icon: 'mdi-currency-usd',
-    gradient: 'linear-gradient(135deg, #8B0000 0%, #B22222 100%)',
-    clickable: false
-  },
-  {
-    title: 'Orders Today',
-    value: 8,
-    icon: 'mdi-eye-outline',
-    gradient: 'linear-gradient(135deg, #DC143C 0%, #FF6347 100%)',
-    clickable: false
+    clickable: true,
   },
 ])
 
-// Navigate to products page or low stock dialog
-const addProduct = () => router.push('/products')
-const handleLogout = () => router.push('/')
-
-// Low Stock dialog
 const lowStockDialog = ref(false)
 
 const openLowStockDialog = () => {
@@ -56,17 +33,46 @@ const openLowStockDialog = () => {
     lowStockDialog.value = true
   }
 }
+
+const handleLogout = () => router.push('/')
+
+let chartInstance = null
+
+onMounted(() => {
+  const ctx = document.getElementById('dailyChart')
+
+  if (!ctx) return
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Expenses', 'Sales', 'Profit'],
+      datasets: [
+        {
+          label: 'Today',
+          data: [todayReport.value.expenses, todayReport.value.sales, profitToday.value],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+      },
+    },
+  })
+})
 </script>
 
 <template>
-  <v-main class="app-background">
-    <NavigationDrawer @logout="handleLogout" />
+  <AppLayout>
+    <template #content>
+      <div class="app-background">
+        <v-container class="pa-8">
+          <h1 class="dashboard-title mb-8">Dashboard</h1>
 
-    <v-container class="pa-8">
-      <h1 class="dashboard-title mb-8">Dashboard</h1>
-
-      <!-- Statistics Cards -->
-      <v-row class="mb-6 stats-container pa-8 rounded-xl">
+          <!-- Statistics Cards -->
+          <v-row class="mb-6 stats-container pa-8 rounded-xl">
         <v-col
           cols="12"
           md="6"
@@ -91,7 +97,7 @@ const openLowStockDialog = () => {
                 </p>
               </div>
               <div class="stat-icon-wrapper" :style="{ background: stat.gradient }">
-                <v-icon size="40" color="white">
+                <v-icon size="80" color="white">
                   {{ stat.icon }}
                 </v-icon>
               </div>
@@ -99,6 +105,55 @@ const openLowStockDialog = () => {
           </v-card>
         </v-col>
       </v-row>
+
+      <!-- DAILY SALES REPORT -->
+      <v-card class="pa-6 mt-8 rounded-xl" elevation="4">
+        <h2 class="mb-4">Daily Sales Report - {{ currentSimulatedDate }}</h2>
+
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              label="Sales Today"
+              type="number"
+              prefix="₱"
+              variant="outlined"
+              :model-value="todayReport.sales"
+              @update:model-value="setTodaySales"
+            />
+          </v-col>
+
+          <v-col cols="12" md="4">
+            <v-text-field
+              label="Expenses Today"
+              prefix="₱"
+              variant="outlined"
+              :model-value="todayReport.expenses"
+              readonly
+            />
+          </v-col>
+
+          <v-col cols="12" md="4">
+            <v-text-field
+              label="Profit Today"
+              prefix="₱"
+              variant="outlined"
+              :model-value="profitToday"
+              readonly
+              :color="profitToday >= 0 ? 'green' : 'red'"
+            />
+          </v-col>
+        </v-row>
+      </v-card>
+
+      <v-card class="pa-6 mt-8 rounded-xl" elevation="4">
+        <h2 class="mb-4">Profit vs Expenses (Today)</h2>
+        <canvas id="dailyChart" height="120"></canvas>
+      </v-card>
+
+      <v-btn class="mt-4" color="red-darken-2" variant="elevated" size="large" @click="endToday">
+        <v-icon start>mdi-calendar-check</v-icon>
+        End Day & Advance to Next
+      </v-btn>
 
       <!-- Low Stock Dialog -->
       <v-dialog v-model="lowStockDialog" max-width="600px">
@@ -124,28 +179,30 @@ const openLowStockDialog = () => {
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-container>
-  </v-main>
+        </v-container>
+      </div>
+    </template>
+  </AppLayout>
 </template>
 
 <style scoped>
 .app-background {
-  background: linear-gradient(135deg, #FFF5F5 0%, #FFE4E1 100%);
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
   min-height: 100vh;
 }
 .dashboard-title {
-  color: #8B0000;
+  color: #8b0000;
   font-size: 2.5rem;
   font-weight: 700;
 }
 .stats-container {
-  background: linear-gradient(135deg, #8B0000 0%, #B22222 100%);
+  background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);
 }
 .stat-card {
   background: white;
 }
 .stat-value {
-  color: #8B0000;
+  color: #8b0000;
 }
 .stat-icon-wrapper {
   width: 80px;
