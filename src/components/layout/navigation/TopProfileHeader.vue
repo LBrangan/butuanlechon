@@ -42,7 +42,7 @@ const isCompact = computed(() => xs.value || sm.value)
 // Mobile menu control
 const formAction = ref({ ...formActionDefault })
 const mobileDrawer = ref(false)
-
+const searchQuery = ref('')
 
 // Logout handler
 const onLogout = async () => {
@@ -74,7 +74,18 @@ const drawerItems = computed(() => [
         BL & SG Administrative Panel
       </v-app-bar-title>
 
-      <v-spacer></v-spacer>
+
+
+      <!-- Search Bar -->
+      <v-text-field
+        v-model="searchQuery"
+        placeholder="Search..."
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="search-field ml-auto"
+      ></v-text-field>
 
       <!-- Profile Menu -->
       <v-menu min-width="280px" rounded offset="5" transition="scale-transition">
@@ -210,5 +221,25 @@ const drawerItems = computed(() => [
   text-transform: none;
 }
 
+.search-field :deep(.v-field) {
+  background-color: rgba(255, 255, 255, 0.15);
+  max-width: 300px;
+  margin-right: 16px;
+}
 
-</style>
+.search-field :deep(.v-field:hover) {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.search-field :deep(.v-field__input) {
+  color: white;
+  caret-color: white;
+}
+
+.search-field :deep(.v-field__input::placeholder) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-field :deep(.v-icon) {
+  color: rgba(255, 255, 255, 0.7);
+}</style>
