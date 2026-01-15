@@ -95,31 +95,43 @@ export const useAuthUserStore = defineStore('authUser', () => {
   }
 
   // Update User Profile Image
-  async function updateUserImage(file) {
-    // Get the file extension from the uploaded file
-    // const fileExtension = file.name.split('.').pop()
-
-    // Upload the file with the user ID and file extension
-    const { data, error } = await supabase.storage
-      .from('BL&SG')
-      .upload('avatars/' + userData.value.id + '-avatar.png', file, {
-        cacheControl: '3600',
-        upsert: true
-      })
-
-    // Check if it has error
-    if (error) {
-      return { error }
-    }
-    // If no error set data to userData state with the image_url
-    else if (data) {
-      // Retrieve Image Public Url
-      const { data: imageData } = supabase.storage.from('shirlix').getPublicUrl(data.path)
-
-      // Update the user information with the new image_url
-      return await updateUserInformation({ ...userData.value, image_url: imageData.publicUrl })
-    }
+ async function updateUserImage(file) {
+  // 1. Ensure user is loaded
+  if (!userData.value?.id) {
+    await getUserInformation()
   }
+
+  if (!userData.value?.id) {
+    return { error: 'User not authenticated' }
+  }
+
+  const filePath = `${userData.value.id}-avatar.png`
+
+  // 2. Upload to the CORRECT bucket, NO extra folder
+  const { data, error } = await supabase.storage
+    .from('butuanlechon') // ✅ must exist
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: file.type
+    })
+
+  if (error) {
+    console.error('UPLOAD ERROR:', error)
+    return { error }
+  }
+
+  // 3. Get public URL from SAME bucket
+  const { data: imageData } = supabase.storage
+    .from('butuanlechon')
+    .getPublicUrl(filePath)
+
+  // 4. Save URL to user metadata
+  return await updateUserInformation({
+    image_url: imageData.publicUrl
+  })
+}
+
 
   return {
     userData,

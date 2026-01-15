@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isAuthenticated } from '@/utils/supabase.js'
 
 // Views
 import ReportView from '@/views/auth/ReportView.vue'
@@ -57,7 +56,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/report',
+      path: '/reports',
       name: 'reports',
       component: ReportView,
     },

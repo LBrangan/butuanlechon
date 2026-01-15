@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthUserStore } from '@/stores/authUser'
 import { mainNav } from './NavigationDrawer';
-import TopProfileHeader from './TopProfileHeader.vue';
+
 
 const router = useRouter()
 const route = useRoute()
