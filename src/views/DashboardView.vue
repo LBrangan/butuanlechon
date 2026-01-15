@@ -1,5 +1,4 @@
 <script setup>
-import { watch } from 'vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthUserStore } from '@/stores/authUser'
@@ -74,7 +73,7 @@ const handleLogout = () => router.push('/')
 
 
       <!-- DAILY SALES REPORT -->
-
+          <!--Dire butuang daily sales shet-->
 
 
 
@@ -84,29 +83,7 @@ const handleLogout = () => router.push('/')
       </v-btn>
 
       <!-- Low Stock Dialog -->
-      <v-dialog v-model="lowStockDialog" max-width="600px">
-        <v-card>
-          <v-card-title class="text-h6">Low Stock Products</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <v-list>
-              <v-list-item v-for="product in lowStockProducts" :key="product.id">
-                <v-list-item-content>
-                  <v-list-item-title>{{ product.name }}</v-list-item-title>
-                  <v-list-item-subtitle>
-                    Qty: {{ product.quantity }} {{ product.unit }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            <p v-if="lowStockProducts.length === 0">All products have sufficient stock.</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text @click="lowStockDialog = false">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+
         </v-container>
       </div>
     </template>
