@@ -1,6 +1,6 @@
 <script setup>
 import { useProducts } from '@/composables/useProducts'
-import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
+import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 
 const { allReports } = useProducts()
 </script>
