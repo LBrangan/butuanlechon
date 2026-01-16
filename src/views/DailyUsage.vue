@@ -1,7 +1,7 @@
 <script setup>
 import { reactive } from 'vue'
 import { useProducts } from '@/composables/useProducts'
-import NavigationDrawer from '@/components/layout/navigation/Navigation.vue'
+import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 
 const { products, lowStockProducts, deductMultipleProducts } = useProducts()
 
