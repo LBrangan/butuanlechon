@@ -2,8 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthUserStore } from '@/stores/authUser'
-import { mainNav } from './NavigationDrawer';
-
+import { mainNav } from './NavigationDrawer'
 
 const router = useRouter()
 const route = useRoute()
@@ -26,7 +25,7 @@ onMounted(checkAuth)
 
 <template>
   <template v-if="isVisible">
-    <v-navigation-drawer :model-value="drawer" class="nav-drawer-red">
+    <v-navigation-drawer :model-value="drawer" class="nav-drawer-red" permanent>
       <!-- Logo Section -->
       <v-list-item class="mx-6 my-5">
         <template v-slot:prepend>
@@ -69,11 +68,16 @@ onMounted(checkAuth)
 .nav-drawer-red {
   background: linear-gradient(180deg, #1a0505 0%, #2d0a0a 100%) !important;
   border-right: 1px solid rgba(139, 0, 0, 0.3) !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  height: 100vh !important;
+  z-index: 1000;
 }
 
 /* App Bar - Red Theme */
 .app-bar-red {
-  background: linear-gradient(90deg, #8B0000 0%, #A52A2A 100%) !important;
+  background: linear-gradient(90deg, #8b0000 0%, #a52a2a 100%) !important;
   box-shadow: 0 2px 12px rgba(139, 0, 0, 0.3) !important;
 }
 
@@ -92,7 +96,7 @@ onMounted(checkAuth)
 
 /* Navigation Items */
 .nav-item {
-  color: #FFE4E1 !important;
+  color: #ffe4e1 !important;
   transition: all 0.3s ease;
   border-radius: 12px;
   margin: 6px 12px !important;
@@ -105,24 +109,24 @@ onMounted(checkAuth)
 
 .nav-item-active {
   background: rgba(220, 20, 60, 0.3) !important;
-  border-left: 5px solid #DC143C !important;
+  border-left: 5px solid #dc143c !important;
   font-weight: 700;
   color: white !important;
 }
 
 .nav-item-active :deep(.v-icon) {
-  color: #DC143C !important;
+  color: #dc143c !important;
   transform: scale(1.1);
 }
 
 /* Navigation Icons */
 .nav-item :deep(.v-icon) {
-  color: #FFB6B6 !important;
+  color: #ffb6b6 !important;
   transition: all 0.3s ease;
 }
 
 .nav-item:hover :deep(.v-icon) {
-  color: #FF6B6B !important;
+  color: #ff6b6b !important;
 }
 
 /* List Item Title */
