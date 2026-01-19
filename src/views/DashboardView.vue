@@ -64,7 +64,19 @@ const handleLogout = () => router.push('/')
       <div class="app-background">
         <v-container class="pa-8">
           <h1 class="dashboard-title mb-8">Dashboard</h1>
-
+          <!-- Current Date Display -->
+          <v-alert type="info" variant="tonal" class="my-5" prominent>
+            <template #prepend>
+              <v-icon>mdi-calendar-today</v-icon>
+            </template>
+            <div class="d-flex justify-space-between align-center">
+              <div><strong>Current Business Date:</strong> {{ currentSimulatedDate }}</div>
+              <v-btn color="primary" variant="elevated" size="small" @click="openDatePicker">
+                <v-icon start>mdi-calendar-edit</v-icon>
+                Change Date
+              </v-btn>
+            </div>
+          </v-alert>
           <!-- Statistics Cards -->
           <v-row class="mb-6 stats-container pa-8 rounded-xl">
             <v-col cols="12" md="6" lg="6" v-for="stat in stats.slice(0, 2)" :key="stat.title">
