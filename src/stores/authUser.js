@@ -39,8 +39,8 @@ export const useAuthUserStore = defineStore('authUser', () => {
     const {
       data: {
         // Retrieve Id, Email and Metadata thru Destructuring
-        user: { id, email, user_metadata }
-      }
+        user: { id, email, user_metadata },
+      },
     } = await supabase.auth.getUser()
 
     // Set the retrieved information to state
@@ -73,13 +73,13 @@ export const useAuthUserStore = defineStore('authUser', () => {
     const {
       data: {
         // Retrieve Id, Email and Metadata thru Destructuring
-        user: { id, email, user_metadata }
+        user: { id, email, user_metadata },
       },
-      error
+      error,
     } = await supabase.auth.updateUser({
       data: {
-        ...updatedData
-      }
+        ...updatedData,
+      },
     })
 
     // Check if it has error
@@ -95,43 +95,40 @@ export const useAuthUserStore = defineStore('authUser', () => {
   }
 
   // Update User Profile Image
- async function updateUserImage(file) {
-  // 1. Ensure user is loaded
-  if (!userData.value?.id) {
-    await getUserInformation()
-  }
+  async function updateUserImage(file) {
+    // 1. Ensure user is loaded
+    if (!userData.value?.id) {
+      await getUserInformation()
+    }
 
-  if (!userData.value?.id) {
-    return { error: 'User not authenticated' }
-  }
+    if (!userData.value?.id) {
+      return { error: 'User not authenticated' }
+    }
 
-  const filePath = `${userData.value.id}-avatar.png`
+    const filePath = `${userData.value.id}-avatar.png`
 
-  // 2. Upload to the CORRECT bucket, NO extra folder
-  const { data, error } = await supabase.storage
-    .from('butuanlechon') // ✅ must exist
-    .upload(filePath, file, {
-      cacheControl: '3600',
-      upsert: true,
-      contentType: file.type
+    // 2. Upload to the CORRECT bucket, NO extra folder
+    const { data, error } = await supabase.storage
+      .from('butuanlechon') // ✅ must exist
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true,
+        contentType: file.type,
+      })
+
+    if (error) {
+      console.error('UPLOAD ERROR:', error)
+      return { error }
+    }
+
+    // 3. Get public URL from SAME bucket
+    const { data: imageData } = supabase.storage.from('butuanlechon').getPublicUrl(filePath)
+
+    // 4. Save URL to user metadata
+    return await updateUserInformation({
+      image_url: imageData.publicUrl,
     })
-
-  if (error) {
-    console.error('UPLOAD ERROR:', error)
-    return { error }
   }
-
-  // 3. Get public URL from SAME bucket
-  const { data: imageData } = supabase.storage
-    .from('butuanlechon')
-    .getPublicUrl(filePath)
-
-  // 4. Save URL to user metadata
-  return await updateUserInformation({
-    image_url: imageData.publicUrl
-  })
-}
-
 
   return {
     userData,
@@ -144,6 +141,6 @@ export const useAuthUserStore = defineStore('authUser', () => {
     getAuthPages,
     getAuthBranchIds,
     updateUserInformation,
-    updateUserImage
+    updateUserImage,
   }
 })
