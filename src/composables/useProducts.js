@@ -45,11 +45,16 @@ export function useProducts() {
 
   const addProduct = (product, customDate = null) => {
     const purchaseDate = customDate || todayKey()
+
+    // Calculate totalPrice if not provided
+    const totalPrice = product.totalPrice || product.quantity * product.unitPrice
+
     const newProduct = {
       ...product,
       id: nextId++,
       purchaseDate: purchaseDate,
       initialQuantity: product.quantity,
+      totalPrice: totalPrice, // Ensure totalPrice is set
     }
 
     products.value.push(newProduct)
@@ -58,7 +63,7 @@ export function useProducts() {
     if (!dailyReports.value[purchaseDate]) {
       dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
     }
-    dailyReports.value[purchaseDate].expenses += newProduct.totalPrice
+    dailyReports.value[purchaseDate].expenses += totalPrice
   }
 
   const updateProduct = (updated) => {
@@ -67,15 +72,19 @@ export function useProducts() {
       const oldProduct = products.value[index]
       const today = todayKey()
 
+      // Recalculate totalPrice if needed
+      const newTotalPrice = updated.totalPrice || updated.quantity * updated.unitPrice
+
       if (oldProduct.purchaseDate === today) {
         const report = getTodayReport()
         report.expenses -= oldProduct.totalPrice
-        report.expenses += updated.totalPrice
+        report.expenses += newTotalPrice
       }
 
       products.value[index] = {
         ...updated,
         purchaseDate: oldProduct.purchaseDate,
+        totalPrice: newTotalPrice,
       }
     }
   }
