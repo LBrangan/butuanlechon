@@ -7,7 +7,10 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import Chart from 'chart.js/auto'
 
 const router = useRouter()
+
 const authStore = useAuthUserStore()
+
+
 
 // Get all product state and methods from composable
 const {
@@ -242,6 +245,7 @@ const handleLogout = () => router.push('/')
                   variant="outlined"
                   :model-value="todayReport.sales"
                   @update:model-value="handleSalesInput"
+                  @keypress="isNumber($event)"
                 />
               </v-col>
 

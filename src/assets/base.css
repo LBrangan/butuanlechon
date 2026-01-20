@@ -127,7 +127,7 @@ body {
 
 .v-list-item:hover {
   background: rgba(139, 0, 0, 0.3) !important;
-  transform: translateX(4px);
+
 }
 
 .v-list-item--active {
