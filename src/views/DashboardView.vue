@@ -245,7 +245,7 @@ const handleLogout = () => router.push('/')
                   variant="outlined"
                   :model-value="todayReport.sales"
                   @update:model-value="handleSalesInput"
-                  @keypress="isNumber($event)"
+
                 />
               </v-col>
 
