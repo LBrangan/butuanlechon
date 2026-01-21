@@ -35,10 +35,14 @@ onMounted(async () => {
 <template>
   <v-app>
     <!-- Navigation Drawer - shown when logged in -->
-    <NavigationDrawer v-if="isLoggedIn" />
+    <keep-alive>
+      <NavigationDrawer v-if="isLoggedIn" />
+    </keep-alive>
 
     <!-- Top Profile Header -->
-    <TopProfileHeader v-if="isLoggedIn" />
+    <keep-alive>
+      <TopProfileHeader v-if="isLoggedIn" />
+    </keep-alive>
 
     <!-- Main Content -->
     <v-main>
