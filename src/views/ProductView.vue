@@ -197,7 +197,12 @@ const submitDeduct = () => {
               min-height="550"
             >
               <h2 class="section-title mb-6">Product Inventory List</h2>
+
+
+
               <v-divider class="section-divider mb-10"></v-divider>
+
+
 
               <!-- Product Table -->
               <v-table class="product-table" v-if="products.length > 0">
@@ -206,7 +211,6 @@ const submitDeduct = () => {
                     <th class="table-header">Product Name</th>
                     <th class="table-header">Purchase Date</th>
                     <th class="table-header">Quantity</th>
-                    <th class="table-header">Unit</th>
                     <th class="table-header">Price/Unit</th>
                     <th class="table-header">Total Price</th>
                     <th class="table-header">Actions</th>
@@ -224,9 +228,6 @@ const submitDeduct = () => {
                     </td>
                     <td class="pa-5">
                       <span class="product-data">{{ product.quantity }}</span>
-                    </td>
-                    <td class="pa-5">
-                      <span class="product-data">{{ product.unit }}</span>
                     </td>
                     <td class="pa-5">
                       <span class="product-price">₱{{ product.price.toLocaleString() }}</span>
@@ -320,17 +321,6 @@ const submitDeduct = () => {
                     variant="outlined"
                     class="form-field"
                     prepend-inner-icon="mdi-counter"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="productForm.unit"
-                    label="Unit"
-                    :rules="unitRules"
-                    variant="outlined"
-                    class="form-field"
-                    prepend-inner-icon="mdi-scale"
                   ></v-text-field>
                 </v-col>
 

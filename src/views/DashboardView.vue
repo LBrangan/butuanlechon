@@ -7,7 +7,10 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import Chart from 'chart.js/auto'
 
 const router = useRouter()
+
 const authStore = useAuthUserStore()
+
+
 
 // Get all product state and methods from composable
 const {
@@ -37,7 +40,7 @@ const stats = computed(() => [
   {
     title: 'Total Products',
     value: totalProducts.value,
-    clickable: false,
+    clickable: true,
     icon: 'mdi-package-variant',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   },
@@ -65,6 +68,14 @@ const formattedDate = computed(() => {
 const openLowStockDialog = () => {
   if (lowStockProducts.value.length > 0) {
     lowStockDialog.value = true
+  }
+}
+
+const handleStatClick = (stat) => {
+  if (stat.title === 'Total Products') {
+    router.push('/daily-usage')
+  } else if (stat.title === 'Low Stock Items') {
+    openLowStockDialog()
   }
 }
 
@@ -208,7 +219,7 @@ const handleLogout = () => router.push('/')
                 elevation="4"
                 height="180"
                 :style="{ cursor: stat.clickable ? 'pointer' : 'default' }"
-                @click="stat.clickable ? openLowStockDialog() : null"
+                @click="stat.clickable ? handleStatClick(stat) : null"
               >
                 <div class="d-flex justify-space-between align-center h-100">
                   <div>
@@ -242,6 +253,7 @@ const handleLogout = () => router.push('/')
                   variant="outlined"
                   :model-value="todayReport.sales"
                   @update:model-value="handleSalesInput"
+
                 />
               </v-col>
 
