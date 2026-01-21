@@ -75,18 +75,6 @@ const drawerItems = computed(() => [
       </v-app-bar-title>
 
 
-
-      <!-- Search Bar -->
-      <v-text-field
-        v-model="searchQuery"
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        variant="outlined"
-        density="compact"
-        hide-details
-        class="search-field ml-auto"
-      ></v-text-field>
-
       <!-- Profile Menu -->
       <v-menu min-width="280px" rounded offset="5" transition="scale-transition">
         <template #activator="{ props }">

@@ -30,7 +30,11 @@ onMounted(checkAuth)
       <v-list-item class="mx-6 my-5">
         <template v-slot:prepend>
           <v-avatar size="160">
-            <v-img src="/images/bl.png" alt="BL & SG Logo" />
+            <v-img
+            src="/images/bl.png"
+            alt="BL & SG Logo"
+
+            />
           </v-avatar>
         </template>
       </v-list-item>
@@ -50,15 +54,6 @@ onMounted(checkAuth)
         />
       </v-list>
 
-      <template #append>
-        <v-list-item
-          class="ma-2 nav-item"
-          link
-          nav
-          prepend-icon="mdi-cog-outline"
-          title="Settings"
-        />
-      </template>
     </v-navigation-drawer>
   </template>
 </template>
@@ -104,7 +99,7 @@ onMounted(checkAuth)
 
 .nav-item:hover {
   background: rgba(139, 0, 0, 0.35) !important;
-  transform: translateX(6px);
+
 }
 
 .nav-item-active {
