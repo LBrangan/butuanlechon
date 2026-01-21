@@ -197,7 +197,12 @@ const submitDeduct = () => {
               min-height="550"
             >
               <h2 class="section-title mb-6">Product Inventory List</h2>
+
+
+
               <v-divider class="section-divider mb-10"></v-divider>
+
+
 
               <!-- Product Table -->
               <v-table class="product-table" v-if="products.length > 0">

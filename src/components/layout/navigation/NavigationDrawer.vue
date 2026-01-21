@@ -30,7 +30,11 @@ onMounted(checkAuth)
       <v-list-item class="mx-6 my-5">
         <template v-slot:prepend>
           <v-avatar size="160">
-            <v-img src="/images/bl.png" alt="BL & SG Logo" />
+            <v-img
+            src="/images/bl.png"
+            alt="BL & SG Logo"
+
+            />
           </v-avatar>
         </template>
       </v-list-item>
