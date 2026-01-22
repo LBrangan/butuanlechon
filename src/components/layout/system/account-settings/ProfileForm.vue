@@ -10,11 +10,11 @@ const authStore = useAuthUserStore()
 
 // Load Variables
 const formDataDefault = {
-  firstname: authStore.userData.firstname,
-  middlename: authStore.userData.middlename,
-  lastname: authStore.userData.lastname,
-  email: authStore.userData.email,
-  phone: authStore.userData.phone
+  firstname: authStore.userData?.firstname || '',
+  middlename: authStore.userData?.middlename || '',
+  lastname: authStore.userData?.lastname || '',
+  email: authStore.userData?.email || '',
+  phone: authStore.userData?.phone || ''
 }
 const formData = ref({
   ...formDataDefault
