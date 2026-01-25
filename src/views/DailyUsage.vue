@@ -1,11 +1,15 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useProducts } from '@/composables/useProducts'
 
 const { products, lowStockProducts, deductMultipleProducts } = useProducts()
 
 // reactive object to store daily usage inputs
 const usage = reactive({})
+
+// Alert dialog state
+const showAlert = ref(false)
+const alertMessage = ref('')
 
 // submit function
 const submitUsage = () => {
@@ -21,7 +25,8 @@ const submitUsage = () => {
   }
 
   if (!usageArray.length) {
-    alert('Please input usage before submitting')
+    alertMessage.value = 'Please input usage before submitting'
+    showAlert.value = true
     return
   }
 
@@ -111,6 +116,26 @@ const submitUsage = () => {
         </v-card-actions>
       </v-card>
     </v-container>
+
+    <!-- Alert Dialog -->
+    <v-dialog v-model="showAlert" max-width="400px">
+      <v-card>
+        <v-card-title class="text-h6 bg-red-darken-2 text-white">
+          <v-icon start color="white">mdi-alert-circle</v-icon>
+          Validation Error
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text class="pa-6">
+          <p class="mb-0">{{ alertMessage }}</p>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn color="red-darken-2" variant="elevated" @click="showAlert = false">
+            OK
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
