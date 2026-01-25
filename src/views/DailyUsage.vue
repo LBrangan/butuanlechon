@@ -102,7 +102,7 @@ const submitUsage = () => {
         <v-card-actions class="justify-end pa-6">
           <v-btn
             color="red-darken-2"
-            size="large"
+            size="medium"
             prepend-icon="mdi-minus-circle-outline"
             @click="submitUsage"
           >

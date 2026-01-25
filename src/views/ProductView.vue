@@ -132,9 +132,15 @@ const confirmDelete = () => {
 }
 
 //Deduct
-const openDeductDialog = () => {
+const openDeductDialog = async () => {
   selectedProductId.value = null
   deductQuantity.value = 0
+  try {
+    await fetchProducts() // Fetch fresh product data
+    console.log('Products loaded:', products.value)
+  } catch (error) {
+    console.error('Error fetching products:', error)
+  }
   deductDialog.value = true
 }
 
@@ -425,12 +431,13 @@ const submitDeduct = () => {
             <v-form>
               <v-row>
                 <v-col cols="12">
+                  <label class="text-body2 font-weight-bold mb-2 d-block">Select Product to Deduct</label>
                   <v-select
                     v-model="selectedProductId"
                     :items="products"
-                    item-text="name"
+                    item-title="name"
                     item-value="id"
-                    label="Select Product"
+                    label="Choose a product from inventory"
                     variant="outlined"
                     class="form-field"
                     prepend-inner-icon="mdi-food"
@@ -438,13 +445,20 @@ const submitDeduct = () => {
                     hide-details="auto"
                     required
                   >
-                    <template #item="{ item }">
-                      <div class="d-flex justify-space-between">
-                        <span>{{ item.name }}</span>
-                        <span class="text-grey">{{ item.quantity }} {{ item.unit }}</span>
-                      </div>
+                    <template #item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :subtitle="`${item.raw.quantity} ${item.raw.unit}`"
+                      >
+                      </v-list-item>
+                    </template>
+                    <template #selection="{ item }">
+                      <span v-if="item.raw">{{ item.raw.name }} ({{ item.raw.quantity }} {{ item.raw.unit }})</span>
                     </template>
                   </v-select>
+                  <div class="text-caption text-grey mt-2">
+                    {{ products.length }} product(s) available
+                  </div>
                 </v-col>
 
                 <v-col cols="6">

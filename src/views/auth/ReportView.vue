@@ -1,7 +1,12 @@
 <script setup>
-import { useProducts } from '@/composables/useProducts'
+import { onMounted } from 'vue'
+import { useReportsStore } from '@/composables/reports'
 
-const { allReports } = useProducts()
+const reportsStore = useReportsStore()
+
+onMounted(() => {
+  reportsStore.getDailyReports()
+})
 </script>
 
 <template>
@@ -20,8 +25,8 @@ const { allReports } = useProducts()
         </thead>
 
         <tbody>
-          <tr v-for="r in allReports" :key="r.date">
-            <td>{{ r.date }}</td>
+          <tr v-for="r in reportsStore.dailyReports" :key="r.report_date">
+            <td>{{ r.report_date }}</td>
             <td>₱{{ r.sales.toLocaleString() }}</td>
             <td>₱{{ r.expenses.toLocaleString() }}</td>
             <td :style="{ color: r.profit >= 0 ? 'green' : 'red' }">

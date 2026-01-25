@@ -3,7 +3,6 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useProducts } from '@/composables/useProducts'
-import { useInventory } from '@/composables/useInventory'
 import Chart from 'chart.js/auto'
 
 const router = useRouter()
@@ -98,9 +97,9 @@ const handleSalesInput = (value) => {
 }
 
 // End day handler
-const endToday = () => {
+const endToday = async () => {
   if (confirm('Are you sure you want to end this day and advance to the next?')) {
-    endDay()
+    await endDay()
   }
 }
 

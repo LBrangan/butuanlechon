@@ -237,7 +237,34 @@ export function useProducts() {
 
   /* ===== END DAY / REPORTS ===== */
 
-  const endDay = () => {
+  const saveDailyReport = async () => {
+    const today = todayKey()
+    const report = getTodayReport()
+
+    try {
+      const { data, error } = await supabase
+        .from('daily_reports')
+        .insert([
+          {
+            report_date: today,
+            sales: report.sales,
+            expenses: report.expenses,
+            profit: report.sales - report.expenses,
+          },
+        ])
+        .select()
+
+      if (error) throw error
+
+      console.log('Daily report saved successfully:', data)
+      return data
+    } catch (error) {
+      console.error('Error saving daily report:', error)
+      // Continue even if save fails - don't block the day advancement
+    }
+  }
+
+  const endDay = async () => {
     const today = todayKey()
 
     console.log('=== DAY ENDED ===')
@@ -245,6 +272,9 @@ export function useProducts() {
     console.log('Sales:', todayReport.value.sales)
     console.log('Expenses:', todayReport.value.expenses)
     console.log('Profit:', profitToday.value)
+
+    // Save the daily report to database
+    await saveDailyReport()
 
     // Advance to next day
     const nextDate = new Date(today)

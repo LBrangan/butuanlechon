@@ -1,6 +1,6 @@
 import { getAccumulatedNumber, getISODate, getPreciseNumber, prepareDate } from '@/utils/helpers'
 import { supabase, tablePagination, tableSearch } from '@/utils/supabase'
-import { useAuthUserStore } from './authUser'
+import { useAuthUserStore } from '@/stores/authUser'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -12,12 +12,14 @@ export const useReportsStore = defineStore('reports', () => {
   const productsReport = ref([])
   const stocksReport = ref([])
   const salesReport = ref([])
+  const dailyReports = ref([])
 
   // Reset State Action
   function $reset() {
     productsReport.value = []
     stocksReport.value = []
     salesReport.value = []
+    dailyReports.value = []
   }
 
   // Retrieve Products Report
@@ -193,13 +195,33 @@ export const useReportsStore = defineStore('reports', () => {
     return query
   }
 
+  // Retrieve Daily Reports
+  async function getDailyReports() {
+    try {
+      const { data, error } = await supabase
+        .from('daily_reports')
+        .select('*')
+        .order('report_date', { ascending: false })
+
+      if (error) throw error
+
+      dailyReports.value = data || []
+      return dailyReports.value
+    } catch (error) {
+      console.error('Error fetching daily reports:', error)
+      return []
+    }
+  }
+
   return {
     productsReport,
     stocksReport,
     salesReport,
+    dailyReports,
     $reset,
     getProductsReport,
     getStocksReport,
-    getSalesReport
+    getSalesReport,
+    getDailyReports
   }
 })
