@@ -64,6 +64,10 @@ const router = createRouter({
       path: '/account/settings',
       name: 'account-settings',
       component: AccountSettings,
+      meta: {
+        requiresAuth: true,
+        role: 'User',
+      },
     }
 
   ],

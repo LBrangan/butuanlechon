@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthUserStore } from '@/stores/authUser'
 import { useProducts } from '@/composables/useProducts'
+import { useInventory } from '@/composables/useInventory'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import Chart from 'chart.js/auto'
 

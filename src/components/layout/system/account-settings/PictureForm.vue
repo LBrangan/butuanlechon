@@ -20,7 +20,7 @@ const formAction = ref({
   ...formActionDefault
 })
 const refVForm = ref()
-const imgPreview = ref(authStore.userData.image_url || '/images/img-profile.png')
+const imgPreview = ref(authStore.userData?.image_url || '/images/img-profile.png')
 
 // Function to handle file change and show image preview
 const onPreview = async (event) => {
@@ -33,7 +33,7 @@ const onPreview = async (event) => {
 
 // Function to reset preview if file-input clear is clicked
 const onPreviewReset = () => {
-  imgPreview.value = authStore.userData.image_url || '/images/img-profile.png'
+  imgPreview.value = authStore.userData?.image_url || '/images/img-profile.png'
 }
 
 // Submit Functionality
