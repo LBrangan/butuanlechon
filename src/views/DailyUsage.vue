@@ -111,7 +111,7 @@ const submitUsage = () => {
             prepend-icon="mdi-minus-circle-outline"
             @click="submitUsage"
           >
-            Deduct Daily Usage
+            Deduct Product
           </v-btn>
         </v-card-actions>
       </v-card>
