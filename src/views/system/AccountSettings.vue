@@ -4,10 +4,11 @@ import PictureForm from '@/components/layout/system/account-settings/PictureForm
 import ProfileForm from '@/components/layout/system/account-settings/ProfileForm.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
-import { ref } from 'vue'
+
 
 // Use Pinia Store
 const authStore = useAuthUserStore()
+
 </script>
 
 <template>
@@ -28,14 +29,14 @@ const authStore = useAuthUserStore()
 
           <template #subtitle>
             <p class="ms-4 text-wrap">
-              Edit profile information, update profile picture and change password.
+              Edit profile information, update profile picture and change .
             </p>
           </template>
         </v-card>
 
         <v-row>
           <v-col cols="12" lg="4">
-            <v-card>
+            <v-card v-if="authStore.userData">
               <v-card-text>
                 <v-img
                   width="50%"
@@ -81,7 +82,7 @@ const authStore = useAuthUserStore()
             </v-card>
 
             <v-card
-              v-if="authStore.userRole === 'Administrator'"
+
               class="mb-5"
               title="Change Password"
             >
