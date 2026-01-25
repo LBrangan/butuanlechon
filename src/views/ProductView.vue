@@ -148,13 +148,9 @@ const submitDeduct = () => {
 </script>
 
 <template>
-  <v-app>
-    <!-- Navigation Drawer -->
-    <NavigationDrawer @logout="handleLogout" />
-
+  <div class="app-background">
     <!-- Main Content -->
-    <v-main class="app-background">
-      <v-container class="pa-4 pa-md-8">
+    <v-container class="pa-4 pa-md-8">
         <!-- Header -->
         <v-row class="mb-8 header-container pa-4 pa-md-8 rounded-xl">
           <v-col
@@ -491,8 +487,8 @@ const submitDeduct = () => {
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-main>
-  </v-app>
+
+  </div>
 </template>
 
 <style scoped>
