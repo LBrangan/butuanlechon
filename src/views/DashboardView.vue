@@ -28,6 +28,7 @@ const {
 // Local state
 const lowStockDialog = ref(false)
 const datePickerDialog = ref(false)
+const endDayDialog = ref(false)
 const tempDate = ref(null)
 let chartInstance = null
 
@@ -97,10 +98,13 @@ const handleSalesInput = (value) => {
 }
 
 // End day handler
-const endToday = async () => {
-  if (confirm('Are you sure you want to end this day and advance to the next?')) {
-    await endDay()
-  }
+const openEndDayDialog = () => {
+  endDayDialog.value = true
+}
+
+const confirmEndDay = async () => {
+  endDayDialog.value = false
+  await endDay()
 }
 
 // Chart setup
@@ -308,7 +312,7 @@ const handleLogout = () => router.push('/')
             variant="elevated"
             size="large"
             block
-            @click="endToday"
+            @click="openEndDayDialog"
           >
             <v-icon start>mdi-calendar-check</v-icon>
             End Day & Advance to Next
@@ -367,6 +371,33 @@ const handleLogout = () => router.push('/')
                 <v-btn text @click="datePickerDialog = false">Cancel</v-btn>
                 <v-btn color="red-darken-2" variant="elevated" @click="confirmDateChange">
                   Confirm
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <!-- End Day Confirmation Dialog -->
+          <v-dialog v-model="endDayDialog" max-width="400px">
+            <v-card>
+              <v-card-title class="text-h6 bg-red-darken-2 text-white">
+                <v-icon start color="white">mdi-calendar-check</v-icon>
+                End Day
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-card-text class="pa-6">
+                <p class="mb-0">
+                  <strong>Are you sure you want to end this day and advance to the next?</strong>
+                </p>
+                <p class="text-caption text-grey mt-2 mb-0">
+                  This will save today's sales report (Sales: ₱{{ todayReport.sales.toLocaleString() }} | Expenses: ₱{{ todayReport.expenses.toLocaleString() }})
+                </p>
+              </v-card-text>
+              <v-card-actions class="pa-4">
+                <v-spacer></v-spacer>
+                <v-btn text @click="endDayDialog = false">Cancel</v-btn>
+                <v-btn color="red-darken-2" variant="elevated" @click="confirmEndDay">
+                  <v-icon start>mdi-check</v-icon>
+                  Confirm End Day
                 </v-btn>
               </v-card-actions>
             </v-card>
