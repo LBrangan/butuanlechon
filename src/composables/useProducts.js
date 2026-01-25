@@ -1,9 +1,9 @@
 import { ref, computed } from 'vue'
+import { supabase } from '@/utils/supabase'
 
 /* ================= GLOBAL STATE ================= */
 
 const products = ref([])
-let nextId = 1
 
 // SIMULATED DATE - para testable ang end of day
 const currentSimulatedDate = ref(new Date().toISOString().split('T')[0])
@@ -43,76 +43,183 @@ const todayProducts = computed(() => {
 export function useProducts() {
   /* ===== PRODUCTS ===== */
 
-  const addProduct = (product, customDate = null) => {
-    const purchaseDate = customDate || todayKey()
+  // Fetch all inventory from Supabase
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('inventory')
+        .select('*')
+        .order('item_name', { ascending: true })
 
-    // Calculate totalPrice if not provided
-    const totalPrice = product.totalPrice || product.quantity * product.unitPrice
+      if (error) throw error
 
-    const newProduct = {
-      ...product,
-      id: nextId++,
-      purchaseDate: purchaseDate,
-      initialQuantity: product.quantity,
-      totalPrice: totalPrice, // Ensure totalPrice is set
+      // Map Supabase columns to local product structure
+      const mappedData = (data || []).map((item) => ({
+        id: item.inv_id,
+        name: item.item_name,
+        quantity: item.quantity,
+        unit: item.unit,
+        price: item.price,
+        totalPrice: item.quantity * item.price,
+        purchaseDate: currentSimulatedDate.value,
+        initialQuantity: item.quantity,
+      }))
+
+      products.value = mappedData
+      return mappedData
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      return []
     }
-
-    products.value.push(newProduct)
-
-    // Add expenses to the SPECIFIC date's report
-    if (!dailyReports.value[purchaseDate]) {
-      dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
-    }
-    dailyReports.value[purchaseDate].expenses += totalPrice
   }
 
-  const updateProduct = (updated) => {
-    const index = products.value.findIndex((p) => p.id === updated.id)
-    if (index !== -1) {
-      const oldProduct = products.value[index]
+  const addProduct = async (product, customDate = null) => {
+    try {
+      const purchaseDate = customDate || todayKey()
+      const totalPrice = product.totalPrice || product.quantity * product.price
+
+      const { data, error } = await supabase
+        .from('inventory')
+        .insert([
+          {
+            item_name: product.name,
+            quantity: product.quantity,
+            unit: product.unit || 'piece(s)',
+            price: product.price,
+          },
+        ])
+        .select()
+
+      if (error) throw error
+
+      // Add to local state
+      if (data && data.length > 0) {
+        const newProduct = {
+          id: data[0].inv_id,
+          name: data[0].item_name,
+          quantity: data[0].quantity,
+          unit: data[0].unit,
+          price: data[0].price,
+          totalPrice: totalPrice,
+          purchaseDate: purchaseDate,
+          initialQuantity: data[0].quantity,
+        }
+        products.value.push(newProduct)
+
+        // Add expenses to the SPECIFIC date's report
+        if (!dailyReports.value[purchaseDate]) {
+          dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
+        }
+        dailyReports.value[purchaseDate].expenses += totalPrice
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error adding product:', error)
+    }
+  }
+
+  const updateProduct = async (updated) => {
+    try {
+      const oldProduct = products.value.find((p) => p.id === updated.id)
       const today = todayKey()
 
-      // Recalculate totalPrice if needed
-      const newTotalPrice = updated.totalPrice || updated.quantity * updated.unitPrice
+      const newTotalPrice = updated.totalPrice || updated.quantity * updated.price
 
-      if (oldProduct.purchaseDate === today) {
+      // Update in Supabase
+      const { data, error } = await supabase
+        .from('inventory')
+        .update({
+          item_name: updated.name,
+          quantity: updated.quantity,
+          unit: updated.unit,
+          price: updated.price,
+        })
+        .eq('inv_id', updated.id)
+        .select()
+
+      if (error) throw error
+
+      // Update local state
+      const index = products.value.findIndex((p) => p.id === updated.id)
+      if (index !== -1) {
+        if (oldProduct && oldProduct.purchaseDate === today) {
+          const report = getTodayReport()
+          report.expenses -= oldProduct.totalPrice
+          report.expenses += newTotalPrice
+        }
+
+        products.value[index] = {
+          ...updated,
+          purchaseDate: oldProduct?.purchaseDate,
+          totalPrice: newTotalPrice,
+        }
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error updating product:', error)
+    }
+  }
+
+  const deleteProduct = async (id) => {
+    try {
+      const product = products.value.find((p) => p.id === id)
+      const today = todayKey()
+
+      // Delete from Supabase
+      const { error } = await supabase.from('inventory').delete().eq('inv_id', id)
+
+      if (error) throw error
+
+      // Update local state and reports
+      if (product && product.purchaseDate === today) {
         const report = getTodayReport()
-        report.expenses -= oldProduct.totalPrice
-        report.expenses += newTotalPrice
+        report.expenses -= product.totalPrice
       }
 
-      products.value[index] = {
-        ...updated,
-        purchaseDate: oldProduct.purchaseDate,
-        totalPrice: newTotalPrice,
-      }
+      products.value = products.value.filter((p) => p.id !== id)
+    } catch (error) {
+      console.error('Error deleting product:', error)
     }
   }
 
-  const deleteProduct = (id) => {
-    const product = products.value.find((p) => p.id === id)
-    const today = todayKey()
+  const deductProduct = async (productId, qty) => {
+    try {
+      const product = products.value.find((p) => p.id === productId)
+      if (!product || qty <= 0) return
 
-    if (product && product.purchaseDate === today) {
-      const report = getTodayReport()
-      report.expenses -= product.totalPrice
+      const newQuantity = Math.max(0, product.quantity - qty)
+
+      // Update in Supabase
+      const { data, error } = await supabase
+        .from('inventory')
+        .update({ quantity: newQuantity })
+        .eq('inv_id', productId)
+        .select()
+
+      if (error) throw error
+
+      // Update local state
+      product.quantity = newQuantity
+
+      return data
+    } catch (error) {
+      console.error('Error deducting product:', error)
     }
-
-    products.value = products.value.filter((p) => p.id !== id)
   }
 
-  const deductProduct = (productId, qty) => {
-    const product = products.value.find((p) => p.id === productId)
-    if (!product || qty <= 0) return
-    product.quantity -= qty
-  }
-
-  const deductMultipleProducts = (usageArray) => {
-    usageArray.forEach((u) => {
-      const product = products.value.find((p) => p.id === u.productId)
-      if (!product || u.quantity <= 0) return
-      product.quantity -= u.quantity
-    })
+  const deductMultipleProducts = async (usageArray) => {
+    try {
+      for (const u of usageArray) {
+        const product = products.value.find((p) => p.id === u.productId)
+        if (product && u.quantity > 0) {
+          await deductProduct(u.productId, u.quantity)
+        }
+      }
+    } catch (error) {
+      console.error('Error deducting multiple products:', error)
+    }
   }
 
   /* ===== SALES ===== */
@@ -166,6 +273,7 @@ export function useProducts() {
     currentSimulatedDate, // expose para makita sa UI
 
     // product actions
+    fetchProducts,
     addProduct,
     updateProduct,
     deleteProduct,

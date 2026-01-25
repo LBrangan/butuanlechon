@@ -1,7 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { ref, computed } from 'vue'
-import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
+import { ref, computed, onMounted } from 'vue'
 import { useProducts } from '@/composables/useProducts.js'
 
 const router = useRouter()
@@ -14,7 +13,13 @@ const {
   deductProduct,
   lowStockProducts,
   currentSimulatedDate,
+  fetchProducts,
 } = useProducts()
+
+// Fetch products on component mount
+onMounted(async () => {
+  await fetchProducts()
+})
 
 // Reactive data
 const drawer = ref(true)

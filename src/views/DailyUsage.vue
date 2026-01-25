@@ -1,7 +1,6 @@
 <script setup>
 import { reactive } from 'vue'
 import { useProducts } from '@/composables/useProducts'
-import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 
 const { products, lowStockProducts, deductMultipleProducts } = useProducts()
 
@@ -34,11 +33,8 @@ const submitUsage = () => {
 </script>
 
 <template>
-  <!-- NO <v-app> HERE — sidebar handled by Dashboard layout -->
-  <NavigationDrawer />
-
-  <v-main>
-    <v-container fluid class="pa-6 daily-bg">
+  <div class="daily-bg">
+    <v-container fluid class="pa-6">
       <!-- Page Header -->
       <v-card class="mb-6 header-card" elevation="6">
         <v-card-title class="header-title">
@@ -115,13 +111,14 @@ const submitUsage = () => {
         </v-card-actions>
       </v-card>
     </v-container>
-  </v-main>
+  </div>
 </template>
 
 <style scoped>
 .daily-bg {
   background: #f7f7f7;
-  min-height: 100%;
+  min-height: 100vh;
+  display: block;
 }
 
 /* Header Card */

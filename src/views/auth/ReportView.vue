@@ -1,14 +1,11 @@
 <script setup>
 import { useProducts } from '@/composables/useProducts'
-import NavigationDrawer from '@/components/layout/navigation/NavigationDrawer.vue'
 
 const { allReports } = useProducts()
 </script>
 
 <template>
-  <v-main class="app-background">
-    <NavigationDrawer />
-
+  <div class="app-background">
     <v-container class="pa-8">
       <h1 class="mb-6">Daily Reports</h1>
 
@@ -34,7 +31,7 @@ const { allReports } = useProducts()
         </tbody>
       </v-table>
     </v-container>
-  </v-main>
+  </div>
 </template>
 
 <style scoped>
