@@ -34,7 +34,6 @@ export function useRegister() {
         data: {
           firstname: formData.value.firstname,
           lastname: formData.value.lastname,
-          is_admin: false,
           role: 'Administrator' // If role based; just change the string based on role
         }
       }

@@ -1,4 +1,4 @@
-import { supabase } from '@/supabase'
+import { supabase } from '@/utils/supabase'
 import { useAuthUserStore } from '@/stores/authUser'
 
 export function useInventory() {
