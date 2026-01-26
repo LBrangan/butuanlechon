@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthUserStore } from '@/stores/authUser'
 
 // Views
 import ReportView from '@/views/auth/ReportView.vue'
@@ -71,6 +72,33 @@ const router = createRouter({
     }
 
   ],
+})
+
+// Route guard for authentication
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthUserStore()
+
+  // Skip guard on initial route to allow login/register
+  if (from.name === undefined && !to.meta.requiresAuth) {
+    next()
+    return
+  }
+
+  const isAuthenticated = await authStore.isAuthenticated()
+
+  // If route requires auth and user is not authenticated
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/')
+    return
+  }
+
+  // If route is guest-only and user is authenticated
+  if (to.meta.guestOnly && isAuthenticated) {
+    next('/dashboard')
+    return
+  }
+
+  next()
 })
 
 export default router

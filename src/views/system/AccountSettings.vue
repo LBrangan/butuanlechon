@@ -2,7 +2,6 @@
 import PasswordForm from '@/components/layout/system/account-settings/PasswordForm.vue'
 import PictureForm from '@/components/layout/system/account-settings/PictureForm.vue'
 import ProfileForm from '@/components/layout/system/account-settings/ProfileForm.vue'
-import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthUserStore } from '@/stores/authUser'
 
 
@@ -12,8 +11,6 @@ const authStore = useAuthUserStore()
 </script>
 
 <template>
-  <AppLayout>
-    <template #content>
       <div class="app-background">
         <v-container>
           <v-card class="mb-5">
@@ -94,8 +91,6 @@ const authStore = useAuthUserStore()
         </v-row>
       </v-container>
     </div>
-    </template>
-  </AppLayout>
 </template>
 
 <style scoped>
