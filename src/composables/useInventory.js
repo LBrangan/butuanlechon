@@ -7,7 +7,8 @@ export function useInventory() {
   const fetchInventory = async () => {
     return await supabase
       .from('inventory')
-      .select(`
+      .select(
+        `
         inv_id,
         item_name,
         quantity,
@@ -15,7 +16,8 @@ export function useInventory() {
         expiry_date,
         categories ( name ),
         users ( firstname, lastname )
-      `)
+      `,
+      )
       .order('date_added', { ascending: false })
   }
 
@@ -27,20 +29,17 @@ export function useInventory() {
       unit: item.unit,
       quantity: item.quantity,
       expiry_date: item.expiry_date,
-      added_by: user.value.id
+      added_by: user.value.id,
     })
   }
 
   const updateQuantity = async (inv_id, qty) => {
-    return await supabase
-      .from('inventory')
-      .update({ quantity: qty })
-      .eq('inv_id', inv_id)
+    return await supabase.from('inventory').update({ quantity: qty }).eq('inv_id', inv_id)
   }
 
   return {
     fetchInventory,
     addItem,
-    updateQuantity
+    updateQuantity,
   }
 }

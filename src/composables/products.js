@@ -63,7 +63,7 @@ export const useProductsStore = defineStore('products', () => {
     const { data } = await supabase
       .from('products')
       .select(
-        'name, stock_ins( qty_reweighed, branch_id, is_portion ), sale_products( qty, branch_id )'
+        'name, stock_ins( qty_reweighed, branch_id, is_portion ), sale_products( qty, branch_id )',
       )
       .eq('stock_ins.branch_id', branch_id)
       .eq('stock_ins.is_portion', true)
@@ -106,7 +106,7 @@ export const useProductsStore = defineStore('products', () => {
       .from('shirlix')
       .upload('products/' + getSlugText(filename) + '.png', file, {
         cacheControl: '3600',
-        upsert: true
+        upsert: true,
       })
 
     // If no error set data to userData state with the image_url
@@ -129,6 +129,6 @@ export const useProductsStore = defineStore('products', () => {
     addProduct,
     updateProduct,
     deleteProduct,
-    updateProductImage
+    updateProductImage,
   }
 })
