@@ -12,13 +12,13 @@ export function useRegister() {
     lastname: '',
     email: '',
     password: '',
-    password_confirmation: ''
+    password_confirmation: '',
   }
   const formData = ref({
-    ...formDataDefault
+    ...formDataDefault,
   })
   const formAction = ref({
-    ...formActionDefault
+    ...formActionDefault,
   })
   const refVForm = ref()
 
@@ -35,9 +35,9 @@ export function useRegister() {
           firstname: formData.value.firstname,
           lastname: formData.value.lastname,
           is_admin: true, // If role based; just change the boolean based on role
-          role: 'Administrator' // If role based; just change the string based on role
-        }
-      }
+          role: 'Administrator', // If role based; just change the string based on role
+        },
+      },
     })
 
     if (error) {
