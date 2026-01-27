@@ -13,7 +13,6 @@ const { formData, formAction, refVForm, onFormSubmit } = useRegister()
 
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
-
 </script>
 
 <template>
@@ -80,14 +79,15 @@ const isPasswordConfirmVisible = ref(false)
     </v-card-text>
 
     <v-btn
-      class="mt-2"
+      class="mt-n2"
       variant="flat"
       size="large"
       rounded="lg"
       type="submit"
       block
       text="black"
-      color="#0D47A1"
+      prepend-icon="mdi-login"
+      color="red-darken-4"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
     >
