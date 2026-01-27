@@ -21,7 +21,7 @@ import RegisterForm from '@/components/auth/RegisterForm.vue'
                 <v-divider class="my-2"></v-divider>
                 <RegisterForm></RegisterForm>
 
-                <h5>
+                <h5 class="text-center mt-3">
                   Already have an account?
                   <router-link to="/" class="text-decoration-none">Sign in here</router-link>
                 </h5>

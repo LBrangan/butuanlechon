@@ -1,6 +1,5 @@
 <script setup>
-  import LoginForm from '@/components/auth/LoginForm.vue';
-
+import LoginForm from '@/components/auth/LoginForm.vue'
 </script>
 
 <template>
@@ -29,12 +28,12 @@
 
                 <v-divider class="my-5"></v-divider>
 
-                <h5 class="text-center">
+                <h5 class="text-center m mt-n5">
                   Don't have an account?
                   <router-link to="/register" class="text-decoration-none"
-                      >Register Here</router-link
-                    >
-                  </h5>
+                    >Register Here</router-link
+                  >
+                </h5>
               </v-card>
             </v-col>
           </v-row>

@@ -20,7 +20,7 @@ export const formActionDefault = {
   formProcess: false,
   formStatus: 200,
   formErrorMessage: '',
-  formSuccessMessage: ''
+  formSuccessMessage: '',
 }
 
 // 👉 Form Metrics
@@ -30,7 +30,7 @@ export const formDataMetrics = ['kg', 'L', 'm', 'piece(s)']
 export const tablePagination = (
   { page, itemsPerPage, sortBy },
   defaultColumn = 'id',
-  isAscending = true
+  isAscending = true,
 ) => {
   const [column, order] =
     sortBy && sortBy[0] ? [sortBy[0].key, sortBy[0].order === 'asc'] : [defaultColumn, isAscending]
@@ -52,5 +52,3 @@ export const tablePagination = (
 export const tableSearch = (search) => {
   return (search ||= '')
 }
-
-
