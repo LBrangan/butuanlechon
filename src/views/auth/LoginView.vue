@@ -6,7 +6,7 @@ import LoginForm from '@/components/auth/LoginForm.vue'
   <v-responsive>
     <v-app>
       <v-main>
-        <v-container fluid class="fill-height bg-blue-lighten-1 pa-0">
+        <v-container fluid class="fill-height pa-0">
           <v-row class="ma-0" no-gutters>
             <!-- Left side - Image -->
             <v-col cols="12" md="6" class="d-flex justify-center align-center pa-4 pa-md-8">
@@ -28,6 +28,7 @@ import LoginForm from '@/components/auth/LoginForm.vue'
                 subtitle="Inventory Management System"
                 max-width="500"
                 width="100%"
+                rounded="xl"
               >
                 <template v-slot:title>
                   <span class="font-weight-black text-h6 text-sm-h5"> BL & SG Restaurant </span>
@@ -58,6 +59,8 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 <style scoped>
 .fill-height {
   min-height: 100vh;
+  background-image: url('/images/LogInBG.png');
+  background-size: cover;
 }
 .hero-avatar {
   width: 70vw;
