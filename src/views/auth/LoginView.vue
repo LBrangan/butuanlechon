@@ -6,31 +6,43 @@ import LoginForm from '@/components/auth/LoginForm.vue'
   <v-responsive>
     <v-app>
       <v-main>
-        <v-container fluid class="fill-height bg-blue-lighten-1 d-flex flex-wrap">
-          <v-row class="justify-center">
-            <v-col cols="12" class="text-center">
-              <v-avatar size="180">
-                <v-img class :src="`/images/Background.png`" cover alt="logo"></v-img>
+        <v-container fluid class="fill-height bg-blue-lighten-1 pa-0">
+          <v-row class="ma-0" no-gutters>
+            <!-- Left side - Image -->
+            <v-col cols="12" md="6" class="d-flex justify-center align-center pa-4 pa-md-8">
+              <v-avatar class="hero-avatar elevation-4 floating">
+                <v-img src="/images/Background.png" cover alt="logo" />
               </v-avatar>
             </v-col>
 
-            <v-col cols="12" sm="8" md="6" lg="4">
+            <!-- Right side - Login Card -->
+            <v-col
+              cols="12"
+              sm="12"
+              md="6"
+              class="d-flex justify-center align-center pa-4 pa-sm-6 pa-md-8"
+            >
               <v-card
-                class="elevation-12 pa-4"
+                class="elevation-12 pa-4 pa-sm-6 pa-md-8"
                 prepend-icon="mdi-account"
                 subtitle="Inventory Management System"
+                max-width="500"
+                width="100%"
               >
                 <template v-slot:title>
-                  <span class="font-weight-black"> BL & SG Restaurant </span>
+                  <span class="font-weight-black text-h6 text-sm-h5"> BL & SG Restaurant </span>
                 </template>
 
                 <LoginForm></LoginForm>
 
-                <v-divider class="my-5"></v-divider>
+                <v-divider class="my-4 my-sm-5"></v-divider>
 
-                <h5 class="text-center m mt-n5">
+                <h5 class="text-center mt-n5 text-body-2 text-sm-body-1">
                   Don't have an account?
-                  <router-link to="/register" class="text-decoration-none"
+                  <router-link
+                    to="/register"
+                    color="red-darken-4"
+                    class="text-decoration-none text-red-darken-4"
                     >Register Here</router-link
                   >
                 </h5>
@@ -46,5 +58,26 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 <style scoped>
 .fill-height {
   min-height: 100vh;
+}
+.hero-avatar {
+  width: 70vw;
+  max-width: 350px;
+  height: 70vw;
+  max-height: 350px;
+}
+.floating {
+  animation: floatY 4s ease-in-out infinite;
+}
+
+@keyframes floatY {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 </style>
