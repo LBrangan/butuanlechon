@@ -29,7 +29,7 @@ export const useReportsStore = defineStore('reports', () => {
     let query = supabase
       .from('products')
       .select(
-        'id, name, image_url, description, stock_ins( qty, qty_reweighed, qty_metric, branch_id, is_segregated, is_portion, purchased_at ), sale_products( qty, branch_id, created_at )'
+        'id, name, image_url, description, stock_ins( qty, qty_reweighed, qty_metric, branch_id, is_segregated, is_portion, purchased_at ), sale_products( qty, branch_id, created_at )',
       )
       .order('name', { ascending: true })
 
@@ -59,26 +59,26 @@ export const useReportsStore = defineStore('reports', () => {
     const remappedData = data.map((product) => {
       const totalInventory = getAccumulatedNumber(
         product.stock_ins.filter(
-          (stock) => stock.purchased_at <= todayDate && !stock.is_segregated && !stock.is_portion
+          (stock) => stock.purchased_at <= todayDate && !stock.is_segregated && !stock.is_portion,
         ),
-        'qty'
+        'qty',
       )
       const totalStockIns = getAccumulatedNumber(
         product.stock_ins.filter((stock) => stock.purchased_at <= previousDate && stock.is_portion),
-        'qty_reweighed'
+        'qty_reweighed',
       )
       const totalSales = getAccumulatedNumber(
         product.sale_products.filter((sale) => getISODate(sale.created_at) <= previousDate),
-        'qty'
+        'qty',
       )
       // Stock in for the specified date
       const stockInDuringDate = getAccumulatedNumber(
         product.stock_ins.filter((stock) => stock.purchased_at === todayDate && stock.is_portion),
-        'qty_reweighed'
+        'qty_reweighed',
       )
       const stockSoldDuringDate = getAccumulatedNumber(
         product.sale_products.filter((sale) => getISODate(sale.created_at) === todayDate),
-        'qty'
+        'qty',
       )
       const qty_metric = product.stock_ins.length > 0 ? product.stock_ins[0].qty_metric : ''
 
@@ -92,9 +92,9 @@ export const useReportsStore = defineStore('reports', () => {
         stock_in: getPreciseNumber(stockInDuringDate),
         stock_sold: getPreciseNumber(stockSoldDuringDate),
         stock_remaining: getPreciseNumber(
-          totalStockIns - totalSales + stockInDuringDate - stockSoldDuringDate
+          totalStockIns - totalSales + stockInDuringDate - stockSoldDuringDate,
         ),
-        qty_metric
+        qty_metric,
       }
     })
 
@@ -158,7 +158,7 @@ export const useReportsStore = defineStore('reports', () => {
     let query = supabase
       .from('sales')
       .select(
-        '*, customers( customer ), branches( name ), sale_products( products(name, image_url), qty, discounted_price, unit_price, is_cash_discount, discount), customer_payments( payment, created_at )'
+        '*, customers( customer ), branches( name ), sale_products( products(name, image_url), qty, discounted_price, unit_price, is_cash_discount, discount), customer_payments( payment, created_at )',
       )
       .order(column, { ascending: order })
 
@@ -222,6 +222,6 @@ export const useReportsStore = defineStore('reports', () => {
     getProductsReport,
     getStocksReport,
     getSalesReport,
-    getDailyReports
+    getDailyReports,
   }
 })
