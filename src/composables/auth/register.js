@@ -34,10 +34,9 @@ export function useRegister() {
         data: {
           firstname: formData.value.firstname,
           lastname: formData.value.lastname,
-          is_admin: true, // If role based; just change the boolean based on role
-          role: 'Administrator', // If role based; just change the string based on role
-        },
-      },
+          role: 'Administrator' // If role based; just change the string based on role
+        }
+      }
     })
 
     if (error) {
