@@ -61,7 +61,7 @@ export function useProducts() {
         unit: item.unit,
         price: item.price,
         totalPrice: item.quantity * item.price,
-        purchaseDate: currentSimulatedDate.value,
+        purchaseDate: item.purchase_date || currentSimulatedDate.value,
         initialQuantity: item.quantity,
       }))
 
@@ -86,6 +86,7 @@ export function useProducts() {
             quantity: product.quantity,
             unit: product.unit || 'piece(s)',
             price: product.price,
+            purchase_date: purchaseDate,
           },
         ])
         .select()
