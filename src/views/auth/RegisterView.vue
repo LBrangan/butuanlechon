@@ -6,13 +6,14 @@ import RegisterForm from '@/components/auth/RegisterForm.vue'
   <v-responsive>
     <v-app>
       <v-main>
-        <v-container fluid class="fill-height bg-blue-lighten-1 d-flex flex-wrap">
+        <v-container fluid class="fill-height d-flex flex-wrap">
           <v-row class="justify-center">
             <v-col cols="12" sm="8" md="6" lg="4">
               <v-card
                 class="elevation-12 pa-4"
                 prepend-icon="mdi-account-plus"
                 subtitle="Create your account"
+                rounded="xl"
               >
                 <template v-slot:title>
                   <span class="font-weight-black">BL & SG Restaurant</span>
@@ -37,5 +38,7 @@ import RegisterForm from '@/components/auth/RegisterForm.vue'
 <style scoped>
 .fill-height {
   min-height: 100vh;
+  background-image: url('/images/RegisterBG.png');
+  background-size: cover;
 }
 </style>

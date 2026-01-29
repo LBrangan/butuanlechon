@@ -4,71 +4,103 @@ import { imageValidator, requiredValidator } from '@/utils/validators'
 import { formActionDefault } from '@/utils/supabase.js'
 import { useAuthUserStore } from '@/stores/authUser'
 import { fileExtract } from '@/utils/helpers'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 // Use Pinia Store
 const authStore = useAuthUserStore()
 
-// Load Variables
-const formDataDefault = {
-  image: null
-}
-const formData = ref({
-  ...formDataDefault
-})
-const formAction = ref({
-  ...formActionDefault
-})
+// State
+const formDataDefault = { image: null }
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
-const imgPreview = ref(authStore.userData?.image_url || '/images/img-profile.png')
 
-// Function to handle file change and show image preview
+// Preview (fallback safe)
+const imgPreview = ref(
+  authStore.userData?.image_url || '/images/img-profile.png'
+)
+
+let objectUrl = null
+
+// 🔹 Handle preview
 const onPreview = async (event) => {
   const { fileObject, fileUrl } = await fileExtract(event)
-  // Update formData
+
+  // cleanup previous preview
+  if (objectUrl) URL.revokeObjectURL(objectUrl)
+
+  objectUrl = fileUrl
   formData.value.image = fileObject
-  // Update imgPreview state
   imgPreview.value = fileUrl
 }
 
-// Function to reset preview if file-input clear is clicked
+// 🔹 Reset preview
 const onPreviewReset = () => {
-  imgPreview.value = authStore.userData?.image_url || '/images/img-profile.png'
+  if (objectUrl) URL.revokeObjectURL(objectUrl)
+  objectUrl = null
+
+  formData.value.image = null
+  imgPreview.value =
+    authStore.userData?.image_url || '/images/img-profile.png'
 }
 
-// Submit Functionality
+// 🔹 Submit with proper loading and error handling
 const onSubmit = async () => {
-  /// Reset Form Action utils; Turn on processing at the same time
+  if (!formData.value.image) return
+
+  // Set loading state
   formAction.value = { ...formActionDefault, formProcess: true }
 
-  const { data, error } = await authStore.updateUserImage(formData.value.image)
+  try {
+    // Wait for the image upload to complete
+    const { error } = await authStore.updateUserImage(formData.value.image)
 
-  if (error) {
-    // Add Error Message and Status Code
-    formAction.value.formErrorMessage = error.message
-    formAction.value.formStatus = error.status
-  } else if (data) {
-    // Add Success Message
-    formAction.value.formSuccessMessage = 'Successfully Updated Profile Image.'
+    if (error) {
+      formAction.value.formErrorMessage = error.message || 'Failed to update image'
+      formAction.value.formStatus = error.status || 500
+      return
+    }
+
+    // Success - update UI with cache-busted URL
+    formAction.value.formSuccessMessage = 'Successfully updated profile image.'
+    imgPreview.value = authStore.userData?.image_url
+
+    // Reset form after brief delay
+    await new Promise(resolve => setTimeout(resolve, 500))
+    onPreviewReset()
+    refVForm.value?.reset()
+
+  } catch (err) {
+    formAction.value.formErrorMessage = err.message || 'An error occurred during upload'
+    formAction.value.formStatus = 500
+  } finally {
+    formAction.value.formProcess = false
   }
-
-  // Turn off processing
-  formAction.value.formProcess = false
 }
 
-// Trigger Validators
+// 🔹 Validate + submit
 const onFormSubmit = () => {
   refVForm.value?.validate().then(({ valid }) => {
     if (valid) onSubmit()
   })
 }
+
+// 🔹 Keep preview in sync if userData changes elsewhere
+watch(
+  () => authStore.userData?.image_url,
+  (newUrl) => {
+    if (newUrl && !formData.value.image) {
+      imgPreview.value = newUrl
+    }
+  }
+)
 </script>
 
 <template>
   <AlertNotification
     :form-success-message="formAction.formSuccessMessage"
     :form-error-message="formAction.formErrorMessage"
-  ></AlertNotification>
+  />
 
   <v-form ref="refVForm" @submit.prevent="onFormSubmit">
     <v-row>
@@ -76,35 +108,33 @@ const onFormSubmit = () => {
         <v-img
           width="55%"
           class="mx-auto rounded-circle"
-          color="red-darken-4"
           aspect-ratio="1"
           :src="imgPreview"
           alt="Profile Picture Preview"
           cover
-        >
-        </v-img>
+        />
       </v-col>
 
       <v-col cols="12" sm="6" md="7">
         <v-file-input
           class="mt-5"
           :rules="[requiredValidator, imageValidator]"
-          accept="image/png, image/jpeg, image/bmp"
+          accept="image/png,image/jpeg,image/bmp"
           label="Browse Profile Picture"
-          placeholder="Browse Profile Picture"
           prepend-icon="mdi-camera"
           show-size
           chips
+          :disabled="formAction.formProcess"
           @change="onPreview"
           @click:clear="onPreviewReset"
-        ></v-file-input>
+        />
 
         <v-btn
           class="mt-2"
           type="submit"
           color="red-darken-4"
           prepend-icon="mdi-image-edit"
-          :disabled="formAction.formProcess"
+          :disabled="formAction.formProcess || !formData.image"
           :loading="formAction.formProcess"
         >
           Update Picture

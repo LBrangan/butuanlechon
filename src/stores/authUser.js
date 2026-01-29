@@ -102,32 +102,41 @@ export const useAuthUserStore = defineStore('authUser', () => {
     }
 
     if (!userData.value?.id) {
-      return { error: 'User not authenticated' }
+      return { error: { message: 'User not authenticated', status: 401 } }
     }
 
     const filePath = `${userData.value.id}-avatar.png`
 
-    // 2. Upload to the CORRECT bucket, NO extra folder
-    const { data, error } = await supabase.storage
-      .from('butuanlechon') // ✅ must exist
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: true,
-        contentType: file.type,
+    try {
+      // 2. Upload to the CORRECT bucket with cache-busting parameter
+      const { data, error } = await supabase.storage
+        .from('butuanlechon') // ✅ must exist
+        .upload(filePath, file, {
+          cacheControl: '0', // No cache - always get fresh image
+          upsert: true,
+          contentType: file.type || 'image/png',
+        })
+
+      if (error) {
+        console.error('UPLOAD ERROR:', error)
+        return { error: { message: error.message, status: error.status || 500 } }
+      }
+
+      // 3. Get public URL from SAME bucket with cache-busting timestamp
+      const timestamp = new Date().getTime()
+      const { data: imageData } = supabase.storage.from('butuanlechon').getPublicUrl(filePath)
+      const cacheBustedUrl = `${imageData.publicUrl}?t=${timestamp}`
+
+      // 4. Save URL to user metadata with slight delay to ensure CDN propagation
+      await new Promise(resolve => setTimeout(resolve, 200))
+
+      return await updateUserInformation({
+        image_url: cacheBustedUrl,
       })
-
-    if (error) {
-      console.error('UPLOAD ERROR:', error)
-      return { error }
+    } catch (err) {
+      console.error('UPDATE IMAGE ERROR:', err)
+      return { error: { message: err.message, status: 500 } }
     }
-
-    // 3. Get public URL from SAME bucket
-    const { data: imageData } = supabase.storage.from('butuanlechon').getPublicUrl(filePath)
-
-    // 4. Save URL to user metadata
-    return await updateUserInformation({
-      image_url: imageData.publicUrl,
-    })
   }
 
   return {
