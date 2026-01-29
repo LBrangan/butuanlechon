@@ -61,7 +61,7 @@ export function useProducts() {
         unit: item.unit,
         price: item.price,
         totalPrice: item.quantity * item.price,
-        purchaseDate: currentSimulatedDate.value,
+        purchaseDate: item.purchase_date || currentSimulatedDate.value,
         initialQuantity: item.quantity,
       }))
 
@@ -86,6 +86,7 @@ export function useProducts() {
             quantity: product.quantity,
             unit: product.unit || 'piece(s)',
             price: product.price,
+            purchase_date: purchaseDate,
           },
         ])
         .select()
@@ -122,7 +123,6 @@ export function useProducts() {
   const updateProduct = async (updated) => {
     try {
       const oldProduct = products.value.find((p) => p.id === updated.id)
-      const today = todayKey()
 
       const newTotalPrice = updated.totalPrice || updated.quantity * updated.price
 
@@ -143,10 +143,36 @@ export function useProducts() {
       // Update local state
       const index = products.value.findIndex((p) => p.id === updated.id)
       if (index !== -1) {
-        if (oldProduct && oldProduct.purchaseDate === today) {
-          const report = getTodayReport()
+        // ✅ FIXED: Update expenses on the PURCHASE DATE, not today
+        if (oldProduct && oldProduct.purchaseDate) {
+          const purchaseDate = oldProduct.purchaseDate
+
+          // Initialize report for that date if it doesn't exist
+          if (!dailyReports.value[purchaseDate]) {
+            dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
+          }
+
+          const report = dailyReports.value[purchaseDate]
           report.expenses -= oldProduct.totalPrice
           report.expenses += newTotalPrice
+        }
+
+        // ✅ NEW: Handle additional expense for TODAY if this is a stock update
+        if (updated._additionalExpense && updated._addedOnDate) {
+          const addedOnDate = updated._addedOnDate
+
+          // Initialize report for today if it doesn't exist
+          if (!dailyReports.value[addedOnDate]) {
+            dailyReports.value[addedOnDate] = { sales: 0, expenses: 0 }
+          }
+
+          // Add only the ADDITIONAL expense to today
+          const todayReport = dailyReports.value[addedOnDate]
+          todayReport.expenses += updated._additionalExpense
+
+          console.log(
+            `Added ₱${updated._additionalExpense} to ${addedOnDate} expenses (stock update)`,
+          )
         }
 
         products.value[index] = {
@@ -165,16 +191,20 @@ export function useProducts() {
   const deleteProduct = async (id) => {
     try {
       const product = products.value.find((p) => p.id === id)
-      const today = todayKey()
 
       // Delete from Supabase
       const { error } = await supabase.from('inventory').delete().eq('inv_id', id)
 
       if (error) throw error
 
-      // Update local state and reports
-      if (product && product.purchaseDate === today) {
-        const report = getTodayReport()
+      // FIXED: Update expenses on the PURCHASE DATE, not today
+      if (product && product.purchaseDate) {
+        // Initialize report for that date if it doesn't exist
+        if (!dailyReports.value[product.purchaseDate]) {
+          dailyReports.value[product.purchaseDate] = { sales: 0, expenses: 0 }
+        }
+
+        const report = dailyReports.value[product.purchaseDate]
         report.expenses -= product.totalPrice
       }
 
