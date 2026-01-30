@@ -86,7 +86,8 @@ const openDatePicker = () => {
 
 const confirmDateChange = () => {
   if (tempDate.value) {
-    const newDate = new Date(tempDate.value).toISOString().split('T')[0]
+    const date = new Date(tempDate.value)
+    const newDate = date.toLocaleDateString('en-CA') // en-CA gives YYYY-MM-DD format in local timezone
     setBusinessDate(newDate)
     datePickerDialog.value = false
   }
