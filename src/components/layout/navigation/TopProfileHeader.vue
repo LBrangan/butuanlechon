@@ -173,8 +173,6 @@ const drawerItems = computed(() => [
 }
 .profile-btn {
   background-color: #f4f5ee;
-  color: #e91313;
-  border-radius: 100%;
   transition: all 0.3s ease;
 }
 .profile-btn:hover {
@@ -200,8 +198,6 @@ const drawerItems = computed(() => [
   overflow: hidden;
 }
 
-
-
 .menu-btn {
   height: 44px;
   font-weight: 500;
@@ -209,25 +205,4 @@ const drawerItems = computed(() => [
   text-transform: none;
 }
 
-.search-field :deep(.v-field) {
-  background-color: rgba(255, 255, 255, 0.15);
-  max-width: 300px;
-  margin-right: 16px;
-}
-
-.search-field :deep(.v-field:hover) {
-  background-color: rgba(255, 255, 255, 0.25);
-}
-
-.search-field :deep(.v-field__input) {
-  color: white;
-  caret-color: white;
-}
-
-.search-field :deep(.v-field__input::placeholder) {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.search-field :deep(.v-icon) {
-  color: rgba(255, 255, 255, 0.7);
-}</style>
+</style>
