@@ -19,7 +19,7 @@ const submitUsage = () => {
     if (usage[id] > 0) {
       usageArray.push({
         productId: Number(id),
-        quantity: usage[id]
+        quantity: usage[id],
       })
     }
   }
@@ -88,14 +88,7 @@ const submitUsage = () => {
                   Low Stock
                 </v-chip>
 
-                <v-chip
-                  v-else
-                  color="green-darken-2"
-                  variant="tonal"
-                  size="small"
-                >
-                  OK
-                </v-chip>
+                <v-chip v-else color="green-darken-2" variant="tonal" size="small"> OK </v-chip>
               </td>
             </tr>
           </tbody>
@@ -111,7 +104,7 @@ const submitUsage = () => {
             prepend-icon="mdi-minus-circle-outline"
             @click="submitUsage"
           >
-            Deduct Product
+            Deduct Quantity
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -130,9 +123,7 @@ const submitUsage = () => {
         </v-card-text>
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
-          <v-btn color="red-darken-2" variant="elevated" @click="showAlert = false">
-            OK
-          </v-btn>
+          <v-btn color="red-darken-2" variant="elevated" @click="showAlert = false"> OK </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -148,7 +139,7 @@ const submitUsage = () => {
 
 /* Header Card */
 .header-card {
-  background: linear-gradient(90deg, #8B0000 0%, #A52A2A 100%);
+  background: linear-gradient(90deg, #8b0000 0%, #a52a2a 100%);
   border-radius: 18px;
   color: white;
 }
@@ -173,7 +164,7 @@ const submitUsage = () => {
 
 th {
   font-weight: 700;
-  color: #8B0000;
+  color: #8b0000;
 }
 
 .fw-600 {
