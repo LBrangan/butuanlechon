@@ -212,6 +212,34 @@ export const useReportsStore = defineStore('reports', () => {
       return []
     }
   }
+  // Delete multiple daily reports
+  async function deleteDailyReports(ids) {
+    try {
+      const { error } = await supabase.from('daily_reports').delete().in('id', ids)
+
+      if (error) throw error
+
+      return true
+    } catch (error) {
+      console.error('Error deleting daily reports:', error)
+      throw error
+    }
+  }
+
+  // Delete all daily reports
+  async function deleteAllDailyReports() {
+    try {
+      const { error } = await supabase.from('daily_reports').delete().neq('id', 0) // This will match all records
+
+      if (error) throw error
+
+      dailyReports.value = []
+      return true
+    } catch (error) {
+      console.error('Error deleting all daily reports:', error)
+      throw error
+    }
+  }
 
   return {
     productsReport,
@@ -223,5 +251,7 @@ export const useReportsStore = defineStore('reports', () => {
     getStocksReport,
     getSalesReport,
     getDailyReports,
+    deleteDailyReports,
+    deleteAllDailyReports,
   }
 })
