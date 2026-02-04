@@ -435,18 +435,18 @@ const submitDeduct = () => {
             <v-col cols="12" class="d-flex justify-center ga-4">
               <v-btn
                 variant="outlined"
-                class="cancel-btn py-5 flex-grow-0"
+                class="cancel-btn py-4 flex-grow-0"
                 style="min-width: 160px"
-                size="large"
+                size="medium"
                 rounded="xl"
                 @click="editWarningDialog = false"
               >
                 Cancel
               </v-btn>
               <v-btn
-                class="edit-old-btn py-5 flex-grow-0"
+                class="edit-old-btn py-4 flex-grow-0"
                 style="min-width: 160px"
-                size="large"
+                size="medium"
                 rounded="xl"
                 elevation="4"
                 color="info"
@@ -456,9 +456,9 @@ const submitDeduct = () => {
                 Edit Old Entry
               </v-btn>
               <v-btn
-                class="update-stock-btn py-5 flex-grow-0"
+                class="update-stock-btn py-4 flex-grow-0"
                 style="min-width: 160px"
-                size="large"
+                size="medium"
                 rounded="xl"
                 elevation="4"
                 color="success"
@@ -1192,6 +1192,12 @@ const submitDeduct = () => {
 }
 
 .add-new-btn {
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.update-stock-btn {
   text-transform: none;
   font-weight: 700;
   letter-spacing: 0.5px;

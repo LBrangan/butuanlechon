@@ -39,9 +39,9 @@ const submitUsage = () => {
 
 <template>
   <div class="daily-bg">
-    <v-container fluid class="pa-6">
+    <v-container fluid class="pa-5">
       <!-- Page Header -->
-      <v-card class="mb-6 header-card" elevation="6">
+      <v-card class="mb-6 header-card" elevation="5">
         <v-card-title class="header-title">
           <v-icon class="mr-3">mdi-clipboard-check-outline</v-icon>
           Daily Product Usage
