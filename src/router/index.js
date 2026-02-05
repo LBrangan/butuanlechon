@@ -10,6 +10,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import ProductView from '@/views/ProductView.vue'
 import DailyUsage from '@/views/DailyUsage.vue'
 import AccountSettings from '@/views/system/AccountSettings.vue'
+import ResetPassword from '@/components/auth/ResetPassword.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -78,6 +79,11 @@ const router = createRouter({
         requiresAuth: true,
         role: 'User',
       },
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: ResetPassword,
     }
 
   ],

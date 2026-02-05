@@ -1,34 +1,56 @@
 <script setup>
 import { ref } from 'vue'
-import { emailValidator } from '@/utils/validators'
-import { useForgotPassword } from '@/composables/auth/forgotPassword'
+import {emailValidator} from '@/utils/validators'
 import AlertNotification from '@/common/AlertNotification.vue'
+import { supabase, formActionDefault} from '@/utils/supabase'
 
-const { formData, formAction, refVForm, onFormSubmit } = useForgotPassword()
 const showBackToLogin = ref(false)
 
 
-const recoverPassword = async () => {
-  StaticRange.error = undefined;
-  if (!validateEmail(state.email)) {
-    state.error = "Please enter a valid email address.";
-    return
+  const formDataDefault = {
+    email: '',
   }
-  try {
-    state.loading = true;
-    let { data, error} = await supabase
-    .auth
-    .resetPasswordForEmail(state.email)
 
-    if (data) {
-      state.success = "Password recovery email sent. Please check your inbox."
-    }
-  } catch (error) {
-      state.error = error.message;
+  const formData = ref({
+    ...formDataDefault,
+  })
+
+  const formAction = ref({
+    ...formActionDefault,
+  })
+
+  const refVForm = ref()
+
+  // Password recovery flow
+
+
+  const recoverPassword = async () => {
+    formAction.value.formErrorMessage = undefined
+    formAction.value.formSuccessMessage = undefined
+
+    try {
+      formAction.value.formProcess = true
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.value.email)
+
+      if (error) {
+        formAction.value.formErrorMessage = error.message
+      } else {
+        formAction.value.formSuccessMessage = 'Password reset email sent! Please check your inbox.'
+      }
+    } catch (err) {
+      formAction.value.formErrorMessage = err.message
     } finally {
-      state.loading = false;
+      formAction.value.formProcess = false
+    }
   }
-}
+
+  const onFormSubmit = () => {
+    refVForm.value?.validate().then(({ valid }) => {
+      if (valid) recoverPassword()
+    })
+  }
+
+
 </script>
 
 <template>
