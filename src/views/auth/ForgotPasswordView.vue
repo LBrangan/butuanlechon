@@ -1,7 +1,5 @@
 <script setup>
-import RecoverPassword from '@/components/auth/RecoverPassword.vue';
-
-
+import RecoverPassword from '@/components/auth/RecoverPassword.vue'
 </script>
 
 <template>
@@ -16,7 +14,10 @@ import RecoverPassword from '@/components/auth/RecoverPassword.vue';
           </div>
 
           <!-- Form Card -->
-          <v-card class="pa-8 rounded-xl elevation-4" style="border: 2px solid rgba(139, 0, 0, 0.1)">
+          <v-card
+            class="pa-8 rounded-xl elevation-4"
+            style="border: 2px solid rgba(139, 0, 0, 0.1)"
+          >
             <RecoverPassword />
           </v-card>
 
