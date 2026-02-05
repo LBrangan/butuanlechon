@@ -5,6 +5,7 @@ import { useAuthUserStore } from '@/stores/authUser'
 import ReportView from '@/views/auth/ReportView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
+import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import ProductView from '@/views/ProductView.vue'
 import DailyUsage from '@/views/DailyUsage.vue'
@@ -25,6 +26,14 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
+      meta: {
+        guestOnly: true,
+      },
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPasswordView,
       meta: {
         guestOnly: true,
       },
