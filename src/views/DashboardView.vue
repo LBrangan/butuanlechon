@@ -86,9 +86,19 @@ const openDatePicker = () => {
 
 const confirmDateChange = () => {
   if (tempDate.value) {
-    const date = new Date(tempDate.value)
-    const newDate = date.toLocaleDateString('en-CA') // en-CA gives YYYY-MM-DD format in local timezone
-    setBusinessDate(newDate)
+    // Ensure proper date handling without timezone issues
+    let dateToUse = tempDate.value
+    if (typeof dateToUse === 'string') {
+      // Already in YYYY-MM-DD format from the date picker
+      setBusinessDate(dateToUse)
+    } else if (dateToUse instanceof Date) {
+      // Convert Date object to YYYY-MM-DD using local timezone
+      const year = dateToUse.getFullYear()
+      const month = String(dateToUse.getMonth() + 1).padStart(2, '0')
+      const day = String(dateToUse.getDate()).padStart(2, '0')
+      const newDate = `${year}-${month}-${day}`
+      setBusinessDate(newDate)
+    }
     datePickerDialog.value = false
   }
 }

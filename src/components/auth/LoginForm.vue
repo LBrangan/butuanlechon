@@ -37,6 +37,18 @@ const isPasswordVisible = ref(false)
             :rules="[requiredValidator]"
           ></v-text-field>
         </v-col>
+
+        <v-col cols="12" class="d-flex justify-end pa-1">
+          <v-btn
+            variant="text"
+            class="text-body-2 text-sm-body-1"
+            size="small"
+            color="red-darken-4"
+            @click="$router.push('/forgot-password')"
+          >
+            Forgot Password?
+          </v-btn>
+        </v-col>
       </v-row>
 
       <v-btn
