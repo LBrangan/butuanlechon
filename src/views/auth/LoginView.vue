@@ -38,7 +38,7 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 
                 <v-divider class="my-4 my-sm-5"></v-divider>
 
-                <h5 class="text-center mt-n5 text-body-2 text-sm-body-1">
+                <h5 class="text-center mt-5 text-body-2 text-sm-body-1">
                   Don't have an account?
                   <router-link
                     to="/register"
