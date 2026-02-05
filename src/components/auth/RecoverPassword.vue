@@ -1,56 +1,31 @@
 <script setup>
 import { ref } from 'vue'
-import {emailValidator} from '@/utils/validators'
+import { emailValidator } from '@/utils/validators'
+import { useForgotPassword } from '@/composables/auth/forgotPassword'
 import AlertNotification from '@/common/AlertNotification.vue'
-import { supabase, formActionDefault} from '@/utils/supabase'
 
+const { formData, formAction, refVForm, onFormSubmit } = useForgotPassword()
 const showBackToLogin = ref(false)
 
-
-  const formDataDefault = {
-    email: '',
+const recoverPassword = async () => {
+  StaticRange.error = undefined
+  if (!validateEmail(state.email)) {
+    state.error = 'Please enter a valid email address.'
+    return
   }
+  try {
+    state.loading = true
+    let { data, error } = await supabase.auth.resetPasswordForEmail(state.email)
 
-  const formData = ref({
-    ...formDataDefault,
-  })
-
-  const formAction = ref({
-    ...formActionDefault,
-  })
-
-  const refVForm = ref()
-
-  // Password recovery flow
-
-
-  const recoverPassword = async () => {
-    formAction.value.formErrorMessage = undefined
-    formAction.value.formSuccessMessage = undefined
-
-    try {
-      formAction.value.formProcess = true
-      const { error } = await supabase.auth.resetPasswordForEmail(formData.value.email)
-
-      if (error) {
-        formAction.value.formErrorMessage = error.message
-      } else {
-        formAction.value.formSuccessMessage = 'Password reset email sent! Please check your inbox.'
-      }
-    } catch (err) {
-      formAction.value.formErrorMessage = err.message
-    } finally {
-      formAction.value.formProcess = false
+    if (data) {
+      state.success = 'Password recovery email sent. Please check your inbox.'
     }
+  } catch (error) {
+    state.error = error.message
+  } finally {
+    state.loading = false
   }
-
-  const onFormSubmit = () => {
-    refVForm.value?.validate().then(({ valid }) => {
-      if (valid) recoverPassword()
-    })
-  }
-
-
+}
 </script>
 
 <template>
@@ -63,12 +38,7 @@ const showBackToLogin = ref(false)
     <!-- Success state with redirect option -->
     <div v-if="formAction.formSuccessMessage && !formAction.formProcess" class="text-center py-4">
       <p class="text-body-2 text-grey mt-2">Check your email for password reset instructions.</p>
-      <v-btn
-        class="mt-4"
-        variant="outlined"
-        color="red-darken-4"
-        @click="$router.push('/')"
-      >
+      <v-btn class="mt-4" variant="outlined" color="red-darken-4" @click="$router.push('/')">
         <v-icon start>mdi-arrow-left</v-icon>
         Back to Login
       </v-btn>
@@ -106,14 +76,7 @@ const showBackToLogin = ref(false)
         Send Reset Email
       </v-btn>
 
-      <v-btn
-        variant="text"
-        color="grey"
-        class="mt-2"
-        size="small"
-        block
-        @click="$router.push('/')"
-      >
+      <v-btn variant="text" color="grey" class="mt-2" size="small" block @click="$router.push('/')">
         <v-icon start size="small">mdi-arrow-left</v-icon>
         Back to Login
       </v-btn>
@@ -121,5 +84,4 @@ const showBackToLogin = ref(false)
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
