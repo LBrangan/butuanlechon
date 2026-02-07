@@ -37,7 +37,8 @@ const router = createRouter({
       component: ForgotPasswordView,
       meta: {
         guestOnly: true,
-      },
+      }
+
     },
     {
       path: '/dashboard',
@@ -84,6 +85,9 @@ const router = createRouter({
       path: '/reset-password',
       name: 'reset-password',
       component: ResetPasswordView,
+      meta: {
+        guestOnly: true,
+      }
     }
 
   ],
@@ -92,28 +96,23 @@ const router = createRouter({
 // Route guard for authentication
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthUserStore()
-
-  // Skip guard on initial route to allow login/register
-  if (from.name === undefined && !to.meta.requiresAuth) {
-    next()
-    return
-  }
-
   const isAuthenticated = await authStore.isAuthenticated()
 
-  // If route requires auth and user is not authenticated
+  // 1️⃣ Block unauthenticated users from protected routes
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/')
-    return
+    return next('/')
   }
 
-  // If route is guest-only and user is authenticated
+  // 2️⃣ Block authenticated users from guest-only routes
   if (to.meta.guestOnly && isAuthenticated) {
-    next('/dashboard')
-    return
+    return next('/dashboard')
   }
 
   next()
 })
+
+
+
+
 
 export default router
