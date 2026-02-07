@@ -20,7 +20,7 @@ import ResetPassword from '@/components/auth/ResetPassword.vue'
               <v-card
                 class="elevation-12 pa-4 pa-sm-6 pa-md-8"
                 prepend-icon="mdi-lock-reset"
-                subtitle="Inventory Management System"
+                subtitle="Password Recovery Page"
                 max-width="500"
                 width="100%"
                 rounded="xl"

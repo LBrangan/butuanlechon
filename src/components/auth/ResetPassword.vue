@@ -2,6 +2,9 @@
 import { onMounted } from 'vue'
 import { useResetPassword } from '@/composables/auth/resetPassword'
 
+const isPasswordVisible = ref(false)
+const isPasswordConfirmVisible = ref(false)
+
 const {
   formData,
   formAction,
@@ -48,8 +51,9 @@ const confirmPasswordRules = [
       <v-text-field
         v-model="formData.password"
         label="New Password"
-        type="password"
-        :rules="passwordRules"
+       append-inner-icon="isPasswordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'"
+        :type="isPasswordConfirmVisible ? 'text' : 'password'"
+        @click:append-inner="isPasswordConfirmVisible = !isPasswordConfirmVisible"
         :disabled="formAction.formProcess"
         variant="outlined"
         class="mb-4"
@@ -61,7 +65,8 @@ const confirmPasswordRules = [
       <v-text-field
         v-model="formData.passwordConfirm"
         label="Confirm Password"
-        type="password"
+        :type="isPasswordVisible ? 'text' : 'password'"
+        @click:append-inner="isPasswordVisible = !isPasswordVisible"
         :rules="confirmPasswordRules"
         :disabled="formAction.formProcess"
         variant="outlined"
