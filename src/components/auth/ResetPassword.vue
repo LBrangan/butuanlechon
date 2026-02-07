@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useResetPassword } from '@/composables/auth/resetPassword'
+import AlertNotification from '@/common/AlertNotification.vue'
 
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
@@ -36,14 +37,10 @@ const confirmPasswordRules = [
 <template>
   <div class="reset-password-form">
     <!-- Invalid Session Alert -->
-    <v-alert
-      v-if="!isValidSession && formAction.formErrorMessage"
-      type="error"
-      class="mb-6"
-      closable
-    >
-      {{ formAction.formErrorMessage }}
-    </v-alert>
+   <AlertNotification
+      :form-success-message="formAction.formSuccessMessage"
+      :form-error-message="formAction.formErrorMessage"
+    />
 
     <!-- Form -->
     <v-form ref="refVForm" v-if="isValidSession" @submit.prevent="onFormSubmit">
@@ -69,7 +66,6 @@ const confirmPasswordRules = [
         :append-inner-icon="isPasswordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="isPasswordConfirmVisible ? 'text' : 'password'"
         @click:append-inner="isPasswordConfirmVisible = !isPasswordConfirmVisible"
-        :rules="confirmPasswordRules"
         :disabled="formAction.formProcess"
         variant="outlined"
         class="mb-6"
@@ -104,6 +100,7 @@ const confirmPasswordRules = [
         :loading="formAction.formProcess"
         :disabled="formAction.formProcess"
         block=""
+        to="/"
       >
         Reset Password
       </v-btn>
