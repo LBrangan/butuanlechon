@@ -96,6 +96,7 @@ const confirmPasswordRules = [
         size="large"
         :loading="formAction.formProcess"
         :disabled="formAction.formProcess"
+        block=""
       >
         Reset Password
       </v-btn>
