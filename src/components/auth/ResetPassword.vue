@@ -1,6 +1,10 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useResetPassword } from '@/composables/auth/resetPassword'
+import AlertNotification from '@/common/AlertNotification.vue'
+
+const isPasswordVisible = ref(false)
+const isPasswordConfirmVisible = ref(false)
 
 const {
   formData,
@@ -33,14 +37,10 @@ const confirmPasswordRules = [
 <template>
   <div class="reset-password-form">
     <!-- Invalid Session Alert -->
-    <v-alert
-      v-if="!isValidSession && formAction.formErrorMessage"
-      type="error"
-      class="mb-6"
-      closable
-    >
-      {{ formAction.formErrorMessage }}
-    </v-alert>
+   <AlertNotification
+      :form-success-message="formAction.formSuccessMessage"
+      :form-error-message="formAction.formErrorMessage"
+    />
 
     <!-- Form -->
     <v-form ref="refVForm" v-if="isValidSession" @submit.prevent="onFormSubmit">
@@ -48,8 +48,10 @@ const confirmPasswordRules = [
       <v-text-field
         v-model="formData.password"
         label="New Password"
-        type="password"
+        :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+        :type="isPasswordVisible ? 'text' : 'password'"
         :rules="passwordRules"
+        @click:append-inner="isPasswordVisible = !isPasswordVisible"
         :disabled="formAction.formProcess"
         variant="outlined"
         class="mb-4"
@@ -61,8 +63,9 @@ const confirmPasswordRules = [
       <v-text-field
         v-model="formData.passwordConfirm"
         label="Confirm Password"
-        type="password"
-        :rules="confirmPasswordRules"
+        :append-inner-icon="isPasswordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'"
+        :type="isPasswordConfirmVisible ? 'text' : 'password'"
+        @click:append-inner="isPasswordConfirmVisible = !isPasswordConfirmVisible"
         :disabled="formAction.formProcess"
         variant="outlined"
         class="mb-6"
@@ -96,6 +99,8 @@ const confirmPasswordRules = [
         size="large"
         :loading="formAction.formProcess"
         :disabled="formAction.formProcess"
+        block=""
+        to="/"
       >
         Reset Password
       </v-btn>

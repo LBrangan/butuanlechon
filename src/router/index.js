@@ -6,11 +6,11 @@ import ReportView from '@/views/auth/ReportView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
+import ResetPasswordView from '@/views/auth/ResetPasswordView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import ProductView from '@/views/ProductView.vue'
 import DailyUsage from '@/views/DailyUsage.vue'
 import AccountSettings from '@/views/system/AccountSettings.vue'
-import ResetPassword from '@/components/auth/ResetPassword.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,7 +37,8 @@ const router = createRouter({
       component: ForgotPasswordView,
       meta: {
         guestOnly: true,
-      },
+      }
+
     },
     {
       path: '/dashboard',
@@ -83,7 +84,10 @@ const router = createRouter({
     {
       path: '/reset-password',
       name: 'reset-password',
-      component: ResetPassword,
+      component: ResetPasswordView,
+      meta: {
+        guestOnly: true,
+      }
     }
 
   ],
@@ -92,28 +96,23 @@ const router = createRouter({
 // Route guard for authentication
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthUserStore()
-
-  // Skip guard on initial route to allow login/register
-  if (from.name === undefined && !to.meta.requiresAuth) {
-    next()
-    return
-  }
-
   const isAuthenticated = await authStore.isAuthenticated()
 
-  // If route requires auth and user is not authenticated
+  // 1️⃣ Block unauthenticated users from protected routes
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/')
-    return
+    return next('/')
   }
 
-  // If route is guest-only and user is authenticated
+  // 2️⃣ Block authenticated users from guest-only routes
   if (to.meta.guestOnly && isAuthenticated) {
-    next('/dashboard')
-    return
+    return next('/dashboard')
   }
 
   next()
 })
+
+
+
+
 
 export default router

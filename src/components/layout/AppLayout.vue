@@ -16,8 +16,9 @@ const loading = ref(true)
 
 const checkAuthStatus = async () => {
   isLoggedIn.value = await authStore.isAuthenticated()
+  const isResetPasswordPage = route.path === '/reset-password'
   isMobileLogged.value = isLoggedIn.value && (route.path === '/' || route.path === '/register')
-  isDesktop.value = isLoggedIn.value && !isMobileLogged.value
+  isDesktop.value = isLoggedIn.value && !isMobileLogged.value && !isResetPasswordPage
   loading.value = false
 
   if (isLoggedIn.value && route.path === '/') {
@@ -34,14 +35,14 @@ onMounted(async () => {
 
 <template>
   <v-app>
-    <!-- Navigation Drawer - shown when logged in -->
+    <!-- Navigation Drawer - shown when logged in (except on reset password page) -->
     <keep-alive>
-      <NavigationDrawer v-if="isLoggedIn" />
+      <NavigationDrawer v-if="isLoggedIn && route.path !== '/reset-password'" />
     </keep-alive>
 
     <!-- Top Profile Header -->
     <keep-alive>
-      <TopProfileHeader v-if="isLoggedIn" />
+      <TopProfileHeader v-if="isLoggedIn && route.path !== '/reset-password'" />
     </keep-alive>
 
     <!-- Main Content -->
