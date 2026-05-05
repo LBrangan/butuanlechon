@@ -27,11 +27,19 @@ const todayProducts = computed(() => {
 
 /* ================= COMPOSABLE ================= */
 export function useProducts() {
-  const authStore = useAuthUserStore()
 
-  // ✅ Role-based client
-  const getClient = () =>
-    authStore.userRole === 'Super Administrator' ? supabaseAdmin : supabase
+  // ✅ Call useAuthUserStore INSIDE getClient so it's always fresh
+  const getClient = () => {
+    const authStore = useAuthUserStore()
+    return authStore.userRole === 'Super Administrator' ? supabaseAdmin : supabase
+  }
+
+  // ✅ Helper to get branch_id safely
+  const getBranchId = async () => {
+    const authStore = useAuthUserStore()
+    if (authStore.authBranchIds.length === 0) await authStore.getAuthBranchIds()
+    return authStore.authBranchIds[0] ?? null
+  }
 
   const fetchProducts = async () => {
     try {
@@ -63,10 +71,18 @@ export function useProducts() {
 
   const addProduct = async (product, customDate = null) => {
     try {
+      const authStore = useAuthUserStore()
       const purchaseDate = customDate || todayKey()
       const totalPrice = product.totalPrice || product.quantity * product.price
 
-      // ✅ Inventory inserts always use supabaseAdmin
+      // ✅ Get branch_id — required by schema
+      const branch_id = product.branch_id || await getBranchId()
+
+      if (!branch_id) {
+        console.error('No branch_id available — user has no assigned branch')
+        return
+      }
+
       const { data, error } = await supabaseAdmin
         .from('inventory')
         .insert([{
@@ -75,6 +91,8 @@ export function useProducts() {
           unit: product.unit || 'piece(s)',
           price: product.price,
           purchase_date: purchaseDate,
+          branch_id: branch_id,               // ✅ required
+          created_by: authStore.userData?.id, // ✅ optional but good practice
         }])
         .select()
 
@@ -183,7 +201,6 @@ export function useProducts() {
 
       const newQuantity = Math.max(0, product.quantity - qty)
 
-      // ✅ Staff can deduct — use role-based client
       const { data, error } = await getClient()
         .from('inventory')
         .update({ quantity: newQuantity })
@@ -222,6 +239,13 @@ export function useProducts() {
     const today = todayKey()
     const report = getTodayReport()
 
+    // ✅ Include branch_id — required by daily_reports schema
+    const branch_id = await getBranchId()
+    if (!branch_id) {
+      console.error('No branch_id available for daily report')
+      return
+    }
+
     try {
       const { data, error } = await supabaseAdmin
         .from('daily_reports')
@@ -230,6 +254,7 @@ export function useProducts() {
           sales: report.sales,
           expenses: report.expenses,
           profit: report.sales - report.expenses,
+          branch_id: branch_id,
         }])
         .select()
 
