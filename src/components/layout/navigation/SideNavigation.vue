@@ -16,7 +16,7 @@ const props = defineProps(['isDrawerVisible'])
 const { mobile } = useDisplay()
 const authStore = useAuthUserStore()
 
-const isMounted = ref(false)  // ✅ add this
+const isMounted = ref(false)
 const noAccessPages = ref([])
 const editableMenuItemsNav1 = ref([...menuItemsNav1])
 const editableMenuItemsNav2 = ref([...menuItemsNav2])
@@ -28,9 +28,9 @@ const onFilterPages = () => {
   if (authStore.userRole === 'Super Administrator') return
 
   const menuItems = [
-    { items: editableMenuItemsNav1, title: mainNav[0][0] },
-    { items: editableMenuItemsNav2, title: mainNav[1][0] },
-    { items: editableMenuItemsNav3, title: mainNav[2][0] },
+    { items: editableMenuItemsNav1, title: mainNav[0][0] }, // Products
+    { items: editableMenuItemsNav2, title: mainNav[1][0] }, // Reports
+    { items: editableMenuItemsNav3, title: mainNav[2][0] }, // User Management
     { items: editableMenuItemsNav4, title: mainNav[3][0] },
     { items: editableMenuItemsNav5, title: mainNav[4][0] },
   ]
@@ -43,14 +43,12 @@ const onFilterPages = () => {
 
 onMounted(() => {
   onFilterPages()
-  isMounted.value = true  // ✅ set after filter runs
+  isMounted.value = true
 })
 </script>
 
 <template>
   <v-navigation-drawer permanent width="300" expand-on-hover rail>
-
-    <!-- ✅ Only render the list after mount to avoid slot timing issues -->
     <v-list v-if="isMounted" density="compact" nav>
       <v-list-item
         prepend-icon="mdi-view-dashboard"
@@ -60,13 +58,13 @@ onMounted(() => {
 
       <v-divider></v-divider>
 
-      <!-- ✅ Separate v-if from v-for using <template> -->
       <template v-for="([title, icon], i) in mainNav" :key="i">
         <v-list-group v-if="!noAccessPages.includes(title)" fluid>
           <template #activator="{ props }">
             <v-list-item v-bind="props" :prepend-icon="icon" :title="title"></v-list-item>
           </template>
 
+          <!-- Products -->
           <template v-if="title === mainNav[0][0]">
             <v-list-item
               v-for="([title, icon, subtitle, to], i) in editableMenuItemsNav1"
@@ -78,6 +76,7 @@ onMounted(() => {
             ></v-list-item>
           </template>
 
+          <!-- Reports -->
           <template v-if="title === mainNav[1][0]">
             <v-list-item
               v-for="([title, icon, subtitle, to], i) in editableMenuItemsNav2"
@@ -89,31 +88,10 @@ onMounted(() => {
             ></v-list-item>
           </template>
 
+          <!-- User Management -->
           <template v-if="title === mainNav[2][0]">
             <v-list-item
               v-for="([title, icon, subtitle, to], i) in editableMenuItemsNav3"
-              :key="i"
-              :prepend-icon="icon"
-              :title="title"
-              :subtitle="subtitle ?? undefined"
-              :to="to ?? undefined"
-            ></v-list-item>
-          </template>
-
-          <template v-if="title === mainNav[3][0]">
-            <v-list-item
-              v-for="([title, icon, subtitle, to], i) in editableMenuItemsNav4"
-              :key="i"
-              :prepend-icon="icon"
-              :title="title"
-              :subtitle="subtitle ?? undefined"
-              :to="to ?? undefined"
-            ></v-list-item>
-          </template>
-
-          <template v-if="title === mainNav[4][0]">
-            <v-list-item
-              v-for="([title, icon, subtitle, to], i) in editableMenuItemsNav5"
               :key="i"
               :prepend-icon="icon"
               :title="title"
@@ -132,6 +110,5 @@ onMounted(() => {
         to="/account/settings"
       ></v-list-item>
     </v-list>
-
   </v-navigation-drawer>
 </template>
