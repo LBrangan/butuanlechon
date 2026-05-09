@@ -241,403 +241,360 @@ const refreshInventory = async () => {
     }, 500)
   }
 }
-
-
-
 </script>
 
 <template>
   <div class="app-background">
-    <!-- Main Content -->
-    <v-container class="pa-4 pa-md-8">
+    <v-container class="pa-4 pa-md-8" fluid>
       <!-- Header -->
-      <v-row class="mb-8 header-container pa-4 pa-md-8 rounded-xl">
-        <v-col
-          cols="11"
-          class="d-flex flex-column flex-md-row justify-md-space-between align-center ga-4 ga-md-0"
-        >
-          <h1 class="page-title">Product Inventory</h1>
+      <div class="header-bar mb-8">
+        <div class="header-inner px-6 px-md-10 py-5">
+          <div class="d-flex align-center justify-space-between flex-wrap ga-4">
+            <div class="d-flex align-center ga-4">
+              <div class="header-icon-wrap">
+                <v-icon size="28" color="white">mdi-package-variant</v-icon>
+              </div>
+              <div>
+                <p class="header-eyebrow">Inventory Management</p>
+                <h1 class="header-title">Product Inventory</h1>
+              </div>
+            </div>
 
-          <div class="d-flex flex-column flex-sm-row ga-3 ga-sm-4 w-100 w-md-auto">
-            <!-- Add Product Button -->
-            <v-btn
-              class="add-product-btn px-6 px-sm-10 py-2 text-body-2 text-sm-body-1 font-weight-bold flex-grow-1 flex-sm-grow-0"
-              rounded="l"
-              elevation="6"
-              @click="openAddDialog"
-            >
-              <v-icon start size="small" class="hidden-sm-and-up">mdi-plus-circle</v-icon>
-              <v-icon start class="hidden-xs">mdi-plus-circle</v-icon>
-              <span class="hidden-xs">Add Product</span>
-              <span class="hidden-sm-and-up">Add</span>
-            </v-btn>
+            <div class="d-flex align-center ga-3 flex-wrap">
+              <v-btn class="action-header-btn" variant="flat" rounded="lg" @click="openAddDialog">
+                <v-icon start size="18">mdi-plus</v-icon>
+                Add Product
+              </v-btn>
 
+              <v-btn
+                icon
+                variant="text"
+                class="refresh-btn"
+                :loading="isRefreshing"
+                @click="refreshInventory"
+              >
+                <v-icon size="20">mdi-refresh</v-icon>
+                <v-tooltip activator="parent" location="bottom">Refresh Inventory</v-tooltip>
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </div>
 
-
-            <!--Deduct Product Button -->
-            <v-btn
-              class="deduct-product-btn px-6 px-sm-10 py-2 text-body-2 text-sm-body-1 font-weight-bold flex-grow-1 flex-sm-grow-0"
-              rounded="l"
-              elevation="6"
-              @click="openDeductDialog"
-            >
-              <v-icon start size="small" class="hidden-sm-and-up">mdi-minus-circle</v-icon>
-              <v-icon start class="hidden-xs">mdi-minus-circle</v-icon>
-              <span class="hidden-xs">Deduct Product</span>
-              <span class="hidden-sm-and-up">Deduct</span>
-            </v-btn>
-
-
-
+      <!-- Stats Row -->
+      <v-row class="mb-6" dense>
+        <v-col cols="12" sm="4">
+          <div class="stat-card">
+            <div class="stat-icon-wrap stat-blue">
+              <v-icon size="22" color="white">mdi-archive-outline</v-icon>
+            </div>
+            <div>
+              <p class="stat-label">Total Products</p>
+              <p class="stat-value">{{ products.length }}</p>
+            </div>
           </div>
         </v-col>
-
-        <v-col cols="1">
-             <!-- Refresh Button -->
-              <v-btn
-              icon
-              variant="text"
-              color="white"
-              :loading="isRefreshing"
-              @click="refreshInventory"
-              class="my-5"
-            >
-              <v-icon>mdi-refresh</v-icon>
-              <v-tooltip activator="parent" location="top">Refresh Inventory</v-tooltip>
-            </v-btn>
-        </v-col>
-      </v-row>
-
-      <!-- Product List Card -->
-      <v-row>
-        <v-col cols="12" class="product-list-container pa-4 pa-md-8 rounded-xl">
-          <v-card class="product-list-card pa-6 pa-md-10 rounded-xl" elevation="4" min-height="550">
-            <h2 class="section-title mb-6">Product Inventory List</h2>
-
-            <!-- Info Alert -->
-            <v-alert type="info" variant="tonal" class="mb-6" density="compact">
-              <div class="text-body-2">
-                <strong>💡 Tip:</strong> Products with the same name but different purchase dates
-                are tracked separately for accurate expense reporting.
-              </div>
-            </v-alert>
-
-            <v-divider class="section-divider mb-10"></v-divider>
-
-            <!-- Product Table -->
-            <v-table class="product-table" v-if="products.length > 0">
-              <thead>
-                <tr>
-                  <th class="table-header">Product Name</th>
-                  <th class="table-header">Purchase Date</th>
-                  <th class="table-header">Quantity</th>
-                  <th class="table-header">Price/Unit</th>
-                  <th class="table-header">Total Price</th>
-                  <th class="table-header">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="product in products" :key="product.id" class="product-row">
-                  <td class="pa-5">
-                    <span class="product-name">{{ product.name }}</span>
-                  </td>
-                  <td class="pa-5">
-                    <v-chip
-                      size="small"
-                      :color="
-                        product.purchaseDate === currentSimulatedDate ? 'success' : 'blue-grey'
-                      "
-                      variant="tonal"
-                    >
-                      {{ product.purchaseDate }}
-                      <v-tooltip activator="parent" location="top">
-                        {{
-                          product.purchaseDate === currentSimulatedDate
-                            ? 'Purchased TODAY'
-                            : 'Purchased on ' + product.purchaseDate
-                        }}
-                      </v-tooltip>
-                    </v-chip>
-                  </td>
-                  <td class="pa-5">
-                    <span class="product-data">{{ product.quantity }}</span>
-                  </td>
-                  <td class="pa-5">
-                    <span class="product-price">₱{{ product.price.toLocaleString() }}</span>
-                  </td>
-                  <td class="pa-5">
-                    <span class="product-total">₱{{ product.totalPrice.toLocaleString() }}</span>
-                  </td>
-                  <td class="pa-5">
-                    <div class="d-flex ga-3">
-                      <v-btn
-                        class="action-btn edit-btn"
-                        icon
-                        size="small"
-                        elevation="2"
-                        @click="editProduct(product)"
-                      >
-                        <v-icon size="18">mdi-pencil</v-icon>
-                        <v-tooltip activator="parent" location="top"> Edit this entry </v-tooltip>
-                      </v-btn>
-                      <v-btn
-                        class="action-btn delete-btn"
-                        icon
-                        size="small"
-                        elevation="2"
-                        @click="deleteProductHandler(product)"
-                      >
-                        <v-icon size="18">mdi-delete</v-icon>
-                        <v-tooltip activator="parent" location="top"> Delete this entry </v-tooltip>
-                      </v-btn>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </v-table>
-
-            <!-- Empty State -->
-            <div v-else class="text-center py-16">
-              <div class="empty-state-icon mb-8">
-                <v-icon size="120" class="text-grey-lighten-1">mdi-package-variant-closed</v-icon>
-              </div>
-              <p class="empty-state-text mb-10">
-                No products in inventory yet. Start by adding your first product!
-              </p>
+        <v-col cols="12" sm="4">
+          <div class="stat-card">
+            <div class="stat-icon-wrap stat-red">
+              <v-icon size="22" color="white">mdi-alert-circle-outline</v-icon>
             </div>
-          </v-card>
+            <div>
+              <p class="stat-label">Low Stock Items</p>
+              <p class="stat-value">{{ lowStockProducts.length }}</p>
+            </div>
+          </div>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <div class="stat-card">
+            <div class="stat-icon-wrap stat-green">
+              <v-icon size="22" color="white">mdi-calendar-today</v-icon>
+            </div>
+            <div>
+              <p class="stat-label">Business Date</p>
+              <p class="stat-value stat-value--sm">{{ currentSimulatedDate }}</p>
+            </div>
+          </div>
         </v-col>
       </v-row>
+
+      <!-- Product Table Card -->
+      <div class="table-card">
+        <!-- Card Header -->
+        <div class="table-card-header px-6 py-5">
+          <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+            <div class="d-flex align-center ga-3">
+              <h2 class="table-card-title">Product List</h2>
+              <v-chip size="small" class="count-chip">{{ products.length }} items</v-chip>
+            </div>
+            <v-alert type="info" variant="tonal" density="compact" class="tip-alert" border="start">
+              <span class="text-caption"
+                >Products with same name but different purchase dates are tracked separately.</span
+              >
+            </v-alert>
+          </div>
+        </div>
+
+        <v-divider></v-divider>
+
+        <!-- Table -->
+        <div class="table-wrap" v-if="products.length > 0">
+          <v-table class="product-table" hover>
+            <thead>
+              <tr>
+                <th class="th-cell">Product Name</th>
+                <th class="th-cell">Purchase Date</th>
+                <th class="th-cell">Quantity</th>
+                <th class="th-cell">Price / Unit</th>
+                <th class="th-cell">Total Value</th>
+                <th class="th-cell text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="product in products" :key="product.id" class="td-row">
+                <td class="td-cell">
+                  <div class="d-flex align-center ga-3">
+                    <div class="product-avatar">
+                      {{ product.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="product-name-text">{{ product.name }}</span>
+                  </div>
+                </td>
+                <td class="td-cell">
+                  <v-chip
+                    size="small"
+                    :color="product.purchaseDate === currentSimulatedDate ? 'success' : 'blue-grey'"
+                    variant="tonal"
+                    class="date-chip"
+                  >
+                    <v-icon start size="12">mdi-calendar</v-icon>
+                    {{ product.purchaseDate }}
+                    <v-tooltip activator="parent" location="top">
+                      {{
+                        product.purchaseDate === currentSimulatedDate
+                          ? 'Purchased TODAY'
+                          : 'Purchased on ' + product.purchaseDate
+                      }}
+                    </v-tooltip>
+                  </v-chip>
+                </td>
+                <td class="td-cell">
+                  <div class="d-flex align-center ga-2">
+                    <span class="qty-badge" :class="product.quantity <= 10 ? 'qty-low' : 'qty-ok'">
+                      {{ product.quantity }}
+                    </span>
+                    <span class="unit-text">{{ product.unit }}</span>
+                  </div>
+                </td>
+                <td class="td-cell">
+                  <span class="price-text">₱{{ product.price.toLocaleString() }}</span>
+                </td>
+                <td class="td-cell">
+                  <span class="total-text">₱{{ product.totalPrice.toLocaleString() }}</span>
+                </td>
+                <td class="td-cell text-center">
+                  <div class="d-flex justify-center ga-2">
+                    <v-btn
+                      icon
+                      size="small"
+                      variant="tonal"
+                      color="primary"
+                      class="tbl-btn"
+                      @click="editProduct(product)"
+                    >
+                      <v-icon size="16">mdi-pencil-outline</v-icon>
+                      <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      size="small"
+                      variant="tonal"
+                      color="error"
+                      class="tbl-btn"
+                      @click="deleteProductHandler(product)"
+                    >
+                      <v-icon size="16">mdi-trash-can-outline</v-icon>
+                      <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+                    </v-btn>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="empty-state py-16">
+          <div class="empty-icon-wrap mb-6">
+            <v-icon size="56" color="grey-lighten-1">mdi-package-variant-closed</v-icon>
+          </div>
+          <p class="empty-title mb-2">No products yet</p>
+          <p class="empty-sub mb-6">Start by adding your first product to the inventory.</p>
+          <v-btn class="action-header-btn" rounded="lg" @click="openAddDialog">
+            <v-icon start size="18">mdi-plus</v-icon>
+            Add First Product
+          </v-btn>
+        </div>
+      </div>
     </v-container>
 
+    <!-- ═══════════════ DIALOGS ═══════════════ -->
+
     <!-- Edit Warning Dialog -->
-    <v-dialog v-model="editWarningDialog" max-width="600px">
-      <v-card class="dialog-card rounded-xl" elevation="8">
-        <v-card-title class="warning-dialog-header pa-8 pb-6">
-          <v-icon size="48" class="mr-4" color="white">mdi-alert</v-icon>
-          <span class="dialog-title text-white">Old Stock - Edit Warning</span>
-        </v-card-title>
+    <v-dialog v-model="editWarningDialog" max-width="560px">
+      <v-card class="dlg-card" rounded="xl" elevation="12">
+        <div class="dlg-header dlg-header--warning px-8 py-6">
+          <div class="d-flex align-center ga-3">
+            <v-icon size="28" color="white">mdi-alert-outline</v-icon>
+            <span class="dlg-title">Old Stock — Edit Warning</span>
+          </div>
+        </div>
 
-        <v-card-text class="pa-8">
-          <div class="text-h6 mb-4">
+        <v-card-text class="px-8 py-6">
+          <p class="text-body-1 mb-4">
             This product was purchased on
-            <strong class="text-warning">{{ productToEdit?.purchaseDate }}</strong>
-          </div>
+            <strong class="text-warning">{{ productToEdit?.purchaseDate }}</strong
+            >. What would you like to do?
+          </p>
 
-          <v-alert type="warning" variant="tonal" class="mb-4">
-            <div class="text-body-1">
-              <strong>⚠️ Important:</strong> If you're adding NEW STOCK today ({{
-                currentSimulatedDate
-              }}), you should click <strong>"Add New Stock"</strong> to properly track today's
-              expenses.
+          <div class="choice-grid">
+            <div class="choice-card choice-card--green" @click="updateExistingStock">
+              <v-icon size="28" color="success" class="mb-2">mdi-package-variant-plus</v-icon>
+              <p class="choice-title">Add New Stock</p>
+              <p class="choice-desc">Adds qty & cost to today's records</p>
             </div>
-          </v-alert>
-
-          <div class="text-body-1 mb-4">
-            <strong>Choose what you want to do:</strong>
+            <div class="choice-card choice-card--blue" @click="proceedToEdit(productToEdit)">
+              <v-icon size="28" color="info" class="mb-2">mdi-pencil-outline</v-icon>
+              <p class="choice-title">Edit Old Entry</p>
+              <p class="choice-desc">Fix a typo or wrong price from before</p>
+            </div>
           </div>
-
-          <v-list class="bg-transparent">
-            <v-list-item>
-              <template v-slot:prepend>
-                <v-icon color="success">mdi-package-variant-plus</v-icon>
-              </template>
-              <v-list-item-title class="font-weight-bold">Update Existing Stock</v-list-item-title>
-              <v-list-item-subtitle>
-                I'm adding MORE stock to this product today ({{ currentSimulatedDate }}) <br />→
-                Only the ADDITIONAL cost will be added to TODAY's expenses <br />→ Quantity and
-                average price will be updated
-              </v-list-item-subtitle>
-            </v-list-item>
-
-            <v-divider class="my-2"></v-divider>
-
-            <v-list-item>
-              <template v-slot:prepend>
-                <v-icon color="info">mdi-pencil</v-icon>
-              </template>
-              <v-list-item-title class="font-weight-bold">Edit Old Entry</v-list-item-title>
-              <v-list-item-subtitle>
-                I need to fix the {{ productToEdit?.purchaseDate }} entry (typo, wrong price, etc.)
-                <br />→ This will update {{ productToEdit?.purchaseDate }}'s expenses
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
         </v-card-text>
 
-        <v-card-actions class="pa-8 pt-0">
-          <v-row class="ma-0">
-            <v-col cols="12" class="d-flex justify-center ga-4">
-              <v-btn
-                variant="outlined"
-                class="cancel-btn py-4 flex-grow-0"
-                style="min-width: 160px"
-                size="medium"
-                rounded="xl"
-                @click="editWarningDialog = false"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                class="edit-old-btn py-4 flex-grow-0"
-                style="min-width: 160px"
-                size="medium"
-                rounded="xl"
-                elevation="4"
-                color="info"
-                @click="proceedToEdit(productToEdit)"
-              >
-                <v-icon start>mdi-pencil</v-icon>
-                Edit Old Entry
-              </v-btn>
-              <v-btn
-                class="update-stock-btn py-4 flex-grow-0"
-                style="min-width: 160px"
-                size="medium"
-                rounded="xl"
-                elevation="4"
-                color="success"
-                @click="updateExistingStock"
-              >
-                <v-icon start>mdi-package-variant-plus</v-icon>
-                Update Stock
-              </v-btn>
-            </v-col>
-          </v-row>
+        <v-card-actions class="px-8 pb-6 pt-0">
+          <v-spacer></v-spacer>
+          <v-btn
+            variant="text"
+            rounded="lg"
+            class="dlg-cancel-btn"
+            @click="editWarningDialog = false"
+          >
+            Cancel
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <!-- Update Stock Dialog (for adding more stock to existing product) -->
-    <v-dialog v-model="updateStockDialog" max-width="650px" persistent>
-      <v-card class="dialog-card rounded-xl" elevation="8">
-        <v-card-title class="dialog-header pa-8 pb-6">
-          <v-icon size="40" class="mr-4" color="white">mdi-package-variant-plus</v-icon>
-          <span class="dialog-title">Update Stock - {{ productToEdit?.name }}</span>
-        </v-card-title>
+    <!-- Update Stock Dialog -->
+    <v-dialog v-model="updateStockDialog" max-width="620px" persistent>
+      <v-card class="dlg-card" rounded="xl" elevation="12">
+        <div class="dlg-header px-8 py-6">
+          <div class="d-flex align-center ga-3">
+            <v-icon size="26" color="white">mdi-package-variant-plus</v-icon>
+            <span class="dlg-title">Update Stock — {{ productToEdit?.name }}</span>
+          </div>
+        </div>
 
-        <v-card-text class="pa-8">
-          <!-- Current Stock Info -->
-          <v-alert type="info" variant="tonal" class="mb-6">
-            <div class="text-body-1">
-              <strong>Current Stock ({{ productToEdit?.purchaseDate }}):</strong>
-              <br />• Quantity: {{ productToEdit?.quantity }} {{ productToEdit?.unit }} <br />•
-              Price/Unit: ₱{{ productToEdit?.price?.toLocaleString() }} <br />• Total Value: ₱{{
-                productToEdit?.totalPrice?.toLocaleString()
-              }}
+        <v-card-text class="px-8 py-6">
+          <!-- Current stock summary -->
+          <div class="stock-summary mb-6">
+            <div class="stock-summary-row">
+              <span class="ss-label">Current Quantity</span>
+              <span class="ss-val">{{ productToEdit?.quantity }} {{ productToEdit?.unit }}</span>
             </div>
-          </v-alert>
+            <div class="stock-summary-row">
+              <span class="ss-label">Price / Unit</span>
+              <span class="ss-val">₱{{ productToEdit?.price?.toLocaleString() }}</span>
+            </div>
+            <div class="stock-summary-row">
+              <span class="ss-label">Total Value</span>
+              <span class="ss-val ss-val--bold"
+                >₱{{ productToEdit?.totalPrice?.toLocaleString() }}</span
+              >
+            </div>
+          </div>
 
-          <v-form>
-            <v-row>
-              <v-col cols="12">
-                <h3 class="text-h6 mb-4 text-success">
-                  Adding New Stock Today ({{ currentSimulatedDate }})
-                </h3>
-              </v-col>
+          <p class="field-section-label mb-4">Adding New Stock — {{ currentSimulatedDate }}</p>
 
-              <v-col cols="6">
-                <v-text-field
-                  v-model="additionalQuantity"
-                  label="Additional Quantity"
-                  type="number"
-                  variant="outlined"
-                  class="form-field"
-                  prepend-inner-icon="mdi-plus"
-                  hint="How many items are you adding?"
-                  persistent-hint
-                ></v-text-field>
-              </v-col>
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                v-model="additionalQuantity"
+                label="Additional Quantity"
+                type="number"
+                variant="outlined"
+                class="form-field"
+                prepend-inner-icon="mdi-plus"
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="additionalPricePerUnit"
+                label="Price per Unit"
+                type="number"
+                variant="outlined"
+                class="form-field"
+                prepend-inner-icon="mdi-currency-php"
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
+          </v-row>
 
-              <v-col cols="6">
-                <v-text-field
-                  v-model="additionalPricePerUnit"
-                  label="Price per Unit (New Stock)"
-                  type="number"
-                  variant="outlined"
-                  class="form-field"
-                  prepend-inner-icon="mdi-currency-php"
-                  hint="Price of the new stock"
-                  persistent-hint
-                ></v-text-field>
-              </v-col>
+          <!-- Cost today -->
+          <div class="cost-today-box mb-4">
+            <span class="cost-label">Additional Cost Today</span>
+            <span class="cost-value">₱{{ additionalTotalPrice.toLocaleString() }}</span>
+          </div>
 
-              <v-col cols="12">
-                <v-card variant="outlined" class="pa-4 bg-green-lighten-5">
-                  <div class="text-body-1">
-                    <strong>Additional Cost (TODAY):</strong>
-                    <span class="text-h5 text-success ml-2"
-                      >₱{{ additionalTotalPrice.toLocaleString() }}</span
-                    >
-                  </div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12">
-                <v-divider class="my-4"></v-divider>
-                <h3 class="text-h6 mb-4">After Update Preview:</h3>
-              </v-col>
-
-              <v-col cols="12">
-                <v-card variant="outlined" class="pa-4 bg-blue-grey-lighten-5">
-                  <div class="text-body-2">
-                    <div class="mb-2">
-                      <strong>New Total Quantity:</strong>
-                      {{ productToEdit?.quantity || 0 }} + {{ additionalQuantity || 0 }} =
-                      <span class="text-primary font-weight-bold"
-                        >{{
-                          Number(productToEdit?.quantity || 0) + Number(additionalQuantity || 0)
-                        }}
-                        {{ productToEdit?.unit }}</span
-                      >
-                    </div>
-                    <div class="mb-2">
-                      <strong>New Average Price/Unit:</strong>
-                      <span class="text-primary font-weight-bold">
-                        ₱{{
-                          (
-                            ((productToEdit?.quantity || 0) * (productToEdit?.price || 0) +
-                              additionalTotalPrice) /
-                            (Number(productToEdit?.quantity || 0) +
-                              Number(additionalQuantity || 0) || 1)
-                          ).toFixed(2)
-                        }}
-                      </span>
-                    </div>
-                    <div>
-                      <strong>New Total Value:</strong>
-                      <span class="text-primary font-weight-bold">
-                        ₱{{
-                          (
-                            (productToEdit?.quantity || 0) * (productToEdit?.price || 0) +
-                            additionalTotalPrice
-                          ).toLocaleString()
-                        }}
-                      </span>
-                    </div>
-                  </div>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-form>
+          <!-- Preview -->
+          <div class="preview-box">
+            <p class="preview-label mb-3">After Update Preview</p>
+            <div class="preview-row">
+              <span>New Quantity</span>
+              <strong
+                >{{ Number(productToEdit?.quantity || 0) + Number(additionalQuantity || 0) }}
+                {{ productToEdit?.unit }}</strong
+              >
+            </div>
+            <div class="preview-row">
+              <span>Avg Price / Unit</span>
+              <strong
+                >₱{{
+                  (
+                    ((productToEdit?.quantity || 0) * (productToEdit?.price || 0) +
+                      additionalTotalPrice) /
+                    (Number(productToEdit?.quantity || 0) + Number(additionalQuantity || 0) || 1)
+                  ).toFixed(2)
+                }}</strong
+              >
+            </div>
+            <div class="preview-row">
+              <span>New Total Value</span>
+              <strong
+                >₱{{
+                  (
+                    (productToEdit?.quantity || 0) * (productToEdit?.price || 0) +
+                    additionalTotalPrice
+                  ).toLocaleString()
+                }}</strong
+              >
+            </div>
+          </div>
         </v-card-text>
 
-        <v-card-actions class="pa-8 pt-0">
-          <v-spacer></v-spacer>
+        <v-card-actions class="px-8 pb-6 pt-0 d-flex ga-3 justify-end">
           <v-btn
             variant="outlined"
-            class="cancel-btn px-8 py-2"
-            size="large"
-            rounded="xl"
+            rounded="lg"
+            class="dlg-cancel-btn"
             @click="updateStockDialog = false"
+            >Cancel</v-btn
           >
-            Cancel
-          </v-btn>
           <v-btn
-            class="save-btn px-8 py-2 ml-4"
-            size="large"
-            rounded="xl"
-            elevation="4"
+            class="dlg-confirm-btn"
+            rounded="lg"
+            elevation="0"
             color="success"
             @click="confirmStockUpdate"
             :disabled="
@@ -647,23 +604,26 @@ const refreshInventory = async () => {
               additionalPricePerUnit <= 0
             "
           >
-            <v-icon start>mdi-check</v-icon>
+            <v-icon start size="18">mdi-check</v-icon>
             Confirm Update
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <!-- Add/Edit Product Dialog -->
-    <v-dialog v-model="dialog" max-width="650px" persistent>
-      <v-card class="dialog-card rounded-xl" elevation="8">
-        <v-card-title class="dialog-header pa-8 pb-6">
-          <span class="dialog-title">
-            {{ isEditMode ? 'Edit Product' : 'Add New Product' }}
-          </span>
-        </v-card-title>
+    <!-- Add / Edit Product Dialog -->
+    <v-dialog v-model="dialog" max-width="580px" persistent>
+      <v-card class="dlg-card" rounded="xl" elevation="12">
+        <div class="dlg-header px-8 py-6">
+          <div class="d-flex align-center ga-3">
+            <v-icon size="26" color="white">{{
+              isEditMode ? 'mdi-pencil-outline' : 'mdi-plus-circle-outline'
+            }}</v-icon>
+            <span class="dlg-title">{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</span>
+          </div>
+        </div>
 
-        <v-card-text class="pa-8">
+        <v-card-text class="px-8 py-6">
           <v-form ref="productFormRef" v-model="valid">
             <v-row>
               <v-col cols="12">
@@ -673,11 +633,11 @@ const refreshInventory = async () => {
                   :rules="nameRules"
                   variant="outlined"
                   class="form-field"
-                  prepend-inner-icon="mdi-food"
+                  prepend-inner-icon="mdi-food-variant"
+                  density="comfortable"
                 ></v-text-field>
               </v-col>
 
-              <!-- Purchase Date Picker -->
               <v-col cols="12" v-if="!isEditMode">
                 <v-text-field
                   v-model="productForm.purchaseDate"
@@ -685,9 +645,8 @@ const refreshInventory = async () => {
                   type="date"
                   variant="outlined"
                   class="form-field"
-                  prepend-inner-icon="mdi-calendar"
-                  hint="Select the date this product was purchased"
-                  persistent-hint
+                  prepend-inner-icon="mdi-calendar-outline"
+                  density="comfortable"
                 ></v-text-field>
               </v-col>
 
@@ -700,6 +659,20 @@ const refreshInventory = async () => {
                   variant="outlined"
                   class="form-field"
                   prepend-inner-icon="mdi-counter"
+                  density="comfortable"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="6">
+                <v-text-field
+                  v-model="productForm.unit"
+                  label="Unit"
+                  :rules="unitRules"
+                  variant="outlined"
+                  class="form-field"
+                  prepend-inner-icon="mdi-scale"
+                  density="comfortable"
+                  placeholder="kg, pcs, L..."
                 ></v-text-field>
               </v-col>
 
@@ -712,6 +685,7 @@ const refreshInventory = async () => {
                   variant="outlined"
                   class="form-field"
                   prepend-inner-icon="mdi-currency-php"
+                  density="comfortable"
                 ></v-text-field>
               </v-col>
 
@@ -723,119 +697,107 @@ const refreshInventory = async () => {
                   variant="outlined"
                   class="form-field total-price-field"
                   prepend-inner-icon="mdi-calculator"
+                  density="comfortable"
                 ></v-text-field>
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
 
-        <v-card-actions class="pa-8 pt-0">
-          <v-spacer></v-spacer>
-          <v-btn
-            variant="outlined"
-            class="cancel-btn px-8 py-2"
-            size="large"
-            rounded="xl"
-            @click="closeDialog"
+        <v-card-actions class="px-8 pb-6 pt-0 d-flex ga-3 justify-end">
+          <v-btn variant="outlined" rounded="lg" class="dlg-cancel-btn" @click="closeDialog"
+            >Cancel</v-btn
           >
-            Cancel
-          </v-btn>
           <v-btn
-            class="save-btn px-8 py-2 ml-4"
-            size="large"
-            rounded="xl"
-            elevation="4"
+            class="dlg-confirm-btn"
+            rounded="lg"
+            elevation="0"
             @click="saveProduct"
             :disabled="!valid"
           >
-            {{ isEditMode ? 'Update' : 'Add' }} Product
+            <v-icon start size="18">{{
+              isEditMode ? 'mdi-content-save-outline' : 'mdi-plus'
+            }}</v-icon>
+            {{ isEditMode ? 'Save Changes' : 'Add Product' }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Delete Confirmation Dialog -->
-    <v-dialog v-model="deleteDialog" max-width="500px">
-      <v-card class="dialog-card rounded-xl" elevation="8">
-        <v-card-title class="delete-dialog-header pa-8 pb-6">
-          <v-icon size="48" class="mr-4" color="white">mdi-alert-circle</v-icon>
-          <span class="dialog-title text-white">Delete Product</span>
-        </v-card-title>
-
-        <v-card-text class="pa-8 text-center">
-          <p class="text-h6 mb-4">Are you sure you want to delete</p>
-          <p class="text-h5 font-weight-bold text-red-darken-2">"{{ productToDelete?.name }}"?</p>
-          <p class="text-body-1 text-grey-darken-1 mt-4">This action cannot be undone.</p>
+    <v-dialog v-model="deleteDialog" max-width="460px">
+      <v-card class="dlg-card" rounded="xl" elevation="12">
+        <v-card-text class="px-8 pt-10 pb-6 text-center">
+          <div class="delete-icon-wrap mb-5">
+            <v-icon size="36" color="error">mdi-trash-can-outline</v-icon>
+          </div>
+          <p class="delete-title mb-2">Delete Product?</p>
+          <p class="delete-name mb-2">{{ productToDelete?.name }}</p>
+          <p class="delete-sub">This action is permanent and cannot be undone.</p>
         </v-card-text>
-
-        <v-card-actions class="pa-8 pt-0">
-          <v-spacer></v-spacer>
+        <v-card-actions class="px-8 pb-8 d-flex ga-3 justify-center">
           <v-btn
             variant="outlined"
-            class="cancel-btn px-8 py-5"
-            size="large"
-            rounded="xl"
+            rounded="lg"
+            class="dlg-cancel-btn"
+            style="min-width: 130px"
             @click="deleteDialog = false"
+            >Cancel</v-btn
           >
-            Cancel
-          </v-btn>
           <v-btn
-            class="delete-confirm-btn px-8 py-5 ml-4"
-            size="large"
-            rounded="xl"
-            elevation="4"
+            color="error"
+            variant="flat"
+            rounded="lg"
+            style="min-width: 130px"
+            class="font-weight-bold"
             @click="confirmDelete"
+            >Delete</v-btn
           >
-            Delete
-          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Deduct Product Dialog -->
-    <v-dialog v-model="deductDialog" max-width="650px" persistent>
-      <v-card class="dialog-card rounded-xl" elevation="8">
-        <v-card-title class="dialog-header pa-8 pb-6">
-          <span class="dialog-title">Deduct Product</span>
-        </v-card-title>
+    <v-dialog v-model="deductDialog" max-width="580px" persistent>
+      <v-card class="dlg-card" rounded="xl" elevation="12">
+        <div class="dlg-header dlg-header--red px-8 py-6">
+          <div class="d-flex align-center ga-3">
+            <v-icon size="26" color="white">mdi-minus-circle-outline</v-icon>
+            <span class="dlg-title">Deduct Product</span>
+          </div>
+        </div>
 
-        <v-card-text class="pa-8">
+        <v-card-text class="px-8 py-6">
           <v-form>
             <v-row>
               <v-col cols="12">
-                <label class="text-body2 font-weight-bold mb-2 d-block"
-                  >Select Product to Deduct</label
-                >
                 <v-select
                   v-model="selectedProductId"
                   :items="products"
                   item-title="name"
                   item-value="id"
-                  label="Choose a product from inventory"
+                  label="Select Product"
                   variant="outlined"
                   class="form-field"
-                  prepend-inner-icon="mdi-food"
-                  persistent-hint
+                  prepend-inner-icon="mdi-magnify"
+                  density="comfortable"
                   hide-details="auto"
-                  required
                 >
                   <template #item="{ props, item }">
                     <v-list-item
                       v-bind="props"
-                      :subtitle="`${item.raw.quantity} ${item.raw.unit} (Purchased: ${item.raw.purchaseDate})`"
-                    >
-                    </v-list-item>
+                      :subtitle="`${item.raw.quantity} ${item.raw.unit} · ${item.raw.purchaseDate}`"
+                    ></v-list-item>
                   </template>
                   <template #selection="{ item }">
                     <span v-if="item.raw"
-                      >{{ item.raw.name }} ({{ item.raw.quantity }} {{ item.raw.unit }} -
-                      {{ item.raw.purchaseDate }})</span
+                      >{{ item.raw.name }} ({{ item.raw.quantity }} {{ item.raw.unit }})</span
                     >
                   </template>
                 </v-select>
-                <div class="text-caption text-grey mt-2">
+                <p class="text-caption text-grey mt-1">
                   {{ products.length }} product(s) available
-                </div>
+                </p>
               </v-col>
 
               <v-col cols="6">
@@ -846,33 +808,26 @@ const refreshInventory = async () => {
                   variant="outlined"
                   class="form-field"
                   prepend-inner-icon="mdi-counter"
-                  required
+                  density="comfortable"
                 />
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
 
-        <v-card-actions class="pa-8 pt-0">
-          <v-spacer></v-spacer>
-          <v-btn
-            variant="outlined"
-            class="cancel-btn px-8 py-2"
-            size="large"
-            rounded="xl"
-            @click="closeDeductDialog"
+        <v-card-actions class="px-8 pb-6 pt-0 d-flex ga-3 justify-end">
+          <v-btn variant="outlined" rounded="lg" class="dlg-cancel-btn" @click="closeDeductDialog"
+            >Cancel</v-btn
           >
-            Cancel
-          </v-btn>
           <v-btn
-            class="save-btn px-8 py-2 ml-4"
-            size="large"
-            rounded="xl"
-            elevation="4"
-            color="red"
+            color="error"
+            variant="flat"
+            rounded="lg"
+            class="font-weight-bold"
             @click="submitDeduct"
             :disabled="!selectedProductId || deductQuantity <= 0"
           >
+            <v-icon start size="18">mdi-minus</v-icon>
             Deduct
           </v-btn>
         </v-card-actions>
@@ -882,359 +837,474 @@ const refreshInventory = async () => {
 </template>
 
 <style scoped>
+/* ── Base ── */
 .app-background {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+  background: #f4f5f7;
   min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-/* Header Styles */
-.header-container {
-  background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);
-  box-shadow: 0 8px 32px rgba(139, 0, 0, 0.2);
+/* ── Header ── */
+.header-bar {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(139, 0, 0, 0.18);
 }
-
-@media (max-width: 960px) {
-  .header-container {
-    padding: 1.5rem !important;
-  }
+.header-inner {
+  background: linear-gradient(120deg, #7b0000 0%, #b71c1c 60%, #c62828 100%);
 }
-
-@media (max-width: 600px) {
-  .header-container {
-    padding: 1rem !important;
-  }
+.header-icon-wrap {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
-
-.page-title {
-  color: white;
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.header-eyebrow {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0;
 }
-
-@media (max-width: 960px) {
-  .page-title {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .page-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-}
-
-.add-product-btn {
-  background: linear-gradient(135deg, #fff 0%, #ffe4e1 100%) !important;
-  color: #8b0000 !important;
-  text-transform: none;
-  letter-spacing: 0.5px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3) !important;
-  border: 2px solid rgba(139, 0, 0, 0.2);
-}
-
-.add-product-btn:hover {
-  background: linear-gradient(135deg, #ffe4e1 0%, #fff 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.5) !important;
-  border-color: rgba(139, 0, 0, 0.4);
-}
-
-.deduct-product-btn {
-  background: linear-gradient(135deg, #ffe4e1 0%, #fff 100%) !important;
-  color: #8b0000 !important;
-  text-transform: none;
-  letter-spacing: 0.5px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3) !important;
-  border: 2px solid rgba(139, 0, 0, 0.2);
-}
-
-.deduct-product-btn:hover {
-  background: linear-gradient(135deg, #fff 0%, #ffe4e1 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.5) !important;
-  border-color: rgba(139, 0, 0, 0.4);
-}
-
-@media (max-width: 960px) {
-  .add-product-btn,
-  .deduct-product-btn {
-    padding: 12px 16px !important;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .add-product-btn,
-  .deduct-product-btn {
-    padding: 10px 12px !important;
-    font-size: 0.85rem;
-    width: 100%;
-  }
-}
-
-.product-list-container {
-  background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);
-  box-shadow: 0 8px 32px rgba(139, 0, 0, 0.2);
-}
-
-.product-list-card {
-  background: white;
-  border: 1px solid rgba(139, 0, 0, 0.1);
-}
-
-.section-title {
-  color: #8b0000;
-  font-size: 2rem;
+.header-title {
+  color: #fff;
+  font-size: 1.65rem;
   font-weight: 700;
   letter-spacing: -0.3px;
+  margin: 0;
 }
-
-@media (max-width: 960px) {
-  .section-title {
-    font-size: 1.75rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .section-title {
-    font-size: 1.5rem;
-  }
-}
-
-.section-divider {
-  border-color: rgba(139, 0, 0, 0.2);
-  border-width: 2px;
-}
-
-.product-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-.table-header {
-  background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%) !important;
-  color: white !important;
+.action-header-btn {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #8b0000 !important;
   font-weight: 700 !important;
-  font-size: 0.95rem !important;
-  padding: 20px !important;
-  border-bottom: none !important;
-  text-transform: uppercase;
+  font-size: 0.875rem !important;
+  text-transform: none !important;
+  letter-spacing: 0.2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s ease;
+}
+.action-header-btn:hover {
+  background: #fff !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-1px);
+}
+.refresh-btn {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+.refresh-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ── Stat Cards ── */
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+.stat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.stat-blue {
+  background: linear-gradient(135deg, #1565c0, #1976d2);
+}
+.stat-red {
+  background: linear-gradient(135deg, #8b0000, #c62828);
+}
+.stat-green {
+  background: linear-gradient(135deg, #2e7d32, #388e3c);
+}
+.stat-label {
+  color: #888;
+  font-size: 0.75rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0 0 2px;
 }
-
-@media (max-width: 960px) {
-  .table-header {
-    font-size: 0.85rem !important;
-    padding: 15px !important;
-  }
+.stat-value {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
 }
-
-@media (max-width: 600px) {
-  .table-header {
-    font-size: 0.75rem !important;
-    padding: 10px !important;
-  }
-
-  .product-table {
-    font-size: 0.85rem;
-  }
-}
-
-.product-row {
-  transition: all 0.3s ease;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.product-row:hover {
-  background: linear-gradient(90deg, #fff5f5 0%, #ffe4e1 100%) !important;
-  transform: scale(1.01);
-  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
-}
-
-.product-row:last-child {
-  border-bottom: none;
-}
-
-.product-name {
-  color: #8b0000;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.product-data {
-  color: #666;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.product-price {
-  color: #2e7d32;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.product-total {
-  color: #8b0000;
-  font-weight: 700;
+.stat-value--sm {
   font-size: 1.05rem;
 }
 
-.action-btn {
-  transition: all 0.3s ease;
-  border-radius: 8px;
+/* ── Table Card ── */
+.table-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+.table-card-header {
+  background: #fff;
+}
+.table-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.count-chip {
+  background: #f0f0f0 !important;
+  color: #555 !important;
+  font-weight: 600;
+  font-size: 0.72rem;
+}
+.tip-alert {
+  font-size: 0.78rem;
+  max-width: 460px;
+  padding: 6px 12px !important;
 }
 
-.edit-btn {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
-  color: white !important;
+/* ── Table ── */
+.table-wrap {
+  overflow-x: auto;
+}
+.product-table {
+  width: 100%;
 }
 
-.edit-btn:hover {
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4) !important;
+.th-cell {
+  background: #fafafa !important;
+  color: #555 !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.8px !important;
+  text-transform: uppercase !important;
+  padding: 14px 20px !important;
+  border-bottom: 2px solid #f0f0f0 !important;
+  white-space: nowrap;
 }
 
-.delete-btn {
-  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%) !important;
-  color: white !important;
+.td-row {
+  transition: background 0.15s ease;
+}
+.td-row:hover {
+  background: #fdf5f5 !important;
+}
+.td-row:not(:last-child) td {
+  border-bottom: 1px solid #f5f5f5;
 }
 
-.delete-btn:hover {
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4) !important;
+.td-cell {
+  padding: 14px 20px !important;
+  vertical-align: middle;
 }
 
-.empty-state-icon {
-  background: linear-gradient(135deg, #ffe4e1 0%, #fff5f5 100%);
-  width: 180px;
-  height: 180px;
+.product-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #8b0000, #c62828);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.product-name-text {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+}
+.date-chip {
+  font-size: 0.72rem !important;
+}
+.qty-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.qty-ok {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.qty-low {
+  background: #fff3e0;
+  color: #e65100;
+}
+.unit-text {
+  color: #888;
+  font-size: 0.78rem;
+}
+.price-text {
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.total-text {
+  color: #8b0000;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.tbl-btn {
+  border-radius: 8px !important;
+}
+
+/* ── Empty State ── */
+.empty-state {
+  text-align: center;
+}
+.empty-icon-wrap {
+  width: 96px;
+  height: 96px;
+  background: #f5f5f5;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  box-shadow: 0 8px 24px rgba(139, 0, 0, 0.1);
 }
-
-.empty-state-text {
-  color: #666;
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
-
-.dialog-card {
-  border: 2px solid rgba(139, 0, 0, 0.1);
-}
-
-.dialog-header {
-  background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);
-  border-bottom: 3px solid #dc143c;
-}
-
-.dialog-title {
-  color: white;
-  font-size: 1.75rem;
+.empty-title {
+  font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  color: #333;
+}
+.empty-sub {
+  font-size: 0.875rem;
+  color: #888;
 }
 
-.delete-dialog-header {
-  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
-  border-bottom: 3px solid #b71c1c;
+/* ── Dialogs ── */
+.dlg-card {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  overflow: hidden;
 }
 
-.warning-dialog-header {
-  background: linear-gradient(135deg, #d60222 0%, #ef6c00 100%);
-  border-bottom: 3px solid #e65100;
+.dlg-header {
+  background: linear-gradient(120deg, #7b0000, #c62828);
+}
+.dlg-header--warning {
+  background: linear-gradient(120deg, #b71c1c, #e65100);
+}
+.dlg-header--red {
+  background: linear-gradient(120deg, #8b0000, #d32f2f);
+}
+.dlg-title {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.2px;
 }
 
-.form-field :deep(.v-field) {
-  border: 2px solid rgba(139, 0, 0, 0.2);
+.dlg-cancel-btn {
+  color: #555 !important;
+  border-color: #ddd !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+}
+.dlg-confirm-btn {
+  background: linear-gradient(135deg, #7b0000, #b71c1c) !important;
+  color: #fff !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+}
+.dlg-confirm-btn:hover {
+  background: linear-gradient(135deg, #9b0000, #c62828) !important;
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.35) !important;
+}
+
+/* Choice cards in edit warning */
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+.choice-card {
+  border: 2px solid transparent;
   border-radius: 12px;
-  transition: all 0.3s ease;
+  padding: 18px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-
-.form-field :deep(.v-field:hover) {
-  border-color: #b22222;
+.choice-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
-
-.form-field :deep(.v-field--focused) {
-  border-color: #8b0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+.choice-card--green {
+  background: #f1faf2;
+  border-color: #a5d6a7;
 }
-
-.total-price-field :deep(.v-field) {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+.choice-card--green:hover {
+  border-color: #4caf50;
+}
+.choice-card--blue {
+  background: #e8f4fd;
+  border-color: #90caf9;
+}
+.choice-card--blue:hover {
+  border-color: #1976d2;
+}
+.choice-title {
   font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  margin: 4px 0 2px;
+}
+.choice-desc {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Stock summary */
+.stock-summary {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px 18px;
+  border: 1px solid #eee;
+}
+.stock-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+.stock-summary-row:last-child {
+  border-bottom: none;
+}
+.ss-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+.ss-val {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.ss-val--bold {
+  color: #8b0000;
+  font-weight: 800;
+}
+
+.field-section-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #8b0000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cost-today-box {
+  background: #f1faf2;
+  border: 1px solid #a5d6a7;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cost-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2e7d32;
+}
+.cost-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2e7d32;
+}
+
+.preview-box {
+  background: #f4f5f7;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+}
+.preview-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #333;
+  padding: 4px 0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+.preview-row:last-child {
+  border-bottom: none;
+}
+.preview-row strong {
   color: #8b0000;
 }
 
-.cancel-btn {
-  color: #666 !important;
-  border: 2px solid #ddd !important;
-  text-transform: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
+/* Delete dialog */
+.delete-icon-wrap {
+  width: 72px;
+  height: 72px;
+  background: #fff5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 2px solid #ffcdd2;
 }
-
-.cancel-btn:hover {
-  border-color: #999 !important;
-  background: #f5f5f5 !important;
+.delete-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1a1a1a;
 }
-
-.save-btn {
-  background: linear-gradient(135deg, #8b0000 0%, #b22222 100%) !important;
-  color: white !important;
-  text-transform: none;
+.delete-name {
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
+  color: #c62828;
+}
+.delete-sub {
+  font-size: 0.82rem;
+  color: #888;
 }
 
-.save-btn:hover {
-  background: linear-gradient(135deg, #b22222 0%, #dc143c 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(139, 0, 0, 0.4) !important;
+/* Form fields */
+.form-field :deep(.v-field) {
+  border-radius: 10px;
+  transition: all 0.2s ease;
 }
-
-.delete-confirm-btn {
-  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%) !important;
-  color: white !important;
-  text-transform: none;
+.form-field :deep(.v-field--focused) {
+  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+}
+.total-price-field :deep(.v-field) {
+  background: #fff9f9;
+}
+.total-price-field :deep(.v-field input) {
   font-weight: 700;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-}
-
-.delete-confirm-btn:hover {
-  background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(211, 47, 47, 0.4) !important;
-}
-
-.edit-old-btn {
-  text-transform: none;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.add-new-btn {
-  text-transform: none;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.update-stock-btn {
-  text-transform: none;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  color: #8b0000;
 }
 </style>
