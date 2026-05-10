@@ -143,6 +143,20 @@ const save = () => {
                 density="comfortable"
               />
             </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="productForm.shelfLifeDays"
+                label="Shelf Life (days)"
+                type="number"
+                variant="outlined"
+                class="form-field"
+                prepend-inner-icon="mdi-clock-outline"
+                density="comfortable"
+                placeholder="e.g. 3 for meat"
+                hint="Leave blank if non-perishable"
+                persistent-hint
+              />
+            </v-col>
           </v-row>
         </v-form>
       </v-card-text>

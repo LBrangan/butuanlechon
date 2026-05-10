@@ -16,16 +16,31 @@ export const fetchProducts = async () => {
     const { data, error } = await query
     if (error) throw error
 
-    products.value = (data || []).map((item) => ({
-      id: item.inv_id,
-      name: item.item_name,
-      quantity: Number(item.quantity),
-      unit: item.unit,
-      price: Number(item.price),
-      totalPrice: Number(item.quantity) * Number(item.price),
-      purchaseDate: item.purchase_date || currentSimulatedDate.value,
-      initialQuantity: Number(item.quantity),
-    }))
+    products.value = (data || []).map((item) => {
+  const purchaseDate = item.purchase_date || currentSimulatedDate.value
+  const shelfLifeDays = item.shelf_life_days ?? null
+
+  // Auto-calculate expiry
+  let expiryDate = null
+  if (shelfLifeDays && purchaseDate) {
+    const d = new Date(purchaseDate)
+    d.setDate(d.getDate() + shelfLifeDays)
+    expiryDate = d.toISOString().split('T')[0]
+  }
+
+  return {
+    id: item.inv_id,
+    name: item.item_name,
+    quantity: Number(item.quantity),
+    unit: item.unit,
+    price: Number(item.price),
+    totalPrice: Number(item.quantity) * Number(item.price),
+    purchaseDate,
+    initialQuantity: Number(item.quantity),
+    shelfLifeDays,
+    expiryDate,
+  }
+})
 
     return products.value
   } catch (e) {
@@ -39,27 +54,37 @@ export const addProduct = async (product, customDate = null) => {
     const authStore = useAuthUserStore()
     const purchaseDate = customDate || todayKey()
     const branch_id = product.branch_id || await getBranchId()
-    if (!branch_id) { console.error('No branch_id'); return }
 
-    // Merge if same name exists
+    if (!branch_id) {
+      console.error('No branch_id available')
+      return
+    }
+
+    // ✅ Check if product with same name already exists
     const existing = products.value.find(
       (p) => p.name.toLowerCase() === product.name.toLowerCase()
     )
 
     if (existing) {
-      const oldVal = Number(existing.quantity) * Number(existing.price)
-      const newVal = Number(product.quantity) * Number(product.price)
-      const newQty = Number(existing.quantity) + Number(product.quantity)
-      return await updateProduct({
+      // Merge: weighted average price + combined quantity
+      const oldTotalValue = Number(existing.quantity) * Number(existing.price)
+      const newTotalValue = Number(product.quantity) * Number(product.price)
+      const newQuantity = Number(existing.quantity) + Number(product.quantity)
+      const avgPrice = (oldTotalValue + newTotalValue) / newQuantity
+
+      const updated = {
         ...existing,
-        quantity: newQty,
-        price: (oldVal + newVal) / newQty,
-        totalPrice: newQty * ((oldVal + newVal) / newQty),
-        _additionalExpense: newVal,
+        quantity: newQuantity,
+        price: avgPrice,
+        totalPrice: newQuantity * avgPrice,
+        _additionalExpense: newTotalValue,
         _addedOnDate: purchaseDate,
-      })
+      }
+
+      return await updateProduct(updated)
     }
 
+    // No existing — insert as new
     const { data, error } = await getClient()
       .from('inventory')
       .insert([{
@@ -70,25 +95,36 @@ export const addProduct = async (product, customDate = null) => {
         purchase_date: purchaseDate,
         branch_id,
         created_by: authStore.userData?.id,
+        shelf_life_days: product.shelfLifeDays || null,
       }])
       .select()
 
     if (error) throw error
 
-    if (data?.[0]) {
-      const p = data[0]
+    if (data && data.length > 0) {
       products.value.push({
-        id: p.inv_id, name: p.item_name,
-        quantity: Number(p.quantity), unit: p.unit, price: Number(p.price),
-        totalPrice: Number(p.quantity) * Number(p.price),
-        purchaseDate, initialQuantity: Number(p.quantity),
+        id: data[0].inv_id,
+        name: data[0].item_name,
+        quantity: Number(data[0].quantity),
+        unit: data[0].unit,
+        price: Number(data[0].price),
+        totalPrice: Number(data[0].quantity) * Number(data[0].price),
+        purchaseDate: purchaseDate,
+        initialQuantity: Number(data[0].quantity),
+        shelfLifeDays,
+        expiryDate,
       })
-      if (!dailyReports.value[purchaseDate]) dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
+
+      if (!dailyReports.value[purchaseDate]) {
+        dailyReports.value[purchaseDate] = { sales: 0, expenses: 0 }
+      }
       dailyReports.value[purchaseDate].expenses += Number(product.quantity) * Number(product.price)
     }
 
     return data
-  } catch (e) { console.error('addProduct:', e) }
+  } catch (error) {
+    console.error('Error adding product:', error)
+  }
 }
 
 export const updateProduct = async (updated) => {
@@ -98,7 +134,11 @@ export const updateProduct = async (updated) => {
 
     const { data, error } = await getClient()
       .from('inventory')
-      .update({ item_name: updated.name, quantity: updated.quantity, unit: updated.unit, price: updated.price })
+      .update({ item_name: updated.name,
+                quantity: updated.quantity,
+                unit: updated.unit,
+                price: updated.price,
+                shelf_life_days: updated.shelfLifeDays ?? null })
       .eq('inv_id', updated.id)
       .select()
 

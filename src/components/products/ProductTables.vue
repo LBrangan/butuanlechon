@@ -5,6 +5,26 @@ defineProps({
 })
 
 defineEmits(['edit', 'delete', 'add'])
+
+
+const today = new Date()
+today.setHours(0, 0, 0, 0)
+
+const expiryColor = (dateStr) => {
+  const expiry = new Date(dateStr)
+  const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
+  if (diffDays < 0)  return 'error'    // expired — red
+  if (diffDays <= 2) return 'warning'  // expiring soon — orange
+  return 'success'                     // fresh — green
+}
+
+const expiryLabel = (dateStr) => {
+  const expiry = new Date(dateStr)
+  const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
+  if (diffDays < 0)  return `Expired ${Math.abs(diffDays)} day(s) ago`
+  if (diffDays === 0) return 'Expires TODAY'
+  return `Expires in ${diffDays} day(s)`
+}
 </script>
 
 <template>
@@ -34,6 +54,7 @@ defineEmits(['edit', 'delete', 'add'])
             <th class="th-cell">Product Name</th>
             <th class="th-cell">Purchase Date</th>
             <th class="th-cell">Quantity/Unit</th>
+            <th class="th-cell">Expiry Date</th>
             <th class="th-cell">Price </th>
             <th class="th-cell">Total Value</th>
             <th class="th-cell text-center">Actions</th>
@@ -71,6 +92,23 @@ defineEmits(['edit', 'delete', 'add'])
                 <span class="unit-text">{{ product.unit }}</span>
               </div>
             </td>
+            <td class="td-cell">
+                  <template v-if="product.expiryDate">
+                    <v-chip
+                      size="small"
+                      :color="expiryColor(product.expiryDate)"
+                      variant="tonal"
+                      class="date-chip"
+                    >
+                      <v-icon start size="12">mdi-calendar-alert</v-icon>
+                      {{ product.expiryDate }}
+                      <v-tooltip activator="parent" location="top">
+                        {{ expiryLabel(product.expiryDate) }}
+                      </v-tooltip>
+                    </v-chip>
+                  </template>
+                  <span v-else class="text-grey text-caption">—</span>
+              </td>
             <td class="td-cell">
               <span class="price-text">₱{{ product.price.toLocaleString() }}</span>
             </td>
