@@ -33,8 +33,8 @@ defineEmits(['edit', 'delete', 'add'])
           <tr>
             <th class="th-cell">Product Name</th>
             <th class="th-cell">Purchase Date</th>
-            <th class="th-cell">Quantity</th>
-            <th class="th-cell">Price / Unit</th>
+            <th class="th-cell">Quantity/Unit</th>
+            <th class="th-cell">Price </th>
             <th class="th-cell">Total Value</th>
             <th class="th-cell text-center">Actions</th>
           </tr>

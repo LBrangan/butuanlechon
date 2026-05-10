@@ -6,7 +6,21 @@ const props = defineProps({
   isEditMode: { type: Boolean, default: false },
   initialForm: { type: Object, default: () => ({}) },
   currentDate: { type: String, default: '' },
+  existingProducts: { type: Array, default: () => []},
+
 })
+
+const onProductSelect = (val) => {
+  if (val && typeof val === 'object') {
+    // picked from dropdown — auto-fill unit
+    productForm.value.name = val.name
+    productForm.value.unit = val.unit
+  } else {
+    // typed freely — just keep the string
+    productForm.value.name = val
+  }
+}
+
 
 const emit = defineEmits(['update:modelValue', 'save'])
 
@@ -53,14 +67,17 @@ const save = () => {
         <v-form ref="productFormRef" v-model="valid">
           <v-row>
             <v-col cols="12">
-              <v-text-field
+              <v-combobox
                 v-model="productForm.name"
+                :items="existingProducts"
+                item-title="name"
                 label="Product Name"
                 :rules="nameRules"
                 variant="outlined"
                 class="form-field"
                 prepend-inner-icon="mdi-food-variant"
                 density="comfortable"
+                @update:model-value="onProductSelect"
               />
             </v-col>
 

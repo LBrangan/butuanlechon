@@ -11,8 +11,14 @@ import ProductUpdateDialog from '@/components/products/ProductUpdateStockDialog.
 import ProductTable from '@/components/products/ProductTables.vue'
 
 const {
-  products, lowStockProducts, currentSimulatedDate,
-  fetchProducts, addProduct, updateProduct, deleteProduct, deductProduct,
+  products,
+  lowStockProducts,
+  currentSimulatedDate,
+  fetchProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  deductProduct,
 } = useProducts()
 
 onMounted(() => fetchProducts())
@@ -90,6 +96,7 @@ const onDeleteRequest = (product) => {
       :is-edit-mode="isEditMode"
       :initial-form="productForm"
       :current-date="currentSimulatedDate"
+      :existing-products="products"
       @save="(data, date) => isEditMode.value ? updateProduct(data) : addProduct(data, date)"
     />
 

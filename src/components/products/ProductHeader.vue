@@ -38,17 +38,6 @@ const handleRefresh = async () => {
             <v-icon start size="18">mdi-plus</v-icon>
             Add Product
           </v-btn>
-
-          <v-btn
-            icon
-            variant="text"
-            class="refresh-btn"
-            :loading="isRefreshing"
-            @click="handleRefresh"
-          >
-            <v-icon size="20">mdi-refresh</v-icon>
-            <v-tooltip activator="parent" location="bottom">Refresh Inventory</v-tooltip>
-          </v-btn>
         </div>
       </div>
     </div>
