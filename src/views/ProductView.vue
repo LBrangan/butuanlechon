@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useProducts } from '@/composables/useProducts.js'
+import { useProducts } from '@/composables/products/index.js'
 
 import ProductHeader from '@/components/products/ProductHeader.vue'
 import ProductFormDialog from '@/components/products/ProductFormDialog.vue'
