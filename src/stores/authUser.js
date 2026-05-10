@@ -50,16 +50,27 @@ export const useAuthUserStore = defineStore('authUser', () => {
     }
   }
 
-  async function getAuthBranchIds() {
-    if (!userData.value?.branch) return
-    // ✅ Use role-based client
-    const { data } = await getClient()
-      .from('branches')
-      .select('id')
-      .in('name', userData.value.branch.split(','))
-
-    if (data) authBranchIds.value = data.map((b) => b.id)
+async function getAuthBranchIds() {
+  if (!userData.value?.branch) {
+    console.warn('[getAuthBranchIds] No branch in userData:', userData.value)
+    return
   }
+
+  const branchNames = userData.value.branch.split(',').map(b => b.trim()) // ← trim added
+
+  const { data, error } = await supabaseAdmin
+    .from('branches')
+    .select('id')
+    .in('name', branchNames)
+
+  if (error) {
+    console.error('[getAuthBranchIds] Query error:', error)
+    return
+  }
+
+  console.log('[getAuthBranchIds] branchNames:', branchNames, '| matched:', data)
+  authBranchIds.value = data?.map((b) => b.id) ?? []
+}
 
   // Auth operations always use supabase (not admin)
   async function updateUserInformation(updatedData) {

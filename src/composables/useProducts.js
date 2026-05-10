@@ -2,6 +2,8 @@ import { ref, computed } from 'vue'
 import { supabase, supabaseAdmin } from '@/utils/supabase'
 import { useAuthUserStore } from '@/stores/authUser'
 
+
+
 /* ================= GLOBAL STATE ================= */
 const products = ref([])
 const currentSimulatedDate = ref(new Date().toISOString().split('T')[0])
@@ -34,40 +36,58 @@ export function useProducts() {
     return authStore.userRole === 'Super Administrator' ? supabaseAdmin : supabase
   }
 
-  // ✅ Helper to get branch_id safely
-  const getBranchId = async () => {
-    const authStore = useAuthUserStore()
-    if (authStore.authBranchIds.length === 0) await authStore.getAuthBranchIds()
-    return authStore.authBranchIds[0] ?? null
+const getBranchId = async () => {
+  const authStore = useAuthUserStore()
+
+  // Add this guard
+  if (!authStore.userData) {
+    await authStore.getUserInformation()
   }
+
+  if (authStore.authBranchIds.length === 0) await authStore.getAuthBranchIds()
+  return authStore.authBranchIds[0] ?? null
+}
 
   const fetchProducts = async () => {
-    try {
-      const { data, error } = await getClient()
-        .from('inventory')
-        .select('*')
-        .order('item_name', { ascending: true })
+  try {
+    const authStore = useAuthUserStore()
+    const client = getClient()
 
-      if (error) throw error
+    let query = client
+      .from('inventory')
+      .select('*')
+      .order('item_name', { ascending: true })
 
-      const mappedData = (data || []).map((item) => ({
-        id: item.inv_id,
-        name: item.item_name,
-        quantity: item.quantity,
-        unit: item.unit,
-        price: item.price,
-        totalPrice: item.quantity * item.price,
-        purchaseDate: item.purchase_date || currentSimulatedDate.value,
-        initialQuantity: item.quantity,
-      }))
-
-      products.value = mappedData
-      return mappedData
-    } catch (error) {
-      console.error('Error fetching products:', error)
-      return []
+    if (authStore.userRole !== 'Super Administrator') {
+      const branchId = await getBranchId()
+      if (!branchId) {
+        console.warn('fetchProducts: No branch_id available')
+        products.value = []
+        return []
+      }
+      query = query.eq('branch_id', branchId)
     }
+
+    const { data, error } = await query
+    if (error) throw error
+
+    products.value = (data || []).map((item) => ({
+      id: item.inv_id,
+      name: item.item_name,
+      quantity: item.quantity,
+      unit: item.unit,
+      price: item.price,
+      totalPrice: item.quantity * item.price,
+      purchaseDate: item.purchase_date || currentSimulatedDate.value,
+      initialQuantity: item.quantity,
+    }))
+
+    return products.value
+  } catch (error) {
+    console.error('Error fetching products:', error)
+    return []
   }
+}
 
   const addProduct = async (product, customDate = null) => {
     try {
@@ -83,7 +103,7 @@ export function useProducts() {
         return
       }
 
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getClient()
         .from('inventory')
         .insert([{
           item_name: product.name,
@@ -128,7 +148,7 @@ export function useProducts() {
       const oldProduct = products.value.find((p) => p.id === updated.id)
       const newTotalPrice = updated.totalPrice || updated.quantity * updated.price
 
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getClient()
         .from('inventory')
         .update({
           item_name: updated.name,
@@ -178,7 +198,7 @@ export function useProducts() {
     try {
       const product = products.value.find((p) => p.id === id)
 
-      const { error } = await supabaseAdmin.from('inventory').delete().eq('inv_id', id)
+      const { error } = await getClient().from('inventory').delete().eq('inv_id', id)
       if (error) throw error
 
       if (product && product.purchaseDate) {
@@ -247,7 +267,7 @@ export function useProducts() {
     }
 
     try {
-      const { data, error } = await supabaseAdmin
+      const { data, error } = await getClient()
         .from('daily_reports')
         .insert([{
           report_date: today,
