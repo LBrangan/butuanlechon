@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { useProducts } from '@/composables/useProducts'
+import { useProducts } from '@/composables/products/index.js'
 import Chart from 'chart.js/auto'
 
 const router = useRouter()

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useProducts } from '@/composables/useProducts'
+import { useProducts } from '@/composables/products/index.js'
+
 
 const router = useRouter()
 const isRefreshing = ref(false)
