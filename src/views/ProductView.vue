@@ -3,12 +3,12 @@ import { ref, onMounted } from 'vue'
 import { useProducts } from '@/composables/useProducts.js'
 
 import ProductHeader from '@/components/products/ProductHeader.vue'
-import ProductTable from '@/components/products/ProductTable.vue'
 import ProductFormDialog from '@/components/products/ProductFormDialog.vue'
 import ProductDeleteDialog from '@/components/products/ProductDeleteDialog.vue'
 import ProductDeductDialog from '@/components/products/ProductDeductDialog.vue'
 import ProductEditWarningDialog from '@/components/products/ProductEditWarningDialog.vue'
-import ProductUpdateStockDialog from '@/components/products/ProductUpdateStockDialog.vue'
+import ProductUpdateDialog from '@/components/products/ProductUpdateStockDialog.vue'
+import ProductTable from '@/components/products/ProductTables.vue'
 
 const {
   products, lowStockProducts, currentSimulatedDate,
@@ -112,7 +112,7 @@ const onDeleteRequest = (product) => {
       @update-stock="onUpdateStock"
     />
 
-    <ProductUpdateStockDialog
+    <ProductUpdateDialog
       v-model="updateStockDialog"
       :product="productToEdit"
       :current-date="currentSimulatedDate"
