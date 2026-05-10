@@ -11,9 +11,7 @@ export const menuItemsNav1 = [
   ['Daily Usage', 'mdi-clipboard-check-outline', 'Record Daily Usage of Products', '/daily-usage'],
 ]
 export const menuItemsNav2 = [
-  ['Running Inventory', 'mdi-package', 'Products Inventory Report', '/reports/products'],
   ['Stocks', 'mdi-poll', 'Stocks of Products Report', '/reports/stocks'],
-  ['Sales Status', 'mdi-sale', 'Sold Products Report', '/reports/sales'],
   ['Sales Summary', 'mdi-counter', 'Sales and Expenses Report', '/reports/summary'],
 ]
 export const menuItemsNav3 = [
