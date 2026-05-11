@@ -18,7 +18,6 @@ onMounted(async () => {
   await nextTick()
   buildBarChart()
   buildDonutChart()
-  buildMonthlyChart()
 })
 
 // ── Computed summaries ──
@@ -239,21 +238,6 @@ const buildMonthlyChart = () => {
   })
 }
 
-watch(
-  allReports,
-  async () => {
-    await nextTick()
-    buildBarChart()
-    buildDonutChart()
-    buildMonthlyChart()
-  },
-  { deep: true },
-)
-
-watch(selectedMonth, async () => {
-  await nextTick()
-})
-
 // ── Helpers ──
 const profitColor = (val) => (val >= 0 ? '#2e7d32' : '#c62828')
 const formatDate = (d) =>
@@ -269,8 +253,30 @@ const exportMonthlyCSV = () => exportMonthlyExcel(allReports.value)
 const exportMonthlyDetailCSV = () => exportMonthlyDetailExcel(allReports.value, selectedMonth.value)
 const exportFullReport = () => exportFullReportExcel(allReports.value, products.value)
 
-// Active tab
+// ── Active tab ── (IMPORTANTE: naa ni sa ubos sa mga functions)
 const activeTab = ref('daily')
+
+// ── Watchers ──
+watch(
+  allReports,
+  async () => {
+    await nextTick()
+    buildBarChart()
+    buildDonutChart()
+  },
+  { deep: true },
+)
+
+watch(activeTab, async (newTab) => {
+  if (newTab === 'monthly') {
+    await nextTick()
+    buildMonthlyChart()
+  }
+})
+
+watch(selectedMonth, async () => {
+  await nextTick()
+})
 </script>
 
 <template>
