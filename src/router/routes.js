@@ -26,6 +26,7 @@ import DailyUsage from '@/views/DailyUsage.vue'
 import StockView from '@/views/Reports/StockView.vue'
 import SalesSummaryView from '@/views/Reports/SalesSummaryView.vue'
 const isDefaced = false
+import ProductList from '@/views/Reports/ProductList.vue'
 
 //Routes
 export const routes = isDefaced
@@ -155,12 +156,30 @@ export const routes = isDefaced
         component: StockView,
         meta: { requiresAuth: true },
       },
-
       {
         path: '/reports/summary',
         name: 'sales-summary',
         component: SalesSummaryView,
         meta: { requiresAuth: true },
       },
-      //Stock
+      {
+        path: '/reports/product-list',
+        name: 'ProductList',
+        component: ProductList,
+        meta: { requiresAuth: true },
+      },
+
+      //Errors ← IBUTANG KINI SA PINAKA-UBOS
+      {
+        path: '/forbidden',
+        name: 'forbidden',
+        component: ForbiddenView,
+        meta: { isDefault: true },
+      },
+      {
+        path: '/:catchAll(.*)', // ← PINAKA-LAST GYUD NI
+        name: 'not-found',
+        component: NotFoundView,
+        meta: { isDefault: true },
+      },
     ]

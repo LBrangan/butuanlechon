@@ -13,6 +13,7 @@ export const menuItemsNav1 = [
 export const menuItemsNav2 = [
   ['Stocks', 'mdi-poll', 'Stocks of Products Report', '/reports/stocks'],
   ['Sales Summary', 'mdi-counter', 'Sales and Expenses Report', '/reports/summary'],
+  ['Product List', 'mdi-format-list-bulleted', 'List of All Products', '/reports/product-list'],
 ]
 export const menuItemsNav3 = [
   ['List of Branches', 'mdi-store', '', '/manage/branches'],
