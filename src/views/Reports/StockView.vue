@@ -10,9 +10,9 @@ const { products, lowStockProducts, fetchProducts } = useProducts() // ← FIRST
 const authStore = useAuthUserStore()
 
 const stopWatch = watch(
-  () => authStore.authBranchIds,
-  async (ids) => {
-    if (ids.length > 0) {
+  () => authStore.authBranchIds.length,
+  async (length) => {
+    if (length > 0) {
       await fetchProducts()
       stopWatch()
     }
