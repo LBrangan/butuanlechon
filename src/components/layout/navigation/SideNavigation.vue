@@ -31,8 +31,7 @@ const onFilterPages = () => {
     { items: editableMenuItemsNav1, title: mainNav[0][0] }, // Products
     { items: editableMenuItemsNav2, title: mainNav[1][0] }, // Reports
     { items: editableMenuItemsNav3, title: mainNav[2][0] }, // User Management
-    { items: editableMenuItemsNav4, title: mainNav[3][0] },
-    { items: editableMenuItemsNav5, title: mainNav[4][0] },
+    // menuItemsNav4 and menuItemsNav5 are empty and unused, so skip them
   ]
 
   menuItems.forEach(({ items, title }) => {
