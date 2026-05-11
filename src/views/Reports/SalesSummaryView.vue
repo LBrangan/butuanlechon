@@ -10,15 +10,28 @@ import {
   exportFullReportExcel,
 } from './useExcelExport.js'
 
-const router = useRouter()
-const { products, allReports, lowStockProducts, fetchProducts } = useProducts()
+import { useAuthUserStore } from '@/stores/authUser'
 
-onMounted(async () => {
-  await fetchProducts()
-  await nextTick()
-  buildBarChart()
-  buildDonutChart()
-})
+const authStore = useAuthUserStore()
+const { products, allReports, lowStockProducts, fetchProducts } = useProducts() // ← FIRST
+
+
+const stopWatch = watch(
+  () => authStore.authBranchIds,
+  async (ids) => {
+    if (ids.length > 0) {
+      await fetchProducts()
+      stopWatch()
+    }
+  },
+  { immediate: true }
+)
+
+
+const router = useRouter()
+
+
+
 
 // ── Computed summaries ──
 const totalSales = computed(() => allReports.value.reduce((s, r) => s + r.sales, 0))

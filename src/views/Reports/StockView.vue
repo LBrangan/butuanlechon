@@ -2,6 +2,23 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProducts } from '@/composables/products/index.js'
+import { watch } from 'vue'
+import { useAuthUserStore } from '@/stores/authUser'
+
+const { products, lowStockProducts, fetchProducts } = useProducts() // ← FIRST
+
+const authStore = useAuthUserStore()
+
+const stopWatch = watch(
+  () => authStore.authBranchIds,
+  async (ids) => {
+    if (ids.length > 0) {
+      await fetchProducts()
+      stopWatch()
+    }
+  },
+  { immediate: true }
+)
 
 
 const router = useRouter()
@@ -9,11 +26,7 @@ const isRefreshing = ref(false)
 const searchQuery = ref('')
 const filterLevel = ref('all') // 'all' | 'critical' | 'low'
 
-const { products, lowStockProducts, fetchProducts } = useProducts()
 
-onMounted(async () => {
-  await fetchProducts()
-})
 
 const refreshStock = async () => {
   isRefreshing.value = true

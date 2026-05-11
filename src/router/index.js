@@ -8,44 +8,45 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  // Use Pinia Store
   const authStore = useAuthUserStore()
-  // Load if user is logged in
+
+  // Step 1 — check session
   const isLoggedIn = await authStore.isAuthenticated()
 
-  // Redirect to appropriate page if accessing home route
+  // Redirect home
   if (to.name === 'home') {
     return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
   }
 
-  // If logged in, prevent access to login or register pages
+  // Prevent logged-in users from hitting login/register
   if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
-    // redirect the user to the dashboard page
     return { name: 'dashboard' }
   }
 
-  // If not logged in, prevent access to system pages
+  // Require auth
   if (!isLoggedIn && to.meta.requiresAuth) {
-    // redirect the user to the login page
     return { name: 'login' }
   }
 
-  // Check if the user is logged in
   if (isLoggedIn) {
-    // Load user data if not already done
+    // Step 2 — ensure userData is populated (needed for userRole computed)
     if (!authStore.userData) await authStore.getUserInformation()
 
-    // Get the user role
+    // Step 3 — ensure branch IDs are loaded (needed for inventory queries)
+    if (authStore.authBranchIds.length === 0) await authStore.getAuthBranchIds()
+
     const isSuperAdmin = authStore.userRole === 'Super Administrator'
 
-    // Load if not super admin
     if (!isSuperAdmin) {
-      if (authStore.authPages.length == 0) await authStore.getAuthPages(authStore.userRole)
+      // Step 4 — always reload authPages if empty (happens on every refresh)
+      // Pass userRole directly from userData to avoid computed timing issues
+      const roleName = authStore.userData?.user_role || authStore.userData?.role
+      if (authStore.authPages.length === 0 && roleName) {
+        await authStore.getAuthPages(roleName)
+      }
 
-      // Check page that is going to if it is in role pages
       const isAccessible = authStore.authPages.includes(to.path)
 
-      // Forbid access if not in role pages and if page is not default page
       if (!isAccessible && !to.meta.isDefault) {
         return { name: 'forbidden' }
       }
