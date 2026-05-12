@@ -2,23 +2,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProducts } from '@/composables/products/index.js'
-import { watch } from 'vue'
-import { useAuthUserStore } from '@/stores/authUser'
 
 const { products, lowStockProducts, fetchProducts } = useProducts() // ← FIRST
 
-const authStore = useAuthUserStore()
 
-const stopWatch = watch(
-  () => authStore.authBranchIds.length,
-  async (length) => {
-    if (length > 0) {
-      await fetchProducts()
-      stopWatch()
-    }
-  },
-  { immediate: true }
-)
+onMounted(async () => {
+  await fetchProducts()
+})
 
 
 const router = useRouter()

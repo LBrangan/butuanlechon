@@ -16,16 +16,10 @@ const authStore = useAuthUserStore()
 const { products, allReports, lowStockProducts, fetchProducts } = useProducts() // ← FIRST
 
 
-const stopWatch = watch(
-  () => authStore.authBranchIds.length,
-  async (length) => {
-    if (length > 0) {
-      await fetchProducts()
-      stopWatch()
-    }
-  },
-  { immediate: true }
-)
+
+onMounted(async () => {
+  await fetchProducts()
+})
 
 
 const router = useRouter()
