@@ -7,6 +7,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, computed, watch, onMounted } from 'vue'
 
 
+
 /*const { data } = await supabase.auth.getSession()
 const token = data.session.access_token
 
