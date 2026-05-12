@@ -59,11 +59,12 @@ export const addProduct = async (product, customDate = null) => {
   try {
     const authStore = useAuthUserStore()
     const purchaseDate = customDate || currentSimulatedDate.value
+    const isSuperAdmin = authStore.userRole === 'Super Administrator'
+
     const branch_id = product.branch_id || (await getBranchId())
 
     if (!branch_id) {
-      console.error('No branch_id available')
-      return
+      console.error('No branch_id available for adding product')
     }
 
     const existing = products.value.find(

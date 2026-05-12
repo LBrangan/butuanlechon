@@ -8,14 +8,16 @@ import { ref, computed, watch, onMounted } from 'vue'
 
 
 
-/*const { data } = await supabase.auth.getSession()
-const token = data.session.access_token
+// Run in browser console — checks the full chain
+const { data: { session } } = await supabase.auth.getSession()
+const claims = JSON.parse(atob(session.access_token.split('.')[1]))
+console.log('role:', claims.user_role, '| branch:', claims.branch)
 
-// Decode the JWT payload
-const payload = JSON.parse(atob(token.split('.')[1]))
-console.log('user_role:', payload.user_role)
-console.log('branch:', payload.branch)
-console.log('is_admin:', payload.is_admin) */
+const { data, error } = await supabase.from('inventory').select('*').limit(3)
+console.log('inventory:', data, error)
+
+const { data: d2, error: e2 } = await supabase.from('daily_reports').select('*').limit(3)
+console.log('daily_reports:', d2, e2)
 
 // Router setup
 const router = useRouter()
