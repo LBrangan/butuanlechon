@@ -8,16 +8,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 
 
 
-// Run in browser console — checks the full chain
-const { data: { session } } = await supabase.auth.getSession()
-const claims = JSON.parse(atob(session.access_token.split('.')[1]))
-console.log('role:', claims.user_role, '| branch:', claims.branch)
 
-const { data, error } = await supabase.from('inventory').select('*').limit(3)
-console.log('inventory:', data, error)
-
-const { data: d2, error: e2 } = await supabase.from('daily_reports').select('*').limit(3)
-console.log('daily_reports:', d2, e2)
 
 // Router setup
 const router = useRouter()
