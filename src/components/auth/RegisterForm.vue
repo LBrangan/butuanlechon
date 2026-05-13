@@ -10,20 +10,20 @@ import {
   confirmedValidator,
 } from '@/utils/validators'
 
-const { formData, formAction, refVForm, onFormSubmit } = useRegister()
-
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
 
 const showConfirmation = ref(false)
 const registeredEmail = ref('')
 
+// ← define callback first
 const handleRegistrationSuccess = (email) => {
   registeredEmail.value = email
   showConfirmation.value = true
-  // Dialog handles redirect after user closes it
 }
 
+// ← pass callback into composable
+const { formData, formAction, refVForm, onFormSubmit } = useRegister(handleRegistrationSuccess)
 </script>
 
 <template>
@@ -43,7 +43,6 @@ const handleRegistrationSuccess = (email) => {
         :rules="[requiredValidator]"
         variant="outlined"
       />
-
       <v-text-field
         v-model="formData.lastname"
         label="Last Name"
@@ -61,7 +60,6 @@ const handleRegistrationSuccess = (email) => {
         required
         variant="outlined"
       />
-
       <v-text-field
         v-model="formData.password"
         label="Password"
@@ -73,7 +71,6 @@ const handleRegistrationSuccess = (email) => {
         required
         variant="outlined"
       />
-
       <v-text-field
         v-model="formData.password_confirmation"
         label="Password Confirmation"
@@ -97,7 +94,6 @@ const handleRegistrationSuccess = (email) => {
       rounded="lg"
       type="submit"
       block
-      text="black"
       prepend-icon="mdi-login"
       color="red-darken-4"
       :disabled="formAction.formProcess"
