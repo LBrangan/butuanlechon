@@ -133,3 +133,7 @@ export const imageValidator = (value) => {
 
   return !value || !value.length || value[0].size < 2000000 || 'Image size should be less than 2 MB'
 }
+export const phoneValidator = (value) => {
+  const cleaned = value?.toString().replace(/\s/g, '')
+  return /^9\d{9}$/.test(cleaned) || 'Please enter a valid PH mobile number (e.g. 9XXXXXXXXX)'
+}
