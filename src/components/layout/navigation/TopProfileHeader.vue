@@ -6,6 +6,10 @@ import { useDisplay } from 'vuetify'
 import { useRouter, useRoute } from 'vue-router'
 import { ref, computed, watch, onMounted } from 'vue'
 
+
+
+
+
 // Router setup
 const router = useRouter()
 const route = useRoute()
@@ -41,8 +45,9 @@ const isCompact = computed(() => xs.value || sm.value)
 
 // Mobile menu control
 const formAction = ref({ ...formActionDefault })
-const mobileDrawer = ref(false)
-const searchQuery = ref('')
+
+
+
 
 // Logout handler
 const onLogout = async () => {
