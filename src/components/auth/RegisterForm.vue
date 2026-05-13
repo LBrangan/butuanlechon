@@ -35,22 +35,28 @@ const { formData, formAction, refVForm, onFormSubmit } = useRegister(handleRegis
   <RegistrationConfirmationDialog v-model="showConfirmation" :email="registeredEmail" />
 
   <v-form ref="refVForm" @submit.prevent="onFormSubmit">
-    <v-card-text>
-      <v-text-field
-        v-model="formData.firstname"
-        label="First Name"
-        prepend-inner-icon="mdi-account"
-        :rules="[requiredValidator]"
-        variant="outlined"
-      />
-      <v-text-field
-        v-model="formData.lastname"
-        label="Last Name"
-        prepend-inner-icon="mdi-account"
-        :rules="[requiredValidator]"
-        required
-        variant="outlined"
-      />
+    <v-card-text
+      ><v-row>
+        <v-col cols="6">
+          <v-text-field
+            v-model="formData.firstname"
+            label="First Name"
+            prepend-inner-icon="mdi-account"
+            :rules="[requiredValidator]"
+            variant="outlined"
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            v-model="formData.lastname"
+            label="Last Name"
+            prepend-inner-icon="mdi-account"
+            :rules="[requiredValidator]"
+            required
+            variant="outlined"
+          />
+        </v-col>
+      </v-row>
       <v-text-field
         v-model="formData.email"
         label="Email"
@@ -60,6 +66,22 @@ const { formData, formAction, refVForm, onFormSubmit } = useRegister(handleRegis
         required
         variant="outlined"
       />
+
+      <!-- Phone Number Field -->
+      <v-text-field
+        v-model="formData.phone"
+        label="Phone Number"
+        prepend-inner-icon="mdi-phone"
+        variant="outlined"
+        :rules="[requiredValidator, phoneValidator]"
+        required
+        placeholder="9XXXXXXXXX"
+      >
+        <template #prepend-inner>
+          <span class="text-body-2 text-medium-emphasis mr-1 mt-1">+63</span>
+        </template>
+      </v-text-field>
+
       <v-text-field
         v-model="formData.password"
         label="Password"
