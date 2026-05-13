@@ -7,6 +7,7 @@ export function useRegister(onSuccess) {
     firstname: '',
     lastname: '',
     email: '',
+    phone: '',
     password: '',
     password_confirmation: '',
   }
@@ -24,6 +25,7 @@ export function useRegister(onSuccess) {
         data: {
           firstname: formData.value.firstname,
           lastname: formData.value.lastname,
+          phone: `+63${formData.value.phone}`,
           is_admin: false,
           role: '',
           branch: '',
